@@ -2,14 +2,16 @@ XMLUnit version 1.0
 ===================
 
 To run this software you will need:
-- junit (http://www.junit.org/)
+- Junit (http://www.junit.org/)
 - a JAXP compliant XML SAX and DOM parser (e.g. Apache Xerces)
 - a JAXP/Trax compliant XSLT engine (e.g. Apache Xalan)
 in your classpath
 
 If you want to build the source code you will also need Ant (http://jakarta.apache.org/ant)
 
-This build of the source code was prepared using JDK1.4.1, Junit3.8.1, and Ant1.5
+This build of the source code was prepared using JDK1.4.1, Junit3.8.1, and Ant1.5: it is 
+not binary compatible with JDK1.3.x, JDK1.2.x, JDK1.1.x or Junit3.7.x. If you want to use
+these libraries then you will need to rebuild the source code first.
 
 Enjoy!
 http://xmlunit.sourceforge.net
@@ -20,9 +22,15 @@ Changes in this version:
 - NEW NodeDetail class added to supply details of compared nodes in a Difference
 - NEW ElementQualifier interface added so that documents containing elements with 
   repeated names can be compared using attribute values to determine which of the 
-  candidate elements are actually comparable
+  candidate elements are actually comparable (fixes various feature requests / posted bugs)
+- NEW ElementNameQualifier, ElementNameAndTextQualifier and ElementNameAndAttributeQualifier
+  classes added to provide the default (backwards compatible) and extended 
+  implementions of the ElementQualifier interface
 - NEW ComparisonController interface now used to control the operation of a 
   DifferenceEngine instance (extracted from DifferenceListener)
+- Incorporated DifferenceConstants patch submitted by ludovicc 
+- Build file now incorporates JUnitReport
+- TODO Update documentation
 tim.bacon@thoughtworks.com
 Novemeber/December 2002
 
@@ -30,7 +38,8 @@ Changes in version 0.8:
 - Changes to compiled jar in distribution required for compatibility with JUnit 3.8
 - Fixes for a defect in the DetailedDiff class that caused a 
   ClassCastException, raised by Ryan MacLachlan
-- Small API changes for usability
+- Small API changes for usability (e.g. allow use of Source constructor arguments
+  for Diff and Transform)
 tim.bacon@thoughtworks.com
 September 2002
 
@@ -113,6 +122,3 @@ Original source:
 jeff@customMonkey.org
 April 2001
 
-Features planned for future releases:
-- Validator support for XML schema validation (didn't make it into version 0.5)
-- some SOAP-specific functionality
