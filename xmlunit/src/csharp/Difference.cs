@@ -1,24 +1,19 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     using System.Xml;    
     
     public class Difference {
-        private DifferenceType _id;
-        private bool _majorDifference;
+        private readonly DifferenceType _id;
+        private readonly bool _majorDifference;
         private XmlNodeType _controlNodeType;
         private XmlNodeType _testNodeType;
         
         internal Difference(DifferenceType id, bool isMajorDifference) {
-            Init(id, isMajorDifference);
-        }
-        
-        private void Init(DifferenceType id, bool isMajorDifference) {
             _id = id;
             _majorDifference = isMajorDifference;
         }
         
-        public Difference(Difference prototype, XmlNodeType controlNodeType,
-                          XmlNodeType testNodeType) {
-            Init(prototype.Id, prototype.MajorDifference);
+        public Difference(Difference prototype, XmlNodeType controlNodeType, XmlNodeType testNodeType) 
+        : this(prototype.Id, prototype.MajorDifference) {
             _controlNodeType = controlNodeType;
             _testNodeType = testNodeType;
         }
