@@ -344,13 +344,8 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareElement(Element control, Element test,
     DifferenceListener listener) throws DifferenceFoundException {
-        if (isNamespaced(control)) {
-            compare(control.getLocalName(), test.getLocalName(), control, test,
-                listener,ELEMENT_TAG_NAME);
-        } else {
-            compare(control.getTagName(), test.getTagName(), control, test,
-                listener,ELEMENT_TAG_NAME);
-        }
+    	compare(getUnNamespacedNodeName(control), getUnNamespacedNodeName(test), 
+    		control, test, listener, ELEMENT_TAG_NAME);
 
         NamedNodeMap controlAttr = control.getAttributes();
         NamedNodeMap testAttr = test.getAttributes();
@@ -367,29 +362,49 @@ public class DifferenceEngine implements DifferenceConstants {
     DifferenceListener listener) throws DifferenceFoundException {
         for (int i=0; i < controlAttr.getLength(); ++i) {
             Attr nextAttr = (Attr) controlAttr.item(i);
-            Attr compareTo = null;
-            String attrName = nextAttr.getName();
-            if (isXMLNSAttribute(nextAttr)) {
-                // xml namespacing is handled in compareNodeBasics
-            } else if (testAttr.getNamedItem(attrName) != null) {
-                compareTo = (Attr) testAttr.getNamedItem(attrName);
-                compareAttribute(nextAttr, compareTo, listener);
-                Attr attributeItem = (Attr) testAttr.item(i);
-
-                String testAttrName;
-                if (attributeItem == null) {
-                    testAttrName = "[attribute absent]";
-                } else {
-                    testAttrName = testAttr.item(i).getNodeName();
-                }
-                compare(attrName, testAttrName,
-                    nextAttr, compareTo, listener, ATTR_SEQUENCE);
-            } else {
-                compare(attrName, null, control, test, listener,
-                    ATTR_NAME_NOT_FOUND);
-            }
+        	if (isXMLNSAttribute(nextAttr)) {
+        		// xml namespacing is handled in compareNodeBasics
+        	} else {
+            	boolean isNamespacedAttr = isNamespaced(nextAttr);
+            	String attrName = getUnNamespacedNodeName(nextAttr, isNamespacedAttr);
+            	Attr compareTo = null;
+            	
+            	if (isNamespacedAttr) {
+            		compareTo = (Attr) testAttr.getNamedItemNS(
+            			nextAttr.getNamespaceURI(), attrName);
+            	} else {
+            		compareTo = (Attr) testAttr.getNamedItem(attrName);
+            	}
+            	            
+	            if (compareTo != null) {
+	                compareAttribute(nextAttr, compareTo, listener);
+	                
+	                Attr attributeItem = (Attr) testAttr.item(i);
+	                String testAttrName = "[attribute absent]";
+	                if (attributeItem != null) {
+	                    testAttrName = getUnNamespacedNodeName(attributeItem);
+	                }
+	                compare(attrName, testAttrName,
+	                    nextAttr, compareTo, listener, ATTR_SEQUENCE);
+	            } else {
+	                compare(attrName, null, control, test, listener,
+	                    ATTR_NAME_NOT_FOUND);
+	            }
+        	}
         }
     }
+    
+    private String getUnNamespacedNodeName(Node aNode) {
+    	return getUnNamespacedNodeName(aNode, isNamespaced(aNode));
+    }
+    
+	private String getUnNamespacedNodeName(Node aNode, boolean isNamespacedNode) {
+		if (isNamespacedNode) {
+			return aNode.getLocalName();
+		}
+		return aNode.getNodeName();
+	}
+
 
     /**
      * @param attribute
@@ -411,8 +426,12 @@ public class DifferenceEngine implements DifferenceConstants {
     DifferenceListener listener) throws DifferenceFoundException {
     	controlTracker.visited(control);
     	testTracker.visited(test);
+    	
+    	compare(control.getPrefix(), test.getPrefix(), control, test, 
+    		listener, NAMESPACE_PREFIX);
+    		
         compare(control.getValue(), test.getValue(), control, test,
-            listener,ATTR_VALUE);
+            listener, ATTR_VALUE);
 
         compare(control.getSpecified() ? Boolean.TRUE : Boolean.FALSE,
             test.getSpecified() ? Boolean.TRUE : Boolean.FALSE,

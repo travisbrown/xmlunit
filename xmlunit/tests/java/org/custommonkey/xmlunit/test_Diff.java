@@ -40,6 +40,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -228,6 +230,18 @@ public class test_Diff extends TestCase{
 		assertFalse("should not be identical: " + diff.toString(), diff.identical());
 		assertFalse("should not be similar: " + diff.toString(), diff.similar());
 	}
+	
+	public void testRepeatedElementNamesWithNamespacedAttributeQualification() throws Exception {
+		Diff diff = buildDiff("<root xmlns:a=\"http://a.com\" xmlns:b=\"http://b.com\">"
+				+ "<node id=\"1\" a:val=\"a\" b:val=\"b\"/><node id=\"2\" a:val=\"a2\" b:val=\"b2\"/></root>",
+			"<root xmlns:c=\"http://a.com\" xmlns:d=\"http://b.com\">"
+				+ "<node id=\"2\" c:val=\"a2\" d:val=\"b2\"/><node id=\"1\" c:val=\"a\" d:val=\"b\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+		diff.overrideDifferenceListener(new ExpectedDifferenceListener(
+			new int[] {DifferenceConstants.NAMESPACE_PREFIX_ID, DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID}));
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
 
 	public void testRepeatedElementNamesWithTextQualification() throws Exception {
 			Diff diff = buildDiff("<root><node>1</node><node>2</node></root>",
@@ -367,6 +381,18 @@ public class test_Diff extends TestCase{
         assertTrue("d-"+reverseDiff.toString(), !reverseDiff.identical());
     }
     
+    public void testNamespacedAttributes() throws Exception {
+    	FileReader control = new FileReader(test_Constants.BASEDIR
+    		+ "/tests/etc/controlNamespaces.xml");
+    	FileReader test = new FileReader(test_Constants.BASEDIR
+    		+ "/tests/etc/testNamespaces.xml");
+    	Diff diff = buildDiff(control, test);
+    	diff.overrideDifferenceListener(
+    		new ExpectedDifferenceListener(DifferenceConstants.NAMESPACE_PREFIX_ID));
+    	assertEquals(diff.toString(), false, diff.identical());
+    	assertEquals(diff.toString(), true, diff.similar());
+    }
+    
     public void testOverrideDifferenceListener() throws Exception {
         String control = "<vehicles><car colour=\"white\">ford fiesta</car>"
             +"<car colour=\"red\">citroen xsara</car></vehicles>";
@@ -431,8 +457,7 @@ public class test_Diff extends TestCase{
         super(name);
     }
 
-    private class OverrideDifferenceListener 
-    implements DifferenceListener {
+    private class OverrideDifferenceListener implements DifferenceListener {
         private final int overrideValue;
         private OverrideDifferenceListener(int overrideValue) {
             this.overrideValue = overrideValue;
@@ -443,4 +468,23 @@ public class test_Diff extends TestCase{
         public void skippedComparison(Node control, Node test) {
         }
     }
+    
+    private class ExpectedDifferenceListener implements DifferenceListener {
+	private final Set expectedIds;
+	private ExpectedDifferenceListener(int expectedIdValue) {
+		this(new int[] {expectedIdValue});
+	}
+	private ExpectedDifferenceListener(int[] expectedIdValues) {
+		this.expectedIds = new HashSet(expectedIdValues.length);
+		for (int i=0; i < expectedIdValues.length; ++i) {
+			expectedIds.add(new Integer(expectedIdValues[i]));
+		}
+	}
+	public int differenceFound(Difference difference) {
+		assertTrue(difference.toString(), expectedIds.contains(new Integer(difference.getId())));
+		return RETURN_ACCEPT_DIFFERENCE;
+	}
+	public void skippedComparison(Node control, Node test) {
+	}
+}
 }

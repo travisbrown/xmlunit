@@ -60,7 +60,7 @@ public class ElementNameQualifier implements ElementQualifier {
 	public boolean qualifyForComparison(Element control, Element test) {
 		return control != null && test !=null 
 			&& equalsNamespace(control, test)
-			&& getNonNamespacedTagName(control).equals(getNonNamespacedTagName(test));
+			&& getNonNamespacedNodeName(control).equals(getNonNamespacedNodeName(test));
 	}
 	/**
 	 * Determine whether two nodes are defined by the same namespace URI 
@@ -79,17 +79,16 @@ public class ElementNameQualifier implements ElementQualifier {
 	}
 	
 	/**
-	 * Strip any namespace information off the element tag name
-	 * @param element
-	 * @return the element localName if the element is namespaced,
-	 *  or the tagName otherwise 
+	 * Strip any namespace information off a node name
+	 * @param node
+	 * @return the localName if the node is namespaced, or the name otherwise
 	 */
-	protected String getNonNamespacedTagName(Element element) {
-		String tagName = element.getLocalName();
-		if (tagName == null) {
-			return element.getTagName();
+	protected String getNonNamespacedNodeName(Node node) {
+		String name = node.getLocalName();
+		if (name == null) {
+			return node.getNodeName();
 		}
-		return tagName;
+		return name;
 	} 
 
 }
