@@ -31,9 +31,9 @@
 
             new DifferenceTests().ToStringContainsId();
             
-            new XmlUnitConfigurationTests().DefaultConfiguredWhitespaceHandlingAll();
-            new XmlUnitConfigurationTests().CanConfigureWhitespaceHandlingSignificant();
-            new XmlUnitConfigurationTests().CanConfigureWhitespaceHandlingNone();
+            new DiffConfigurationTests().DefaultConfiguredWhitespaceHandlingAll();
+            new DiffConfigurationTests().CanConfigureWhitespaceHandlingSignificant();
+            new DiffConfigurationTests().CanConfigureWhitespaceHandlingNone();
         }
     }
 }

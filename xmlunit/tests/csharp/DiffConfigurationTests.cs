@@ -5,7 +5,7 @@
     using System.Xml;
     
     [TestFixture]
-    public class XmlUnitConfigurationTests {
+    public class DiffConfigurationTests {
         private static string xmlWithWhitespace = "<elemA>as if<elemB> \r\n </elemB>\t</elemA>";
         private static string xmlWithoutWhitespaceElement = "<elemA>as if<elemB/>\r\n</elemA>";
         private static string xmlWithWhitespaceElement = "<elemA>as if<elemB> </elemB></elemA>";
@@ -28,8 +28,8 @@
         }
 
         [Test] public void CanConfigureWhitespaceHandlingSignificant() {
-            XmlUnitConfiguration xmlUnitConfiguration = 
-                new XmlUnitConfiguration (WhitespaceHandling.Significant);
+            DiffConfiguration xmlUnitConfiguration = 
+                new DiffConfiguration (WhitespaceHandling.Significant);
             PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, 
                              true, xmlUnitConfiguration);
             PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, 
@@ -41,8 +41,8 @@
         }
         
         [Test] public void CanConfigureWhitespaceHandlingNone() {
-            XmlUnitConfiguration xmlUnitConfiguration = 
-                new XmlUnitConfiguration(WhitespaceHandling.None);
+            DiffConfiguration xmlUnitConfiguration = 
+                new DiffConfiguration(WhitespaceHandling.None);
             PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, 
                              true, xmlUnitConfiguration);
             PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, 
@@ -54,7 +54,7 @@
         }
         
         private void PerformAssertion(string control, string test, bool assertion, 
-                                      XmlUnitConfiguration xmlUnitConfiguration) {
+                                      DiffConfiguration xmlUnitConfiguration) {
             XmlDiff diff = new XmlDiff(control, test, xmlUnitConfiguration);
             PerformAssertion(diff, assertion);
         }        

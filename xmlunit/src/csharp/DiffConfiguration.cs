@@ -1,14 +1,14 @@
 ﻿namespace XmlUnit {
     using System.Xml;
     
-    public class XmlUnitConfiguration {
+    public class DiffConfiguration {
         private readonly WhitespaceHandling _whitespaceHandling;
         
-        public XmlUnitConfiguration(WhitespaceHandling whitespaceHandling) {
+        public DiffConfiguration(WhitespaceHandling whitespaceHandling) {
             _whitespaceHandling = whitespaceHandling;
         }
         
-        public XmlUnitConfiguration() : this(WhitespaceHandling.All) {}
+        public DiffConfiguration() : this(WhitespaceHandling.All) {}
         
         public WhitespaceHandling WhitespaceHandling {
             get {

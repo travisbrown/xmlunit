@@ -9,24 +9,24 @@
         private DiffResult _diffResult;
                 
         public XmlDiff(TextReader control, TextReader test, 
-                       XmlUnitConfiguration xmlUnitConfiguration) {
-            _controlReader = CreateXmlReader(control, xmlUnitConfiguration);
+                       DiffConfiguration diffConfiguration) {
+            _controlReader = CreateXmlReader(control, diffConfiguration);
             if (control.Equals(test)) {
                 _testReader = _controlReader;
             } else {
-                _testReader = CreateXmlReader(test, xmlUnitConfiguration);
+                _testReader = CreateXmlReader(test, diffConfiguration);
             }
         }
         public XmlDiff(TextReader control, TextReader test)
-            : this(control, test, new XmlUnitConfiguration()) {
+            : this(control, test, new DiffConfiguration()) {
         }
                 
         public XmlDiff(string control, string test) 
             : this(new StringReader(control), new StringReader(test)) {
         }
         
-        public XmlDiff(string control, string test, XmlUnitConfiguration xmlUnitConfiguration) 
-            : this(new StringReader(control), new StringReader(test), xmlUnitConfiguration) {
+        public XmlDiff(string control, string test, DiffConfiguration diffConfiguration) 
+            : this(new StringReader(control), new StringReader(test), diffConfiguration) {
         }
         
         public XmlDiff(string control, TextReader test) 
@@ -38,9 +38,9 @@
         }
         
         private XmlReader CreateXmlReader(TextReader forTextReader, 
-                                          XmlUnitConfiguration xmlUnitConfiguration) {
+                                          DiffConfiguration diffConfiguration) {
             XmlTextReader xmlReader = new XmlTextReader(forTextReader);
-            xmlReader.WhitespaceHandling = xmlUnitConfiguration.WhitespaceHandling;
+            xmlReader.WhitespaceHandling = diffConfiguration.WhitespaceHandling;
             return xmlReader;
         }
         
