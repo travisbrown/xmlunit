@@ -5,6 +5,8 @@
     <title>&lt;xml-unit/&gt;</title>
     <meta http-equiv="content-type" content=
     "text/html; charset=ISO-8859-1">
+    <meta name="keywords"
+      content="unit test, test first, xml, testing, framework, junit">
 <style type="text/css">
  body{font-family: Helvetica, Arial, sans-serif}
  code{font-style: italic}
