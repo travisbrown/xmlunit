@@ -45,7 +45,7 @@
   </target>
 
   <target name="dist" depends="clean,jar,docs">
-    <zip zipfile="src.zip">
+    <zip zipfile="build/src.zip">
       <fileset dir="src"/>
     </zip>
     <zip zipfile="xmlunit-${version}.zip">
