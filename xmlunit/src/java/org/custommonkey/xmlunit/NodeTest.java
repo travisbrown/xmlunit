@@ -52,8 +52,9 @@ import javax.xml.parsers.ParserConfigurationException;
  * Encapsulation of the Node-by-Node testing of a DOM Document
  * Uses a nodetype-specific <code>NodeFilter</code> to pass the DOM Nodes
  * to a NodeTester instance that performs the acual Node validation.
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.
+ * sourceforge.net</a>
  * @see NodeTester
- * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class NodeTest {
     private final DocumentTraversal documentTraversal;

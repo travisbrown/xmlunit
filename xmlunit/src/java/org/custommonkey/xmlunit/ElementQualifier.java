@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
  * 
  * <br />Examples and more at 
  * <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
- * @see DifferenceEngine#compareNodeList(NodeList, NodeList, int, DifferenceListener)
+ * @see DifferenceEngine#compareNodeList(NodeList, NodeList, int, DifferenceListener, ElementQualifier)
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 

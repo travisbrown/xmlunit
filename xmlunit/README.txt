@@ -10,11 +10,11 @@ in your classpath
 If you want to build the source code you will also need Ant (http://jakarta.apache.org/ant)
 
 This build of the source code was prepared using JDK1.4.1, Junit3.8.1, and Ant1.5: it is 
-not binary compatible with JDK1.3.x, JDK1.2.x, JDK1.1.x or Junit3.7.x. If you want to use
-these libraries then you will need to rebuild the source code first.
+not binary compatible with JDK1.1.x or Junit3.7.x. If you want to use these older libraries 
+then you will need to rebuild the source code first.
 
 Enjoy!
-http://xmlunit.sourceforge.net
+http://xmlunit.sourceforge.net/
 
 Changes in this version:
 - DifferenceListener interface refactored: single method now provides the NodeDetail 
@@ -32,10 +32,11 @@ Changes in this version:
 - Added support for namespaced attributes, previously missing
 - Build file now incorporates JUnitReport
 - Deprecated assertNotXpathsEqual() in favour of assertXpathsNotEqual() in XMLTestCase
+- Moved assertion methods from XMLTestCase to new XMLAssert class
 - PDF overview document added to distribution and content updated
 - Updated Javadocs on website
 tim.bacon@thoughtworks.com
-November/December 2002
+November/December 2002, April 2003
 
 Changes in version 0.8:
 - Changes to compiled jar in distribution required for compatibility with JUnit 3.8
