@@ -38,8 +38,10 @@ package org.custommonkey.xmlunit;
 
 
 /**
- * Value object that describes a difference between DOM Nodes.
+ * Value object that describes a difference between DOM Nodes using one of
+ * the DifferenceConstants ID values and a NodeDetail instance.
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
+ * @see NodeDetail
  */
 public class Difference {
     /** Simple unique identifier */

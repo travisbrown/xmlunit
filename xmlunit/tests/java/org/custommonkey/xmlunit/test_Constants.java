@@ -44,6 +44,12 @@ import junit.framework.TestSuite;
  */
 public class test_Constants extends TestCase
 implements XMLConstants, XSLTConstants {
+	static {
+		if (System.getProperty("basedir")==null) {
+			System.setProperty("basedir", "d:/projects/xmlunit");
+		}
+	}
+	
     public static final String BASEDIR = System.getProperty("basedir");
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 

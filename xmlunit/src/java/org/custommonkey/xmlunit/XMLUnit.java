@@ -44,6 +44,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -422,6 +423,72 @@ public final class XMLUnit {
     public static String getVersion() {
         return "1.0"; 
     }
+
+	/**
+	 * Compare XML documents provided by two Reader classes
+	 * @param control Control document
+	 * @param test Document to test
+	 * @return Diff object describing differences in documents
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	public static Diff compareXML(Reader control, Reader test)
+	throws SAXException, IOException, ParserConfigurationException {
+	    return new Diff(control, test);
+	}
+
+	/**
+	 * Compare XML documents provided by two Reader classes
+	 * @param control Control document
+	 * @param test Document to test
+	 * @return Diff object describing differences in documents
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	public static Diff compareXML(String control, Reader test)
+	throws SAXException, IOException, ParserConfigurationException {
+	    return new Diff(new StringReader(control), test);
+	}
+
+	/**
+	 * Compare XML documents provided by two Reader classes
+	 * @param control Control document
+	 * @param test Document to test
+	 * @return Diff object describing differences in documents
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	public static Diff compareXML(Reader control, String test)
+	throws SAXException, IOException, ParserConfigurationException {
+	    return new Diff(control, new StringReader(test));
+	}
+
+	/**
+	 * Compare two XML documents provided as strings
+	 * @param control Control document
+	 * @param test Document to test
+	 * @return Diff object describing differences in documents
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	public static Diff compareXML(String control, String test)
+	throws SAXException, IOException, ParserConfigurationException {
+	    return new Diff(control, test);
+	}
+
+	/**
+	 * Compare two XML documents provided as strings
+	 * @param control Control document
+	 * @param test Document to test
+	 * @return Diff object describing differences in documents
+	 */
+	public static Diff compareXML(Document control, Document test) {
+	    return new Diff(control, test);
+	}
 
 }
 

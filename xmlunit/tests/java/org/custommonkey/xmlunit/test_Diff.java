@@ -446,6 +446,14 @@ public class test_Diff extends TestCase{
 			assertFalse("should not be identical: " + diff.toString(), diff.identical());
 			assertTrue("should be similar: " + diff.toString(), diff.similar());
 	}
+	
+	// defect raised by Kevin Krouse Jan 2003
+	public void testXMLNSNumberOfAttributes() throws Exception {
+		Diff diff = buildDiff("<root xmlns=\"qwerty\"><node/></root>", 
+			"<root xmlns=\"qwerty\" xmlns:qwerty=\"qwerty\"><qwerty:node/></root>");
+		assertTrue(diff.toString(), diff.similar());
+		assertFalse(diff.toString(), diff.identical());
+	}
     	
     protected Diff buildDiff(Document control, Document test) {
         return new Diff(control, test);

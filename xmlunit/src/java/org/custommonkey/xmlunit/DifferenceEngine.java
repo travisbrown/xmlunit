@@ -56,8 +56,9 @@ import org.w3c.dom.Text;
  * only compares nodes of type ELEMENT_NODE, CDATA_SECTION_NODE,
  * COMMENT_NODE, DOCUMENT_TYPE_NODE, PROCESSING_INSTRUCTION_NODE and TEXT_NODE.
  * Nodes of other types (eg ENTITY_NODE) will be skipped.
- * @see DifferenceListener
- * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.
+ * sourceforge.net</a>
+ * @see DifferenceListener#differenceFound(Difference)
  */
 public class DifferenceEngine implements DifferenceConstants {
     private static final String NULL_NODE = "null";
@@ -348,14 +349,25 @@ public class DifferenceEngine implements DifferenceConstants {
     		control, test, listener, ELEMENT_TAG_NAME);
 
         NamedNodeMap controlAttr = control.getAttributes();
+    	Integer controlNonXmlnsAttrLength = getNonXmlnsAttrLength(controlAttr);
         NamedNodeMap testAttr = test.getAttributes();
-        compare(new Integer(controlAttr.getLength()),
-            new Integer(testAttr.getLength()),
+        Integer testNonXmlnsAttrLength = getNonXmlnsAttrLength(testAttr);
+        compare(controlNonXmlnsAttrLength, testNonXmlnsAttrLength,
             control, test, listener, ELEMENT_NUM_ATTRIBUTES);
 
         compareElementAttributes(control, test, controlAttr, testAttr,
             listener);
     }
+
+	private Integer getNonXmlnsAttrLength(NamedNodeMap attributes) {
+		int length = 0, maxLength = attributes.getLength();
+		for (int i = 0; i < maxLength; ++i) {
+			if (!isXMLNSAttribute((Attr) attributes.item(i))) {
+				++length;
+			}
+		}
+		return new Integer(length);
+	}
 
     private void compareElementAttributes(Element control, Element test,
     NamedNodeMap controlAttr, NamedNodeMap testAttr,
