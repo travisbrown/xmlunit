@@ -204,7 +204,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param assertion true if asserting that result is similar
      */
     public void assertXMLEqual(Diff diff, boolean assertion) {
-        assertEquals(diff.toString(), assertion, diff.similar());
+    	if (assertion != diff.similar()) {
+    		fail(diff.toString());
+    	}
     }
 
     /**
@@ -212,9 +214,22 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param diff the result of an XML comparison
      * @param assertion true if asserting that result is similar
      * @param msg additional message to display if assertion fails
+     * @deprecated Use XMLTestCase#assertXMLEqual(String, Diff, boolean) instead
      */
-    public void assertXMLEqual(Diff diff, boolean assertion, String msg) {
-        assertEquals(msg + ", " + diff.toString(), assertion, diff.similar());
+    public void assertXMLEqual(Diff diff, boolean assertion, String msg) {    	
+    	assertXMLEqual(msg, diff, assertion);
+    }
+    
+    /**
+     * Assert that the result of an XML comparison is or is not similar.
+     * @param msg additional message to display if assertion fails
+     * @param diff the result of an XML comparison
+     * @param assertion true if asserting that result is similar
+     */
+    public void assertXMLEqual(String msg, Diff diff, boolean assertion) {    	
+    	if (assertion != diff.similar()) {
+    		fail(msg + ", " + diff.toString());
+    	}
     }
 
     /**
@@ -223,7 +238,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param assertion true if asserting that result is identical
      */
     public void assertXMLIdentical(Diff diff, boolean assertion) {
-        assertEquals(diff.toString(), assertion, diff.identical());
+    	if (assertion != diff.identical()) {
+    		fail(diff.toString());
+    	}
     }
 
     /**
@@ -231,9 +248,22 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param diff the result of an XML comparison
      * @param assertion true if asserting that result is identical
      * @param msg additional message to display if assertion fails
+     * @deprecated Use XMLTestCase#assertXMLIdentical(String, Diff, boolean) instead
      */
     public void assertXMLIdentical(Diff diff, boolean assertion, String msg) {
-        assertEquals(msg + ", " + diff.toString(), assertion, diff.identical());
+        assertXMLIdentical(msg, diff, assertion);
+    }
+
+    /**
+     * Assert that the result of an XML comparison is or is not identical
+     * @param msg Message to display if assertion fails
+     * @param diff the result of an XML comparison
+     * @param assertion true if asserting that result is identical
+     */
+    public void assertXMLIdentical(String msg, Diff diff, boolean assertion) {
+    	if (assertion != diff.identical()) {
+    		fail(msg + ", " + diff.toString());
+    	}
     }
 
     /**
@@ -686,8 +716,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
                 fail("Expected test value NOT to be equal to control but both were "
                     + test);
             }
-        } else {
-            assertNull("control evaluated to null", test);
+        } else if (test != null) {
+            fail("control xPath evaluated to empty node set, "
+            	+ "but test xPath evaluated to " + test);
         }
     }
 
@@ -859,7 +890,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
     public void assertNodeTestPasses(String xmlString, NodeTester tester,
     short nodeType)
     throws SAXException, ParserConfigurationException, IOException {
-        NodeTest test = new NodeTest(new StringReader(xmlString));
+        NodeTest test = new NodeTest(xmlString);
         assertNodeTestPasses(test, tester, new short[] {nodeType}, true);
     }
 

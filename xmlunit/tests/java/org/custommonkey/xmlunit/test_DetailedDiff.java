@@ -115,7 +115,7 @@ public class test_DetailedDiff extends test_Diff {
         List differences = detailedDiff.getAllDifferences();
         assertEquals(1402, differences.size());
     }
-    
+        
     protected Diff buildDiff(Document control, Document test) {
         return new DetailedDiff(super.buildDiff(control, test));
     }

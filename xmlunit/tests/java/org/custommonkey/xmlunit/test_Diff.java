@@ -99,7 +99,7 @@ public class test_Diff extends TestCase{
 
         assertEquals(diff.getClass().getName() +"\n[different] Expected "
             + DifferenceConstants.HAS_CHILD_NODES.getDescription()
-            + " 'true' but was 'false' - comparing <tag...> to <tag...>",
+            + " 'true' but was 'false' - comparing <tag...> to <tag...>\n",
             diff.toString());
 
         diff = buildDiff(aDocument, aDocument);
@@ -110,7 +110,7 @@ public class test_Diff extends TestCase{
         assertEquals(diff.getClass().getName() +"\n[different] Expected "
             + DifferenceConstants.TEXT_VALUE.getDescription()
             + " '" + animals[0] + "' but was '" + animals[1]
-            + "' - comparing <tag...> to <tag...>",
+            + "' - comparing <tag...> to <tag...>\n",
             diff.toString());
 
     }
@@ -203,7 +203,8 @@ public class test_Diff extends TestCase{
         Diff diff = buildDiff(fruitBat, longEaredBat);
         assertEquals(diff.getClass().getName() +"\n[different] Expected "
             + DifferenceConstants.ATTR_VALUE.getDescription()
-            + " 'fruit' but was 'longeared' - comparing <bat type=\"fruit\"...> to <bat type=\"longeared\"...>",
+            + " 'fruit' but was 'longeared' - comparing "
+            + "<bat type=\"fruit\"...> to <bat type=\"longeared\"...>\n",
             diff.toString());
     }
     
@@ -362,7 +363,14 @@ public class test_Diff extends TestCase{
             + diffWithOverride.toString(),
             !diffWithOverride.similar());
     }
-
+    
+    public void testDifferentStructure() throws Exception {
+    	String control = "<root><node>text</node></root>";
+    	String test = "<root><node><inner-node>text</inner-node></node></root>";
+    	Diff myDiff = buildDiff(control, test);
+    	assertEquals(myDiff.toString(), false, myDiff.similar());
+    }
+    	
     protected Diff buildDiff(Document control, Document test) {
         return new Diff(control, test);
     }

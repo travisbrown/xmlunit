@@ -1,4 +1,4 @@
-XMLUnit version 0.7
+XMLUnit version 0.8
 
 To run this software you will need:
 - junit (http://www.junit.org/)
@@ -12,6 +12,13 @@ Enjoy!
 http://xmlunit.sourceforge.com
 
 Changes in this version:
+- Fixes for a defect in the DetailedDiff class that caused a 
+  ClassCastException, raised by Ryan MacLachlan
+- Small API changes for usability
+tim.bacon@thoughtworks.com
+September 2002
+
+Changes in version 0.7:
 - DifferenceListener interface extended to allow more user control over how to
   evaluate differences between control and test XML
 - NEW IgnoreTextAndAttributeValuesDifferenceListener class added to allow

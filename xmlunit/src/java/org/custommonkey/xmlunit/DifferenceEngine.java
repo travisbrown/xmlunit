@@ -95,9 +95,10 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareNode(Node control, Node test,
     DifferenceListener listener) throws DifferenceFoundException {
-        compareNodeBasics(control, test, listener);
+        boolean comparable = compareNodeBasics(control, test, listener);
         boolean isDocumentNode = false;
 
+		if (comparable) {
         switch (control.getNodeType()) {
             case Node.ELEMENT_NODE:
                 compareElement((Element)control, (Element)test, listener);
@@ -127,6 +128,7 @@ public class DifferenceEngine implements DifferenceConstants {
             default:
                 listener.skippedComparison(control, test);
         }
+		} 
 
         compareHasChildNodes(control, test, listener);
         if (isDocumentNode) {
@@ -166,9 +168,10 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param control
      * @param test
      * @param listener
+     * @return true if the nodes are comparable further, false otherwise
      * @throws DifferenceFoundException
      */
-    protected void compareNodeBasics(Node control, Node test,
+    protected boolean compareNodeBasics(Node control, Node test,
     DifferenceListener listener) throws DifferenceFoundException {
         Short controlType = new Short(control.getNodeType());
         Short testType = new Short(test.getNodeType());
@@ -179,6 +182,8 @@ public class DifferenceEngine implements DifferenceConstants {
             control, test, listener, NAMESPACE_URI);
         compare(control.getPrefix(), test.getPrefix(),
             control, test, listener, NAMESPACE_PREFIX);
+            
+        return controlType.equals(testType);
     }
 
     /**

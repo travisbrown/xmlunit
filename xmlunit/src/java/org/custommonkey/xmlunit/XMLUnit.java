@@ -88,6 +88,7 @@ public final class XMLUnit {
     public static void setControlParser(String className)
     throws FactoryConfigurationError {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", className);
+        controlBuilderFactory = null;
         controlBuilderFactory = getControlDocumentBuilderFactory();
     }
     /**
@@ -98,9 +99,7 @@ public final class XMLUnit {
      */
     public static DocumentBuilder getControlParser()
     throws ParserConfigurationException {
-        if (controlBuilderFactory == null) {
-            controlBuilderFactory = getControlDocumentBuilderFactory();
-        }
+        controlBuilderFactory = getControlDocumentBuilderFactory();
         return controlBuilderFactory.newDocumentBuilder() ;
     }
 
@@ -136,6 +135,7 @@ public final class XMLUnit {
     public static void setTestParser(String className)
     throws FactoryConfigurationError {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", className);
+        testBuilderFactory = null;
         testBuilderFactory = getTestDocumentBuilderFactory();
     }
     /**
@@ -146,9 +146,7 @@ public final class XMLUnit {
      */
     public static DocumentBuilder getTestParser()
     throws ParserConfigurationException {
-        if (testBuilderFactory == null) {
-            testBuilderFactory = getTestDocumentBuilderFactory();
-        }
+        testBuilderFactory = getTestDocumentBuilderFactory();
         return testBuilderFactory.newDocumentBuilder();
     }
 
@@ -366,7 +364,8 @@ public final class XMLUnit {
      * @return current version
      */
     public static String getVersion() {
-        return "0.7";
+        return "0.8";
     }
 
 }
+

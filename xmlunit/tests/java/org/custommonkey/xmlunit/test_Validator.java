@@ -80,8 +80,9 @@ public class test_Validator extends XMLTestCase {
 
         String externalDTD = test_Constants.XML_DECLARATION
              + test_Constants.DOCUMENT_WITH_GOOD_EXTERNAL_DTD;
+        String tempDTDUrl = tempDTDFile.toURL().toExternalForm();
         validator = new Validator(new StringReader(externalDTD),
-            tempDTDFile.toURL().toExternalForm());
+            tempDTDUrl);
 
         assertEquals("externalDTD " + validator.toString(),
             true, validator.isValid());

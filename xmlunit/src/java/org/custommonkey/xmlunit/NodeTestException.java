@@ -36,6 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.w3c.dom.Node;
 
 /**
@@ -78,4 +81,15 @@ public class NodeTestException extends Exception {
         return node;
     }
 
+	/**
+	 * @return the exception message and node information if available
+	 */
+	public String getMessage() {
+		StringBuffer stringBuffer = new StringBuffer(super.getMessage());
+		if (hasNode()) {
+			stringBuffer.append(' ')
+				.append(getNode().toString());
+		}
+		return stringBuffer.toString();
+	}
 }

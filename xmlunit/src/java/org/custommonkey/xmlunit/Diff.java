@@ -311,6 +311,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
             .append(" '").append(expected)
             .append("' but was '").append(actual).append("'");
         appendComparingWhat(appendTo, control, test);
+        appendTo.append('\n');
     }
 
     /**
@@ -358,7 +359,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
         if (haltComparison) {
             messages.append("\n[different]");
         } else {
-            messages.append("\n[dissimilar]");
+            messages.append("\n[not identical]");
         }
         appendDifference(messages, expected, actual, 
             control, test, difference);

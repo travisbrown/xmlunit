@@ -146,7 +146,7 @@ public class Transform {
      * @param stylesheetReader
      * @throws TransformerConfigurationException
      */
-    private Transform(Source inputSource, Source stylesheetSource)
+    public Transform(Source inputSource, Source stylesheetSource)
     throws TransformerConfigurationException {
         this.inputSource = inputSource;
         provideSystemIdIfRequired(inputSource);

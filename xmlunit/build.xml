@@ -1,6 +1,6 @@
 <project name="xmlunit" default="compile" basedir=".">
   <target name="init">
-    <property name="version" value="0.7"/>
+    <property name="version" value="0.8"/>
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="tests"/>
     <property name="lib.dir" value="lib"/>
@@ -9,9 +9,9 @@
     <property name="docs.dir" value="doc"/>
     <property name="test.report.dir" value="junit"/>
     <!-- The location of junit.jar -->
-    <property name="junit.libdir" value="${lib.dir}"/>
+    <property name="junit.libdir" value="d:/apps/junit/junit3.8.1"/>
     <!-- The location of jar files for xml parsing and xsl transforms, eg xalan/bin -->
-    <property name="xmlxsl.libdir" value="${lib.dir}"/>
+    <property name="xmlxsl.libdir" value="d:/apps/xalan-j_2_4_D1/bin"/>
     <mkdir dir="${src.dir}/etc"/>
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${out.dir}"/>
@@ -47,13 +47,15 @@
   <target name="test" depends="clean,compile">
     <mkdir dir="${test.report.dir}"/>
     <junit printsummary="yes" haltonfailure="no" fork="yes">
-      <sysproperty key="basedir" value="${basedir}"/>
-      <sysproperty key="javax.xml.parsers.DocumentBuilderFactory"
-        value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
-      <sysproperty key="javax.xml.parsers.SAXParserFactory"
-        value="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
-      <sysproperty key="javax.xml.transform.TransformerFactory"
+    	<!--
+          <sysproperty key="basedir" value="${basedir}"/>
+          <sysproperty key="javax.xml.parsers.DocumentBuilderFactory"
+            value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+          <sysproperty key="javax.xml.parsers.SAXParserFactory"
+            value="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+          <sysproperty key="javax.xml.transform.TransformerFactory"
         value="org.apache.xalan.processor.TransformerFactoryImpl"/>
+        -->
       <classpath>
         <pathelement location="${out.dir}"/>
         <fileset dir="${xmlxsl.libdir}">
@@ -64,13 +66,22 @@
         </fileset>
         <pathelement path="${java.class.path}"/>
       </classpath>
-      <formatter type="plain"/>
+      <formatter type="xml"/>
       <batchtest fork="yes" todir="${test.report.dir}">
         <fileset dir="${test.dir}/java">
           <include name="**/test_*.java"/>
         </fileset>
       </batchtest>
     </junit>
+
+	<junitreport todir="${test.report.dir}">
+	  <fileset dir="${test.report.dir}">
+	    <include name="TEST-*.xml"/>
+	  </fileset>
+	  <report format="frames" todir="${test.report.dir}/html"/>
+	</junitreport>
+
+
   </target>
 
   <target name="setDistVersion" depends="init">
@@ -108,9 +119,9 @@
             includes="**/xmlunit${version}.jar"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd"
-            excludes="${out.dir}/*,bugs/*"/>
+            excludes="${out.dir}/*,bugs/*,${test.report.dir}"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="${docs.dir}/**/*.html,**/overview.html"/>
+            includes="${docs.dir}/**/*.html,**/overview.html,${test.dir}/etc/*.html"/>
     </zip>
   </target>
 

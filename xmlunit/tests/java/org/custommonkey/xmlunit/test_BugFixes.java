@@ -74,6 +74,7 @@ public class test_BugFixes extends TestCase {
         suite.addTest(new test_Diff("testNamespaceIssues"));
         suite.addTest(new test_Diff("testDefaultNamespace"));
         suite.addTest(new test_DetailedDiff("testLargeFiles"));
+        suite.addTest(new test_DetailedDiff("testDifferentStructure"));
         return suite;
     }
 }

@@ -62,6 +62,7 @@ public abstract class AbstractNodeTester implements NodeTester {
     public void testNode(Node aNode, NodeTest forTest) throws NodeTestException {
         switch (aNode.getNodeType()) {
             case Node.ATTRIBUTE_NODE:
+            	// should not happen as attributes are not exposed by DOM traversal
                 testAttribute((Attr)aNode);
                 break;
             case Node.CDATA_SECTION_NODE:
@@ -104,7 +105,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testAttribute(Attr attribute) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(attribute);
     }
     /**
      * Template delegator for testNode() method.
@@ -112,7 +113,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testCDATASection(CDATASection cdata) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(cdata);
     }
     /**
      * Template delegator for testNode() method.
@@ -120,7 +121,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testComment(Comment comment) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(comment);
     }
     /**
      * Template delegator for testNode() method.
@@ -128,7 +129,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testDocumentType(DocumentType doctype) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(doctype);
     }
     /**
      * Template delegator for testNode() method.
@@ -136,7 +137,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testElement(Element element) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(element);
     }
     /**
      * Template delegator for testNode() method.
@@ -144,7 +145,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testEntity(Entity entity) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(entity);
     }
     /**
      * Template delegator for testNode() method.
@@ -152,7 +153,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testEntityReference(EntityReference reference) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(reference);
     }
     /**
      * Template delegator for testNode() method.
@@ -160,7 +161,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testNotation(Notation notation) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(notation);
     }
     /**
      * Template delegator for testNode() method.
@@ -168,7 +169,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testProcessingInstruction(ProcessingInstruction instr) throws NodeTestException  {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(instr);
     }
     /**
      * Template delegator for testNode() method.
@@ -176,7 +177,11 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException always: override if required in subclass
      */
     public void testText(Text text) throws NodeTestException {
-        throw new NodeTestException("Test fails by default in AbstractNodeTester");
+        unhandled(text);
+    }
+    
+    private void unhandled(Node aNode) throws NodeTestException {
+    	throw new NodeTestException("Test fails by default in AbstractNodeTester", aNode);
     }
 
     /**

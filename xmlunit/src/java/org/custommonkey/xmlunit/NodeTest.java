@@ -38,6 +38,8 @@ package org.custommonkey.xmlunit;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.traversal.DocumentTraversal;
@@ -56,6 +58,14 @@ import javax.xml.parsers.ParserConfigurationException;
 public class NodeTest {
     private final DocumentTraversal documentTraversal;
     private final Node rootNode;
+
+    /**
+     * Construct a NodeTest for the DOM built using the String and JAXP
+     */
+    public NodeTest(String xmlString) throws SAXException,
+    ParserConfigurationException, IOException {
+        this(new StringReader(xmlString));
+    }
 
     /**
      * Construct a NodeTest for the DOM built using the Reader and JAXP
