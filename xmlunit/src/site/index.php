@@ -7,6 +7,7 @@
     "text/html; charset=ISO-8859-1">
 <style type="text/css">
  body{font-family: Helvetica, Arial, sans-serif}
+ code{font-style: italic}
 </style>
   </head>
 
@@ -36,8 +37,27 @@ knowlegde that if something breaks you'll know about it. Except those bit's you
 don't know about. Until now XML has been one of them. Oh sure you can use
 <code><b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>.equals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>);</code> but is that really gonna work when some joker decides to output a <code>&lt;stuff/&gt;</code>, damned right it's not.</p>
 
-          <p>XMLUnit allows you to <code>assertXMLEquals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>,
-<b>"&lt;stuff/&gt;"</b>);</code> it's that simple</p>
+          <p>XML can be used for just about anything so deciding if two documents are equal to each other isn't as easy as a character for character match. Somtimes
+<table bgcolor="black">
+<tr><td bgcolor="white"><pre>&lt;stuff-doc&gt;
+  &lt;stuff&gt;
+    Stuff Stuff Stuff
+  &lt;/stuff&gt;
+  &lt;more-stuff&gt;
+    Some More Stuff
+  &lt;/more-stuff&gt;
+&lt;/stuff-doc&gt; </pre>
+</td><td bgcolor="white">equals</td><td bgcolor="white"><pre>&lt;stuff-doc&gt;
+  &lt;more-stuff&gt;
+    Some More Stuff&lt;/more-stuff&gt;
+  &lt;stuff&gt;Stuff Stuff Stuff&lt;/stuff&gt;
+&lt;/stuff-doc&gt; </pre></td></tr></table>
+and sometime it doesn't.</p>
+
+          <p>XMLUnit allows you to <code>assertXMLEquals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>, <b>"&lt;stuff/&gt;"</b>);</code> or and you can do this <code>assertXMLEquals(xmlFile, anotherXmlFile);</code>
+          and this <code>assertXMLEquals(xmlStream, xmlFile);</code></p>
+          <p>The list goes on and on. The Choice is yours.
+          </p>
           <p>The current release is here -&gt; <a href=
           "http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=79585">XMLUnit 0.4</a>, 6th March 2002</p>
 
