@@ -55,9 +55,12 @@ public class test_Validator extends XMLTestCase {
     private File tempDTDFile;
 
     public void testXSchema() throws Exception{
-    	File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/BookXsdGenerated.xml");
-    	assertTrue("xsdFile exists", xsdFile.exists());
-        validator = new Validator(new FileReader(xsdFile));
+    	File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
+		assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", xsdFile.exists());
+		
+		File xmlFile = new File(test_Constants.BASEDIR + "/tests/etc/BookXsdGenerated.xml");
+    	assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", xmlFile.exists());
+        validator = new Validator(new FileReader(xmlFile));
 
         validator.useXMLSchema(true);
 

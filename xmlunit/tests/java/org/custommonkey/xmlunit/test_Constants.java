@@ -46,7 +46,7 @@ public class test_Constants extends TestCase
 implements XMLConstants, XSLTConstants {
 	static {
 		if (System.getProperty("basedir")==null) {
-			System.setProperty("basedir", "d:/projects/xmlunit");
+			System.setProperty("basedir", "d:/projects/sourceforge/xmlunit");
 		}
 	}
 	
