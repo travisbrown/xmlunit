@@ -37,10 +37,10 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import java.io.StringReader;
 
-import java.io.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * JUnit test for DoctypeReader
@@ -121,10 +121,6 @@ public class test_DoctypeReader extends TestCase {
 
     public static TestSuite suite() {
         return new TestSuite(test_DoctypeReader.class);
-    }
-
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
     }
 }
 

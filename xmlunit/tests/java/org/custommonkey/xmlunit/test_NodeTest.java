@@ -36,12 +36,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import java.io.StringReader;
 
-import org.w3c.dom.Document;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Node;
-import java.io.*;
 
 /**
  * JUnit test for NodeTest
@@ -117,8 +117,5 @@ public class test_NodeTest extends TestCase {
         return new TestSuite(test_NodeTest.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

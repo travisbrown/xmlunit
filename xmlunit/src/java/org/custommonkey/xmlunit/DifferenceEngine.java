@@ -65,9 +65,15 @@ public class DifferenceEngine implements DifferenceConstants {
     private final ComparisonController controller;
     private final XpathNodeTracker controlTracker = new XpathNodeTracker();
     private final XpathNodeTracker testTracker = new XpathNodeTracker();
+	private ElementQualifier elementQualifier;
     
     public DifferenceEngine(ComparisonController controller) {
+    	this(controller, new ElementNameQualifier());
+    }
+    
+    public DifferenceEngine(ComparisonController controller, ElementQualifier elementQualifier) {
     	this.controller = controller;
+    	this.elementQualifier = elementQualifier;
     }
     
     /**
@@ -75,8 +81,13 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param control
      * @param test
      * @param listener
+     * @param elementQualifier
      */
-    public void compare(Node control, Node test, DifferenceListener listener) {
+    public void compare(Node control, Node test, DifferenceListener listener, ElementQualifier elementQualifier) {
+    	ElementQualifier oldElementQualifier = this.elementQualifier;
+    	if (elementQualifier != null) {
+    		this.elementQualifier = elementQualifier;
+    	}
     	controlTracker.reset();
     	testTracker.reset();
         try {
@@ -89,6 +100,7 @@ public class DifferenceEngine implements DifferenceConstants {
             // thrown by the protected compare() method to terminate the
             // comparison and unwind the call stack back to here
         }
+    	this.elementQualifier = oldElementQualifier;
     }
 	
     private String getNullOrNotNull(Node aNode) {
@@ -246,11 +258,11 @@ public class DifferenceEngine implements DifferenceConstants {
 
     /**
      * Compare the contents of two node list one by one, assuming that order
-     * of children is NOT important. (If order is important this should be
-     * reflected in a DTD or schema that can be validated against!)
-     * Elements match on tag name, all other types match only on node type.
-     * Matching begins at same position in test list as control list to cope
-     * with repeating elements with the same tag name.
+     * of children is NOT important: matching begins at same position in test
+     * list as control list.
+     * An {@link ElementQualifier ElementQualifier} instance is used to
+     * determine which of the child elements in the test NodeList should be
+     * compared to the current child element in the control NodeList.
      * @param control
      * @param test
      * @param numNodes convenience parameter because the calling method should
@@ -263,32 +275,30 @@ public class DifferenceEngine implements DifferenceConstants {
         Node nextControl, nextTest = null;
         int j = 0;
         int lastTestNode = test.getLength() - 1;
-        boolean matchName, noMatch;
-        String tagName = null;
-        short matchNodeType;
+        boolean matchOnElement, matchFound;
+        short findNodeType;
         testTracker.preloadNodeList(test);
 
         for (int i=0; i < numNodes; ++i) {
             nextControl = control.item(i);
             if (nextControl instanceof Element) {
-                matchName = true;
-                tagName = nextControl.getNodeName();
+                matchOnElement = true;
             } else {
-                matchName = false;
+                matchOnElement = false;
             }
-            matchNodeType = nextControl.getNodeType();
+            findNodeType = nextControl.getNodeType();
             int startAt = ( i > lastTestNode ? lastTestNode : i);
             j = startAt;
             
-            noMatch = true;
+            matchFound = false;
 
-            while (noMatch) {
-                if (matchName && test.item(j) instanceof Element
-                && test.item(j).getNodeName().equals(tagName)) {
-                    noMatch = false;
-                } else if (!matchName
-                && matchNodeType == test.item(j).getNodeType()) {
-                    noMatch = false;
+            while (!matchFound) {
+                if (matchOnElement && test.item(j) instanceof Element
+                && elementQualifier.areComparable((Element)nextControl, (Element)test.item(j))) {
+                    matchFound = true;
+                } else if (!matchOnElement
+                && findNodeType == test.item(j).getNodeType()) {
+                    matchFound = true;
                 } else {
                     ++j;
                     if (j > lastTestNode) {
@@ -296,7 +306,7 @@ public class DifferenceEngine implements DifferenceConstants {
                     }
                     if (j == startAt) {
                         // been through all children
-                        noMatch = false;
+                        break;
                     }
                 }
             }

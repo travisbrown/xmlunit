@@ -37,8 +37,8 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 /**
@@ -117,8 +117,5 @@ public class test_Replacement extends TestCase {
         return new TestSuite(test_Replacement.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

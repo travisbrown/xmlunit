@@ -36,11 +36,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-
 import javax.xml.transform.OutputKeys;
-import org.w3c.dom.Attr;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -138,8 +137,5 @@ public class test_SimpleXpathEngine extends TestCase {
         return new TestSuite(test_SimpleXpathEngine.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

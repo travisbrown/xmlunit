@@ -36,15 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import junit.framework.TestSuite;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Properties;
-import javax.xml.transform.OutputKeys;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 /**
  * JUnit test for HTMLDocumentBuilder
@@ -98,10 +92,6 @@ public class test_HTMLDocumentBuilder extends XMLTestCase {
     }
     public static TestSuite suite() {
         return new TestSuite(test_HTMLDocumentBuilder.class);
-    }
-
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
     }
 }
 

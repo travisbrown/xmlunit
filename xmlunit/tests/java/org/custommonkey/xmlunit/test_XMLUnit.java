@@ -36,9 +36,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
 import javax.xml.parsers.DocumentBuilderFactory;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 
 /**
@@ -107,13 +108,6 @@ public class test_XMLUnit extends TestCase{
         Transform transform = XMLUnit.getStripWhitespaceTransform(doc);
         Diff diff = new Diff(test_Constants.XML_WITHOUT_WHITESPACE, transform);
         assertTrue(diff.similar());
-    }
-
-    /**
-     * Handy dandy main method to run this suite with text-based TestRunner
-     */
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
     }
 
     /**

@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
-import org.w3c.dom.Node;
 
 /**
  * @author TimBacon

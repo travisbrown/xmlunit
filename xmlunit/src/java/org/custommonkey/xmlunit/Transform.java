@@ -37,9 +37,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -55,8 +52,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
@@ -131,7 +126,7 @@ public class Transform {
     }
 
     /**
-     * Create a transformation from an input Node
+     * Create a transformation from an input Node and stylesheet in a Source
      * @param sourceNode
      * @param stylesheetSource
      */
@@ -141,7 +136,7 @@ public class Transform {
     }
 
     /**
-     * Create a transformation using Reader input XML and Reader stylesheet
+     * Create a transformation using Source input XML and Source stylesheet
      * @param inputReader
      * @param stylesheetReader
      * @throws TransformerConfigurationException

@@ -36,16 +36,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-
-import java.util.Iterator;
-import java.util.List;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Iterator;
+import java.util.List;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  * Test a DetailedDiff. Extend the test case class for Diff so we can rerun those

@@ -35,6 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.custommonkey.xmlunit;
 
+import junit.framework.TestCase;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -44,8 +46,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for XpathNodeTracker

@@ -46,10 +46,6 @@ import javax.swing.text.html.*;
 import javax.swing.text.html.parser.*;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.w3c.dom.ProcessingInstruction;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Attributes;

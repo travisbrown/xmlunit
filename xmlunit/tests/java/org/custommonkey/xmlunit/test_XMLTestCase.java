@@ -36,11 +36,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.StringReader;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -395,13 +397,6 @@ public class test_XMLTestCase extends XMLTestCase{
 
     public test_XMLTestCase(String name) {
         super(name);
-    }
-
-    /**
-     * Handy dandy main method to run this suite with text-based TestRunner
-     */
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
     }
 
     /**

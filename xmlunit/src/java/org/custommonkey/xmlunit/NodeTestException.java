@@ -36,9 +36,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.w3c.dom.Node;
 
 /**

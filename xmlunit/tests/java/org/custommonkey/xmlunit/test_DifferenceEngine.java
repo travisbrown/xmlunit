@@ -42,6 +42,8 @@ import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -53,9 +55,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
-
-import junit.framework.*;
-import junit.textui.TestRunner;
 
 /**
  * JUnit test for DifferenceEngine
@@ -317,19 +316,19 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
             + "<?" + PROC_B[0] + " "+ PROC_B[1] + " ?>"
             + "<elem attr=\"" + ATTR_B + "\">" + TEXT_B + "</elem></root>");
 
-        engine.compare(controlDocument, testDocument, listener);
+        engine.compare(controlDocument, testDocument, listener, null);
 
         Node control = controlDocument.getDocumentElement().getFirstChild();
         Node test = testDocument.getDocumentElement().getFirstChild();
 
         do {
             resetListener();
-            engine.compare(control, test, listener);
+            engine.compare(control, test, listener, null);
             assertEquals(true, -1 != listener.comparingWhat);
             assertEquals(false, listener.nodesSkipped);
 
             resetListener();
-            engine.compare(control, control, listener);
+            engine.compare(control, control, listener, null);
             assertEquals(-1, listener.comparingWhat);
 
             control = control.getNextSibling();
@@ -643,7 +642,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 		throws SAXException, IOException, ParserConfigurationException {
 		Document controlDoc = XMLUnit.buildControlDocument(control);
 		Document testDoc = XMLUnit.buildTestDocument(test);
-		engine.compare(controlDoc, testDoc, listener);
+		engine.compare(controlDoc, testDoc, listener, null);
 	}
     	
 
@@ -664,10 +663,6 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 
     public static TestSuite suite() {
         return new TestSuite(test_DifferenceEngine.class);
-    }
-
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
     }
 
 	private class SimpleComparisonController implements ComparisonController {

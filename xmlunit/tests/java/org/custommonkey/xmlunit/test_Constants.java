@@ -36,7 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Not actually a test container, but conforms to the semantics
@@ -65,8 +66,8 @@ implements XMLConstants, XSLTConstants {
         + "<!--meep meep--><toon><name>roadrunnner</name></toon>"
         + DOCUMENT_END;
 
-    public static final String EXTERNAL_DTD = System.getProperty("user.home")
-            +  "/cartoons.dtd";
+    public static final String EXTERNAL_DTD = BASEDIR +  "/cartoons.dtd";
+    
     public static final String DOCUMENT_WITH_GOOD_EXTERNAL_DTD =
         "<!DOCTYPE cartoons SYSTEM \"yak.dtd\">"
         + CHUCK_JONES_RIP_XML;
@@ -88,14 +89,7 @@ implements XMLConstants, XSLTConstants {
     }
 
     /**
-     * Handy dandy main method to run this suite with text-based TestRunner
-     */
-    public static void main(String[] args) {
-        new junit.textui.TestRunner().run(suite());
-    }
-
-    /**
-     * Return the test suite containing this test
+     * Return an empty test suite as this pseudo test class has no tests
      */
     public static TestSuite suite() {
         return new TestSuite();

@@ -36,14 +36,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.StringReader;
-import org.w3c.dom.Document;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.w3c.dom.Document;
 
 /**
  * JUnit test for NodeInputStream
@@ -83,8 +82,5 @@ public class test_NodeInputStream extends TestCase {
         return new TestSuite(test_NodeInputStream.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

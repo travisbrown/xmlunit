@@ -40,16 +40,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
-import org.w3c.dom.Attr;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -76,7 +71,7 @@ import org.xml.sax.SAXException;
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Diff 
-implements DifferenceListener, ComparisonController, DifferenceConstants {
+implements DifferenceListener, ComparisonController {
     private final Document controlDoc;
     private final Document testDoc;
     private boolean similar = true;
@@ -86,6 +81,7 @@ implements DifferenceListener, ComparisonController, DifferenceConstants {
     private StringBuffer messages;
     private DifferenceEngine differenceEngine;
     private DifferenceListener differenceListenerDelegate;
+    private ElementQualifier elementQualifierDelegate;
 
     /**
      * Construct a Diff that compares the XML in two Strings
@@ -105,19 +101,10 @@ implements DifferenceListener, ComparisonController, DifferenceConstants {
     }
 
     /**
-     * Construct a Diff that compares the XML read from two Readers
-     */
-    public Diff(InputSource control, InputSource test) throws SAXException, IOException,
-    ParserConfigurationException {
-        this(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
-            XMLUnit.buildDocument(XMLUnit.getTestParser(), test));
-    }
-
-    /**
      * Construct a Diff that compares the XML in two Documents
      */
     public Diff(Document controlDoc, Document testDoc) {
-        this(controlDoc, testDoc, null);
+        this(controlDoc, testDoc, (DifferenceEngine) null);
     }
 
     /**
@@ -129,6 +116,22 @@ implements DifferenceListener, ComparisonController, DifferenceConstants {
         this(XMLUnit.buildControlDocument(control),
             testTransform.getResultDocument());
     }
+
+	/**
+	 * Construct a Diff that compares the XML read from two JAXP InputSources
+	 */
+	public Diff(InputSource control, InputSource test) throws SAXException, IOException,
+	ParserConfigurationException {
+		this(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
+			XMLUnit.buildDocument(XMLUnit.getTestParser(), test));
+	}
+
+	/**
+	 * Construct a Diff that compares the XML in two JAXP DOMSources
+	 */
+	public Diff(DOMSource control, DOMSource test) {
+		this(control.getNode().getOwnerDocument(), test.getNode().getOwnerDocument());
+	}
 
     /**
      * Construct a Diff that compares the XML in two Documents using a specific
@@ -152,10 +155,7 @@ implements DifferenceListener, ComparisonController, DifferenceConstants {
      * @param prototype a prototypical instance
      */
     protected Diff(Diff prototype) {
-        this.controlDoc = prototype.controlDoc;
-        this.testDoc = prototype.testDoc;
-        this.differenceEngine = prototype.differenceEngine;
-        this.messages = new StringBuffer();
+    	this(prototype.controlDoc, prototype.testDoc, prototype.differenceEngine);
     }
 
     /**
@@ -186,8 +186,7 @@ implements DifferenceListener, ComparisonController, DifferenceConstants {
         if (compared) {
             return;
         }
-        differenceEngine.compare(controlDoc,
-            testDoc, this);
+        differenceEngine.compare(controlDoc, testDoc, this, elementQualifierDelegate);
         compared = true;
     }
 
@@ -329,5 +328,15 @@ implements DifferenceListener, ComparisonController, DifferenceConstants {
      */
     public void overrideDifferenceListener(DifferenceListener delegate) {
         this.differenceListenerDelegate = delegate;
-    }
+    }    
+
+	/**
+	 * Override the <code>ElementQualifier</code> used to determine which
+	 * control and test nodes are comparable for this difference comparison. 
+	 * @param delegate the ElementQualifier instance to delegate to.
+	 */
+	public void overrideElementQualifier(ElementQualifier delegate) {
+		this.elementQualifierDelegate = delegate;
+	}
+
 }

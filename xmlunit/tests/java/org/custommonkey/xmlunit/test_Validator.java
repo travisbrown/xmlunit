@@ -36,12 +36,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.StringReader;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 
 /**
@@ -240,8 +241,5 @@ public class test_Validator extends XMLTestCase {
         return new TestSuite(test_Validator.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

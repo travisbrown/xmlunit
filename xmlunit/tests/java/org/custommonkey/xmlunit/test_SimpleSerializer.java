@@ -36,11 +36,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-
-import java.io.StringReader;
 import javax.xml.transform.OutputKeys;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -80,8 +79,5 @@ public class test_SimpleSerializer extends TestCase {
         return new TestSuite(test_SimpleSerializer.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

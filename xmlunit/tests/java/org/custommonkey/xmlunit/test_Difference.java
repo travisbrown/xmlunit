@@ -1,9 +1,9 @@
 package org.custommonkey.xmlunit;
 
+import junit.framework.TestCase;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import junit.framework.TestCase;
 
 /**
  * @author TimBacon

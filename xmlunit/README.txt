@@ -1,4 +1,5 @@
 XMLUnit version 1.0
+===================
 
 To run this software you will need:
 - junit (http://www.junit.org/)
@@ -8,17 +9,22 @@ in your classpath
 
 If you want to build the source code you will also need Ant (http://jakarta.apache.org/ant)
 
+This build of the source code was prepared using JDK1.4.1, Junit3.8.1, and Ant1.5
+
 Enjoy!
-http://xmlunit.sourceforge.com
+http://xmlunit.sourceforge.net
 
 Changes in this version:
-- DifferenceListener interface refactored: single method now provides the 
-  XPath location of nodes that differ in a comparison
+- DifferenceListener interface refactored: single method now provides the XPath location 
+  of nodes that differ when a comparison is performed
+- NEW NodeDetail class added to supply details of compared nodes in a Difference
+- NEW ElementQualifier interface added so that documents containing elements with 
+  repeated names can be compared using attribute values to determine which of the 
+  candidate elements are actually comparable
 - NEW ComparisonController interface now used to control the operation of a 
   DifferenceEngine instance (extracted from DifferenceListener)
-- NEW NodeDetail class added to supply details of compared nodes in a Difference
 tim.bacon@thoughtworks.com
-November 2002
+Novemeber/December 2002
 
 Changes in version 0.8:
 - Changes to compiled jar in distribution required for compatibility with JUnit 3.8

@@ -36,13 +36,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-
 import java.io.File;
 import java.io.FileReader;
+
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerException;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 
 /**
@@ -128,13 +128,6 @@ public class test_Transform extends TestCase{
 
     public void setUp() throws Exception {
         animal = new File(test_Constants.BASEDIR + "/tests/etc/animal.xsl");
-    }
-
-    /**
-     * Handy dandy main method to run this suite with text-based TestRunner
-     */
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
     }
 
     /**

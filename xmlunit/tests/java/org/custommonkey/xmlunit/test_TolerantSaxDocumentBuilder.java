@@ -36,24 +36,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Properties;
-import javax.xml.transform.OutputKeys;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXNotRecognizedException;
-import org.apache.xalan.serialize.Method;
-import org.apache.xalan.serialize.Serializer;
-import org.apache.xalan.serialize.SerializerFactory;
-import org.apache.xalan.templates.OutputProperties;
 
 /**
  * JUnit test for TolerantSaxDocumentBuilder
@@ -154,7 +144,4 @@ public class test_TolerantSaxDocumentBuilder extends XMLTestCase {
         return new TestSuite(test_TolerantSaxDocumentBuilder.class);
     }
 
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }

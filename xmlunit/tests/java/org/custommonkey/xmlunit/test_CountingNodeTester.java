@@ -36,11 +36,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import org.w3c.dom.Node;
-
-import junit.framework.*;
-
 import java.io.StringReader;
+
+import junit.framework.TestCase;
+
+import org.w3c.dom.Node;
 
 /**
  * JUnit test for CountingNodeTester

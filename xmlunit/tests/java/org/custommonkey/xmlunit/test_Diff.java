@@ -36,16 +36,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
+
+import junit.framework.TestCase;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 /**
  * Test a Diff
@@ -183,7 +184,7 @@ public class test_Diff extends TestCase{
         Diff diff = buildDiff("<same except=\"this\">pass</same>", "<same>pass</same>");
         assertEquals("should not be identical", false, diff.identical());
         assertEquals("and should not be similar", false, diff.similar());
-    }
+    }    
 
     public void testAttributesInReverseOrder() throws Exception {
         Diff diff = buildDiff("<same zzz=\"qwerty\" aaa=\"uiop\">pass</same>",
@@ -194,6 +195,14 @@ public class test_Diff extends TestCase{
         }
         assertEquals(diff.toString() + ": but should be similar",
             true, diff.similar());
+    }
+    
+    public void testRepeatedElementNames() throws Exception {
+    	Diff diff = buildDiff("<root><node id=\"1\"/><node id=\"2\"/></root>", 
+    		"<root><node id=\"2\"/><node id=\"1\"/></root>");
+    	diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
+    	assertFalse("should not be identical: " + diff.toString(), diff.identical());
+    	assertTrue("should be similar: " + diff.toString(), diff.similar());
     }
 
     public void testDiffStringWithAttributes() throws Exception {
