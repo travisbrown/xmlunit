@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>~/projects/xmlunit/src/java/org/custommonkey/xmlunit/test_XMLTestCase.java.html</title>
+<meta name="Generator" content="Vim/6.0">
+<style type="text/css">
+<!--
+.c26 { color: #8080ff; }
+.c28 { color: #ff40ff; }
+.declare { color: #009900; font-weight: bold; }
+.directive { color: #3333ff; font-weight: bold; }
+.literal { color: #9f4040; }
+pre { color: #000000; background-color: #ffffff; }
+body { color: #000000; background-color: #ffffff; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="declare">package</span> org.custommonkey.xmlunit;
+
+<span class="declare">import</span> junit.framework.*;
+<span class="declare">import</span> java.io.*;
+
+<span class="c26">/**</span>
+<span class="c26"> *</span><span class="c28"> Test case used to test the XMLTestCase</span>
+<span class="c28"> </span><span class="c26">*/</span>
+<span class="declare">public</span> <span class="declare">class</span> test_XMLTestCase <span class="declare">extends</span> XMLTestCase{
+    <span class="declare">private</span> <span class="declare">final</span> String[] control;
+    <span class="declare">private</span> <span class="declare">final</span> String[] test;
+
+    <span class="c26">/**</span>
+<span class="c26">     *</span><span class="c28"> Construct the test case</span>
+<span class="c28">     </span><span class="c26">*/</span>
+    <span class="declare">public</span> test_XMLTestCase(String name){
+        <span class="declare">super</span>(name);
+
+        <span class="c26">// Control XML docs</span>
+        control = <span class="directive">new</span> String[]{
+            <span class="literal">&quot;&lt;test/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;test&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">test</span><span class="c28">\&quot;</span><span class="literal">&gt;test&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;test&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">test</span><span class="c28">\&quot;</span><span class="literal">/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;&lt;test&gt;&lt;test&gt;&lt;/test&gt;&lt;/test&gt;&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">test</span><span class="c28">\&quot;</span><span class="literal">&gt;&lt;test&gt;test&lt;test&gt;test&lt;/test&gt;&lt;/test&gt;&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">test</span><span class="c28">\&quot;</span><span class="literal">&gt;&lt;test&gt;test&lt;test&gt;test&lt;/test&gt;&lt;/test&gt;&lt;/test&gt;&quot;</span>
+        };
+        <span class="c26">// Test XML docs</span>
+        test = <span class="directive">new</span> String[]{
+            <span class="literal">&quot;&lt;fail/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;fail/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;fail&gt;test&lt;/fail&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;test&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;fail/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;fail&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">fail</span><span class="c28">\&quot;</span><span class="literal">/&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test&gt;&lt;test&gt;&lt;test&gt;test&lt;/test&gt;&lt;/test&gt;&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">test</span><span class="c28">\&quot;</span><span class="literal">&gt;&lt;test&gt;fail&lt;test&gt;test&lt;/test&gt;&lt;/test&gt;&lt;/test&gt;&quot;</span>,
+            <span class="literal">&quot;&lt;test test=</span><span class="c28">\&quot;</span><span class="literal">fail</span><span class="c28">\&quot;</span><span class="literal">&gt;&lt;test&gt;test&lt;test&gt;test&lt;/test&gt;&lt;/test&gt;&lt;/test&gt;&quot;</span>
+        };
+    }
+
+    <span class="declare">public</span> <span class="declare">void</span> testSetParsers(){
+        setControlParser(<span class="literal">&quot;org.apache.xerces.jaxp.DocumentBuilderFactoryImpl&quot;</span>);
+        setTestParser(<span class="literal">&quot;org.apache.xerces.jaxp.DocumentBuilderFactoryImpl&quot;</span>);
+    }
+
+    <span class="declare">public</span> <span class="declare">void</span> testIgnoreWhitespace() <span class="declare">throws</span> Exception {
+        setIgnoreWhitespace(<span class="literal">true</span>);
+        String test = <span class="literal">&quot;&lt;test&gt;   asdc   &lt;/test&gt;&quot;</span>;
+        String control = <span class="literal">&quot;&lt;test&gt;asdc&lt;/test&gt;&quot;</span>;
+
+        assertXMLEqual(control,test);
+        setIgnoreWhitespace(<span class="literal">false</span>);
+        assertXMLNotEqual(control,test);
+    }
+
+    <span class="c26">/**</span>
+<span class="c26">     *</span><span class="c28">  Test for the compareXML method.</span>
+<span class="c26">     */</span>
+    <span class="declare">public</span> <span class="declare">void</span> testCompareXMLStrings() <span class="declare">throws</span> Exception {
+        <span class="directive">for</span>(<span class="declare">int</span> i=<span class="literal">0</span>;i&lt;control.length;i++){
+            assertEquals(<span class="literal">&quot;compareXML case &quot;</span> + i + <span class="literal">&quot; failed&quot;</span>, <span class="literal">true</span>,
+                compareXML(control[i], control[i]).similar());
+            assertEquals(<span class="literal">&quot;!compareXML case &quot;</span> + i + <span class="literal">&quot; failed&quot;</span>, <span class="literal">false</span>,
+                compareXML(control[i], test[i]).similar());
+        }
+    }
+
+    <span class="c26">/**</span>
+<span class="c26">     *</span><span class="c28"> Test the comparision of two files</span>
+<span class="c28">     </span><span class="c26">*/</span>
+    <span class="declare">public</span> <span class="declare">void</span> testCompareFiles() <span class="declare">throws</span> Exception {
+        assertXMLEqual(<span class="directive">new</span> FileReader(
+                test_Constants.BASEDIR + <span class="literal">&quot;/tests/etc/test1.xml&quot;</span>),
+            <span class="directive">new</span> FileReader(
+                test_Constants.BASEDIR + <span class="literal">&quot;/tests/etc/test1.xml&quot;</span>));
+        assertXMLNotEqual(<span class="directive">new</span> FileReader(
+                test_Constants.BASEDIR + <span class="literal">&quot;/tests/etc/test1.xml&quot;</span>),
+            <span class="directive">new</span> FileReader(
+                test_Constants.BASEDIR + <span class="literal">&quot;/tests/etc/test2.xml&quot;</span>));
+
+        <span class="directive">try</span>{
+            assertXMLNotEqual(<span class="directive">new</span> FileReader(<span class="literal">&quot;nosuchfile.xml&quot;</span>),
+                <span class="directive">new</span> FileReader(<span class="literal">&quot;nosuchfile.xml&quot;</span>));
+            fail(<span class="literal">&quot;Expecting FileNotFoundException&quot;</span>);
+        }<span class="directive">catch</span>(FileNotFoundException e){}
+    }
+
+    <span class="c26">/**</span>
+<span class="c26">     *</span><span class="c28">  Test for the assertXMLEquals method.</span>
+<span class="c26">     */</span>
+    <span class="declare">public</span> <span class="declare">void</span> testXMLEqualsStrings() <span class="declare">throws</span> Exception {
+        <span class="directive">for</span>(<span class="declare">int</span> i=<span class="literal">0</span>;i&lt;control.length;i++){
+            assertXMLEqual(<span class="literal">&quot;assertXMLEquals test case &quot;</span> + i + <span class="literal">&quot; failed&quot;</span>,
+                control[i], control[i]);
+            assertXMLNotEqual(<span class="literal">&quot;assertXMLNotEquals test case&quot;</span> + i + <span class="literal">&quot; failed&quot;</span>,
+                control[i], test[i]);
+        }
+    }
+
+    <span class="c26">/**</span>
+<span class="c26">     *</span><span class="c28"> Handy dandy main method to run this suite with text-based TestRunner</span>
+<span class="c28">     </span><span class="c26">*/</span>
+    <span class="declare">public</span> <span class="declare">static</span> <span class="declare">void</span> main(String[] args) {
+        <span class="directive">new</span> junit.textui.TestRunner().run(suite());
+    }
+
+    <span class="c26">/**</span>
+<span class="c26">     *</span><span class="c28"> returns the TestSuite containing this test</span>
+<span class="c28">     </span><span class="c26">*/</span>
+    <span class="declare">public</span> <span class="declare">static</span> TestSuite suite(){
+        <span class="directive">return</span> <span class="directive">new</span> TestSuite(test_XMLTestCase.<span class="declare">class</span>);
+    }
+}
+</pre>
+</body>
+</html>

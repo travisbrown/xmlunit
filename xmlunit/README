@@ -1,0 +1,23 @@
+http://xmlunit.sourceforge.com
+
+To run this software you will need:
+- junit (http://www.junit.org/)
+- a JAXP compliant XML SAX and DOM parser (e.g. Apache Xerces)
+- a JAXP/Trax compliant XSLT engine (e.g. Apache Xalan)
+in your classpath
+
+Enjoy!
+
+Changes in this version:
+- NEW Validator class for validation against DTDs
+- NEW NodeTest class, NodeTester interface, AbstractNodeTester and CountingNodeTester classes for validating individual Nodes in a DOM tree (NB: requires support for DOM Traversal in your DOM implementation)
+- cleaner separation of source and test code through directory structure
+- better documentation
+- replacement of all deprecated JUnit assert() with assertEquals() calls
+
+Features coming in version 0.5:
+- Diff support for non-element nodes
+- Validator support for XML schema validation
+
+timBacon@primeEight.co.uk
+March 2002

@@ -15,13 +15,18 @@ public class test_XMLUnit extends TestCase{
         super(name);
     }
 
+    private String getDocumentBuilderFactoryImplClass() {
+        return DocumentBuilderFactory.newInstance().getClass().getName();
+    }
+
     /**
      * Test overiding the SAX parser used to parse control documents
      */
     public void testSetControlParser() throws Exception {
         Object before = XMLUnit.getControlParser();
-        XMLUnit.setControlParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        assert("should be different", before!=XMLUnit.getControlParser());
+        XMLUnit.setControlParser(getDocumentBuilderFactoryImplClass());
+        assertEquals("should be different", false,
+            before == XMLUnit.getControlParser());
     }
 
     public void testIgnoreWhitespace() throws Exception {
@@ -30,9 +35,11 @@ public class test_XMLUnit extends TestCase{
         XMLUnit.setIgnoreWhitespace(true);
         String test="<test>  monkey   </test>";
         String control="<test>monkey</test>";
-        assert("Should be similar", XMLUnit.compare(control, test).similar());
+        assertEquals("Should be similar", true,
+            XMLUnit.compare(control, test).similar());
         XMLUnit.setIgnoreWhitespace(false);
-        assert("Should be different", !XMLUnit.compare(control, test).similar());
+        assertEquals("Should be different", false,
+            XMLUnit.compare(control, test).similar());
     }
 
     /**
@@ -40,8 +47,9 @@ public class test_XMLUnit extends TestCase{
      */
     public void testSetTestParser() throws Exception {
         Object before = XMLUnit.getTestParser();
-        XMLUnit.setTestParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        assert("should be different", before!=XMLUnit.getTestParser());
+        XMLUnit.setTestParser(getDocumentBuilderFactoryImplClass());
+        assertEquals("should be different", false,
+            before==XMLUnit.getTestParser());
     }
     /**
      * Handy dandy main method to run this suite with text-based TestRunner

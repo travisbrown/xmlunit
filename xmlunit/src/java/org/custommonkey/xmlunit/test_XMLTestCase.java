@@ -64,10 +64,10 @@ public class test_XMLTestCase extends XMLTestCase{
      */
     public void testCompareXMLStrings() throws Exception {
         for(int i=0;i<control.length;i++){
-            assert("compareXML case " + i + " failed",
+            assertEquals("compareXML case " + i + " failed", true,
                 compareXML(control[i], control[i]).similar());
-            assert("!compareXML case " + i + " failed",
-                !compareXML(control[i], test[i]).similar());
+            assertEquals("!compareXML case " + i + " failed", false,
+                compareXML(control[i], test[i]).similar());
         }
     }
 
@@ -76,13 +76,13 @@ public class test_XMLTestCase extends XMLTestCase{
      */
     public void testCompareFiles() throws Exception {
         assertXMLEqual(new FileReader(
-                test_Constants.BASEDIR + "/tests/test1.xml"),
+                test_Constants.BASEDIR + "/tests/etc/test1.xml"),
             new FileReader(
-                test_Constants.BASEDIR + "/tests/test1.xml"));
+                test_Constants.BASEDIR + "/tests/etc/test1.xml"));
         assertXMLNotEqual(new FileReader(
-                test_Constants.BASEDIR + "/tests/test1.xml"),
+                test_Constants.BASEDIR + "/tests/etc/test1.xml"),
             new FileReader(
-                test_Constants.BASEDIR + "/tests/test2.xml"));
+                test_Constants.BASEDIR + "/tests/etc/test2.xml"));
 
         try{
             assertXMLNotEqual(new FileReader("nosuchfile.xml"),

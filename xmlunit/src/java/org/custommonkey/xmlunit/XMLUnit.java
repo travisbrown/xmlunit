@@ -6,13 +6,18 @@ import java.util.*;
 import java.io.*;
 import org.xml.sax.*;
 
+/**
+ * Allows access to project control parameters such as which Parser to use
+ */
 public final class XMLUnit {
-    private static DocumentBuilderFactory controlBuilderFactory = DocumentBuilderFactory.newInstance();
-    private static DocumentBuilderFactory testBuilderFactory = DocumentBuilderFactory.newInstance();
+    private static DocumentBuilderFactory controlBuilderFactory
+        = DocumentBuilderFactory.newInstance();
+    private static DocumentBuilderFactory testBuilderFactory
+        = DocumentBuilderFactory.newInstance();
     private static boolean ignoreWhitespace = false;
 
     /**
-     * Constructor
+     * Private constructor
      * Makes class non-instantiable
      */
     private XMLUnit() {
@@ -20,7 +25,7 @@ public final class XMLUnit {
     }
 
     /**
-     * Overide the parser to use to parser control documents.
+     * Overide the parser to use to parse control documents.
      * This is useful when comparing the output of two different
      * parsers.
      */
@@ -29,7 +34,11 @@ public final class XMLUnit {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", parser);
         controlBuilderFactory = DocumentBuilderFactory.newInstance();
     }
-
+    /**
+     * Used by Diff class
+     * @return parser for control values
+     * @throws ParserConfigurationException
+     */
     public static DocumentBuilder getControlParser()
     throws ParserConfigurationException {
         return controlBuilderFactory.newDocumentBuilder() ;
@@ -45,6 +54,11 @@ public final class XMLUnit {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", parser);
         testBuilderFactory = DocumentBuilderFactory.newInstance();
     }
+    /**
+     * Used by Diff class
+     * @return parser for test values
+     * @throws ParserConfigurationException
+     */
     public static DocumentBuilder getTestParser()
     throws ParserConfigurationException {
         return testBuilderFactory.newDocumentBuilder();
@@ -110,5 +124,13 @@ public final class XMLUnit {
     public static Diff compare(String control, String test) throws SAXException,
     IOException, ParserConfigurationException {
         return new Diff(control, test);
+    }
+
+    /**
+     * Place holder for version info
+     * @return current version
+     */
+    public static String getVersion() {
+        return "0.4";
     }
 }

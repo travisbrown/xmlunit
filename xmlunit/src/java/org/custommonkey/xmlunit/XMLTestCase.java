@@ -7,6 +7,10 @@ import javax.xml.parsers.*;
 import java.util.*;
 import java.io.*;
 
+/**
+ * JUnit TestCase subclass.
+ * Allows method-level access to Diff class - for the lazy only?
+ */
 public class XMLTestCase extends TestCase{
 
     /**
@@ -24,6 +28,10 @@ public class XMLTestCase extends TestCase{
         super(name);
     }
 
+    /**
+     * Whether to ignore whitespace in attributes and elements
+     * @param ignore
+     */
     public void setIgnoreWhitespace(boolean ignore){
         XMLUnit.setIgnoreWhitespace(ignore);
     }
@@ -98,7 +106,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLEqual(String control, String test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(diff.toString(), diff.similar());
+        assertEquals(diff.toString(), true, diff.similar());
     }
 
     /**
@@ -109,7 +117,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLEqual(Reader control, Reader test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(diff.toString(), diff.similar());
+        assertEquals(diff.toString(), true, diff.similar());
     }
 
     /**
@@ -121,7 +129,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLEqual(String err, String control, String test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(err + ", " + diff.toString(), diff.similar());
+        assertEquals(err + ", " + diff.toString(), true, diff.similar());
     }
 
     /**
@@ -133,7 +141,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLEqual(String err, Reader control, Reader test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(err + ", " + diff.toString(), diff.similar());
+        assertEquals(err + ", " + diff.toString(), true, diff.similar());
     }
 
     /**
@@ -144,7 +152,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLNotEqual(String control, String test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(diff.toString(), !diff.similar());
+        assertEquals(diff.toString(), false, diff.similar());
     }
 
     /**
@@ -156,7 +164,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLNotEqual(String err, String control, String test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(err + ", " + diff.toString(), !diff.similar());
+        assertEquals(err + ", " + diff.toString(), false, diff.similar());
     }
 
     /**
@@ -167,7 +175,7 @@ public class XMLTestCase extends TestCase{
     public void assertXMLNotEqual(Reader control, Reader test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(diff.toString(), !diff.similar());
+        assertEquals(diff.toString(), false, diff.similar());
     }
 
     /**
@@ -179,6 +187,6 @@ public class XMLTestCase extends TestCase{
     public void assertXMLNotEqual(String err, Reader control, Reader test) throws SAXException, IOException,
     ParserConfigurationException {
         Diff diff = new Diff(control, test);
-        assert(err + ", " + diff.toString(), !diff.similar());
+        assertEquals(err + ", " + diff.toString(), false, diff.similar());
     }
 }

@@ -161,7 +161,10 @@ public class Diff{
             if(testMatchingAttribute==null){
                 similar = false;
             }else {
-                similar = identicalNodeValues(controlNextAttribute, testNextAttribute);
+                identical = identical && identicalNodeValues(testNextAttribute,
+                    testMatchingAttribute);
+                similar = identicalNodeValues(controlNextAttribute,
+                    testMatchingAttribute);
             }
             ++attributeNum;
         }
@@ -259,11 +262,9 @@ public class Diff{
         this.testElement = test;
     }
 
-    public String toString(){
-        compare();
-        StringBuffer buf = new StringBuffer(getClass().getName());
-        if (identical) {
-            return buf.append("[identical]").toString();
+    public StringBuffer appendMessage(StringBuffer buf) {
+        if (identical()) {
+            return buf.append("[identical]");
         } else if (similar) {
             buf.append("[similar]");
         }
@@ -271,7 +272,12 @@ public class Diff{
         appendElement(controlElement, buf);
         buf.append(", but was: ");
         appendElement(testElement, buf);
-        return buf.toString();
+        return buf;
+    }
+
+    public String toString(){
+        StringBuffer buf = new StringBuffer(getClass().getName());
+        return appendMessage(buf).toString();
     }
 
     private StringBuffer appendElement(Element anElement,

@@ -13,22 +13,21 @@ public class test_Transform extends TestCase{
     private static final String FLEABALL = "<fleaball><animal><shaggy>dog</shaggy></animal></fleaball>";
 
     private static final String DOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + System.getProperty("line.separator")
-        + "<dog xmlns:fo=\"http://www.w3.org/1999/XSL/Format\"/>" ;
+        + test_Constants.LINE_SEPARATOR + "<dog/>" ;
 
     private Transform transform;
 
     public void testGetResultString() throws Exception {
         transform = new Transform(FLEABALL,
-            new File(test_Constants.BASEDIR + "/tests/animal.xsl"));
+            new File(test_Constants.BASEDIR + "/tests/etc/animal.xsl"));
         assertEquals(DOG, transform.getResultString());
     }
 
     public void testGetResultDocument() throws Exception {
         transform = new Transform(FLEABALL,
-            new File(test_Constants.BASEDIR + "/tests/animal.xsl"));
+            new File(test_Constants.BASEDIR + "/tests/etc/animal.xsl"));
         Diff diff = new Diff(DOG, transform);
-        assert(diff.toString(), diff.identical());
+        assertEquals(diff.toString(), true, diff.identical());
     }
 
     public test_Transform(String name) {

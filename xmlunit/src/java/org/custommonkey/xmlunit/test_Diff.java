@@ -22,9 +22,9 @@ public class test_Diff extends TestCase{
      */
     public void testDifferenceFoundElement(){
         Diff diff = new Diff();
-        assert(diff.similar());
+        assertEquals(true, diff.similar());
         diff.differenceFound(aDocument.createElement("test"), aDocument.createElement("test"));
-        assert(!diff.similar());
+        assertEquals(false, diff.similar());
     }
 
     public void testToString(){
@@ -50,21 +50,23 @@ public class test_Diff extends TestCase{
      */
     public void testDifferenceFoundNullElement(){
         Diff diff = new Diff();
-        assert(diff.similar());
+        assertEquals(true, diff.similar());
         diff.differenceFound(null, aDocument.createElement("test"));
         try{
-            assert(diff.toString(), diff.similar());
+            assertEquals(diff.toString(), true, diff.similar());
             fail("Throwable not thrown");
         }catch(AssertionFailedError t){
-            assertEquals("org.custommonkey.xmlunit.Diff Expected: null, but was: <test/>", t.getMessage());
+            assertEquals("org.custommonkey.xmlunit.Diff Expected: null, but was: <test/>",
+                diff.toString());
         }
         diff = new Diff();
         diff.differenceFound(aDocument.createElement("test"), null);
         try{
-            assert(diff.toString(), diff.similar());
+            assertEquals(diff.toString(), true, diff.similar());
             fail("Throwable not thrown");
         }catch(AssertionFailedError t){
-            assertEquals("org.custommonkey.xmlunit.Diff Expected: <test/>, but was: null", t.getMessage());
+            assertEquals("org.custommonkey.xmlunit.Diff Expected: <test/>, but was: null",
+                diff.toString());
         }
     }
 
@@ -74,10 +76,10 @@ public class test_Diff extends TestCase{
      */
     public void testSimilar() throws Exception {
         for(int i=0;i<control.length;i++){
-            assert("XMLUnit.compare().similar() test case "+i+" failed",
-                new Diff(control[i], control[i]).similar());
-            assert("!XMLUnit.compare().similar() test case "+i+" failed",
-                !(new Diff(control[i], test[i])).similar());
+            assertEquals("XMLUnit.compare().similar() test case "+i+" failed",
+                true, new Diff(control[i], control[i]).similar());
+            assertEquals("!XMLUnit.compare().similar() test case "+i+" failed",
+                false, (new Diff(control[i], test[i])).similar());
         }
     }
 
@@ -88,8 +90,8 @@ public class test_Diff extends TestCase{
         String control="<control><test>test1</test><test>test2</test></control>";
         String test="<control><test>test2</test><test>test1</test></control>";
 
-        assert("Documents are identical, when they are not",
-            !XMLUnit.compare(control, test).identical());
+        assertEquals("Documents are identical, when they are not", false,
+            XMLUnit.compare(control, test).identical());
     }
 
     /**
@@ -97,54 +99,58 @@ public class test_Diff extends TestCase{
      */
     public void testFiles() throws Exception {
         FileReader control = new FileReader(test_Constants.BASEDIR
-            + "/tests/test.blame.html");
+            + "/tests/etc/test.blame.html");
         FileReader test = new FileReader(test_Constants.BASEDIR
-            + "/tests/test.blame.html");
+            + "/tests/etc/test.blame.html");
         Diff diff = XMLUnit.compare(control, test);
-        assert(diff.toString(), diff.identical());
+        assertEquals(diff.toString(), true, diff.identical());
     }
 
     public void testSameTwoStrings() throws Exception {
         Diff diff = new Diff("<same>pass</same>", "<same>pass</same>");
-        assert("same should be identical", diff.identical());
-        assert("same should be similar", diff.similar());
+        assertEquals("same should be identical", true, diff.identical());
+        assertEquals("same should be similar", true, diff.similar());
     }
 
     public void testMissingElement() throws Exception {
         Diff diff = new Diff("<root></root>", "<root><node/></root>");
-        assert("should not be identical", !diff.identical());
-        assert("and should not be similar", !diff.similar());
+        assertEquals("should not be identical", false, diff.identical());
+        assertEquals("and should not be similar", false, diff.similar());
     }
 
     public void testExtraElement() throws Exception {
         Diff diff = new Diff("<root><node/></root>", "<root></root>");
-        assert("should not be identical", !diff.identical());
-        assert("and should not be similar", !diff.similar());
+        assertEquals("should not be identical", false, diff.identical());
+        assertEquals("and should not be similar", false, diff.similar());
     }
 
     public void testElementsInReverseOrder() throws Exception {
         Diff diff = new Diff("<root><same/><pass/></root>", "<root><pass/><same/></root>");
-        assert("should not be identical", !diff.identical());
-        assert("but should be similar", diff.similar());
+        assertEquals("should not be identical", false, diff.identical());
+        assertEquals("but should be similar", true, diff.similar());
     }
 
     public void testMissingAttribute() throws Exception {
         Diff diff = new Diff("<same>pass</same>", "<same except=\"this\">pass</same>");
-        assert("should not be identical", !diff.identical());
-        assert("and should not be similar", !diff.similar());
+        assertEquals("should not be identical", false, diff.identical());
+        assertEquals("and should not be similar", false, diff.similar());
     }
 
     public void testExtraAttribute() throws Exception {
         Diff diff = new Diff("<same except=\"this\">pass</same>", "<same>pass</same>");
-        assert("should not be identical", !diff.identical());
-        assert("and should not be similar", !diff.similar());
+        assertEquals("should not be identical", false, diff.identical());
+        assertEquals("and should not be similar", false, diff.similar());
     }
 
     public void testAttributesInReverseOrder() throws Exception {
         Diff diff = new Diff("<same zzz=\"qwerty\" aaa=\"uiop\">pass</same>",
             "<same aaa=\"uiop\" zzz=\"qwerty\">pass</same>" );
-        assert("should not ideally be identical but JAXP reorders attributes inside NamedNodeMap", diff.identical());
-        assert("but should be similar", diff.similar());
+        if (diff.identical()) {
+            System.out.println(getName() + " - should not ideally be identical "
+                + "but some JAXP implementations do reorder attributes inside NamedNodeMap");
+        }
+        assertEquals(diff.toString() + ": but should be similar",
+            true, diff.similar());
     }
 
     /**
