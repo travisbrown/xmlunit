@@ -14,9 +14,19 @@
             AssertEquals(true, diffResult.Equal);
         }
 
+        public static void AssertXmlEquals(string controlText, string testText) {
+            AssertXmlEquals(new StringReader(controlText),
+                new StringReader(testText)) ;
+        }
+
         public static void AssertXmlIdentical(TextReader controlTextReader, TextReader testTextReader) {
             DiffResult diffResult = PerformComparison(controlTextReader, testTextReader);
             AssertEquals(true, diffResult.Identical);
+        }        
+
+        public static void AssertXmlIdentical(string controlText, string testText) {
+            AssertXmlIdentical(new StringReader(controlText),
+                new StringReader(testText));
         }        
     }
 }
