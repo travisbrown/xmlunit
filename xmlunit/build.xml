@@ -41,8 +41,14 @@
 
   <target name="test" depends="compile">
     <mkdir dir="${test.report.dir}"/>
-    <junit printsummary="yes" haltonfailure="no">
+    <junit printsummary="yes" haltonfailure="no" fork="yes">
       <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="javax.xml.parsers.DocumentBuilderFactory"
+        value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory"
+        value="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+      <sysproperty key="javax.xml.transform.TransformerFactory"
+        value="org.apache.xalan.processor.TransformerFactoryImpl"/>
       <classpath>
         <pathelement location="${out.dir}"/>
         <pathelement location="${xml.parser}"/>
@@ -65,8 +71,13 @@
   <target name="docs" depends="prepare">
     <mkdir dir="${docs.dir}"/>
     <delete includeEmptyDirs="true" dir="${docs.dir}/org"/>
-    <javadoc packagenames="org.custommonkey.xmlunit"
-      sourcepath="${src.dir}/java" destdir="${docs.dir}">
+    <javadoc sourcepath="${src.dir}/java" destdir="${docs.dir}"
+      packagenames="org.custommonkey.xmlunit.*"
+      overview="${basedir}/overview.html"
+      windowtitle="XMLUnit Documentation"
+      footer="&lt;p&gt;&lt;a href=&quot;http://xmlunit.sourceforge.net/&quot;&gt;XMLUnit&lt;/a&gt; is hosted by sourceforge.net&lt;/p&gt;">
+      <group title="XMLUnit v${version}"
+        packages="org.custommonkey.xmlunit*"/>
       <classpath>
         <fileset dir="${lib.dir}">
             <include name="*.jar"/>
@@ -83,7 +94,7 @@
     />
 
     <zip zipfile="${dist.dir}/xmlunit${version}.zip" basedir="${basedir}"
-       includes="**/*.java,**/*.txt,**/*.jar,**/*.xml,**/*.xsl,**/*.html"
+       includes="**/*.java,**/*.txt,**/*.jar,**/*.xml,**/*.xsl,${docs.dir}/**/*.html"
     />
   </target>
 
