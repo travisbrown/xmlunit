@@ -29,10 +29,13 @@ Changes in this version:
 - NEW ComparisonController interface now used to control the operation of a 
   DifferenceEngine instance (extracted from DifferenceListener)
 - Incorporated DifferenceConstants patch submitted by ludovicc 
+- Added support for namespaced attributes, previously missing
 - Build file now incorporates JUnitReport
-- TODO Update documentation
+- Deprecated assertNotXpathsEqual() in favour of assertXpathsNotEqual() in XMLTestCase
+- PDF overview document added to distribution and content updated
+- Updated Javadocs on website
 tim.bacon@thoughtworks.com
-Novemeber/December 2002
+Novmeber/December 2002
 
 Changes in version 0.8:
 - Changes to compiled jar in distribution required for compatibility with JUnit 3.8

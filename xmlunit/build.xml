@@ -115,7 +115,7 @@
     />
   </target>
 
-  <target name="dist" depends="jar,docs">
+  <target name="dist" depends="jar,test,docs">
     <zip zipfile="${dist.dir}/xmlunit${xmlunit.version}.zip">
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/xmlunit${xmlunit.version}.jar"/>
@@ -124,7 +124,7 @@
             excludes="${out.dir}/*,bugs/*,${test.report.dir}/*"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="${docs.dir}/**/*.html,${test.dir}/etc/*.html"/>
-        <zipfileset prefix="xmlunit/${docs.dir}" dir="${src.dir}/site"
+        <zipfileset prefix="xmlunit" dir="${src.dir}/site"
             includes="*.pdf"/>
     </zip>
   </target>
