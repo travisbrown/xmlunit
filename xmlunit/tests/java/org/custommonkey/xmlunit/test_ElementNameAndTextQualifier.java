@@ -60,17 +60,17 @@ public class test_ElementNameAndTextQualifier extends TestCase {
 		Element test = document.createElement(TAG_NAME);
 		
 		assertFalse("control text not comparable to empty text", 
-			elementNameAndTextQualifier.areComparable(control, test));
+			elementNameAndTextQualifier.qualifyForComparison(control, test));
 		
 		test.appendChild(document.createTextNode(TEXT_A));		
 		assertTrue("control textA comparable to test textA",
-					elementNameAndTextQualifier.areComparable(control, test));
+					elementNameAndTextQualifier.qualifyForComparison(control, test));
 					
 		test = document.createElement(TAG_NAME);
 
 		test.appendChild(document.createTextNode(TEXT_B));
 		assertFalse("control textA not comparable to test textB",
-					elementNameAndTextQualifier.areComparable(control, test));
+					elementNameAndTextQualifier.qualifyForComparison(control, test));
 	}
 	
 	public void testMultipleTextValues() throws Exception {
@@ -81,7 +81,7 @@ public class test_ElementNameAndTextQualifier extends TestCase {
 		Element test = document.createElement(TAG_NAME);
 		test.appendChild(document.createTextNode(TEXT_A + TEXT_B));
 		assertTrue("denormalised control text comparable to normalised test text",
-					elementNameAndTextQualifier.areComparable(control, test));
+					elementNameAndTextQualifier.qualifyForComparison(control, test));
 	}
 	
 	public void setUp() throws Exception {

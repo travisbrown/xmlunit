@@ -60,23 +60,23 @@ public class test_ElementNameAndAttributeQualifier extends TestCase {
 
 		Element test = document.createElement(TAG_NAME);
 		assertFalse("qwerty id 1 not comparable to qwerty with no attributes",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 		
 		test.setAttribute(attrName, "1");
 		assertTrue("qwerty id 1 comparable to qwerty id 1", 
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 			
 		control.setAttribute("uiop","true");
 		assertTrue("qwerty id 1 && uiop comparable to qwerty id 1",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 					
 		test.setAttribute("uiop", "false");
 		assertTrue("qwerty id 1 && uiop comparable to qwerty id 1 && !uiop",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 
 		test.setAttribute(attrName, "2");
 		assertFalse("qwerty id 1 && uiop NOT comparable to qwerty id 2 && !uiop",
-			elementNameAndAttributeQualifier.areComparable(control, test));	
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));	
 	}
 	
 	public void testMultipleQualifyingAttributes() throws Exception {
@@ -90,35 +90,35 @@ public class test_ElementNameAndAttributeQualifier extends TestCase {
 
 		Element test = document.createElement(TAG_NAME);
 		assertFalse("qwerty id/uid 1 not comparable to qwerty with no attributes",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 			
 		for (int i=0; i < attrNames.length; ++i) {
 			test.setAttribute(attrNames[i], "1");
 		}
 
 		assertTrue("qwerty id/uid 1 comparable to qwerty id/uid 1",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 		
 		test.setAttribute("oid", "0x2394b3456df");
 		assertTrue("qwerty id/uid 1 comparable to qwerty id/uid 1 with oid",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 
 		control.setAttribute("oid", "0xfd6543b4932");
 		assertTrue("qwerty id/uid 1 with oid comparable to qwerty id/uid 1 with different oid",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 		
 		test.setAttribute(attrNames[0], "2");
 		assertFalse("qwerty id/uid 1 not comparable to qwerty id 2 /uid 1",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 
 		test.setAttribute(attrNames[0], "1");
 		test.setAttribute(attrNames[1], "2");
 		assertFalse("qwerty id/uid 1 not comparable to qwerty id 1 /uid 2",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 
 		test.setAttribute(attrNames[0], "2");
 		assertFalse("qwerty id/uid 1 not comparable to qwerty id/uid 2",
-			elementNameAndAttributeQualifier.areComparable(control, test));
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 	}	
 
 	public void setUp() throws Exception {

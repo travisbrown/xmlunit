@@ -294,7 +294,7 @@ public class DifferenceEngine implements DifferenceConstants {
 
             while (!matchFound) {
                 if (matchOnElement && test.item(j) instanceof Element
-                && elementQualifier.areComparable((Element)nextControl, (Element)test.item(j))) {
+                && elementQualifier.qualifyForComparison((Element)nextControl, (Element)test.item(j))) {
                     matchFound = true;
                 } else if (!matchOnElement
                 && findNodeType == test.item(j).getNodeType()) {

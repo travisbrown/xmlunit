@@ -67,7 +67,7 @@ import org.xml.sax.SAXException;
  *  NB: When comparing documents, the comparison is halted as soon as the
  *  status (identical / similar / different) is known with certainty. For a
  *  list of all differences between the documents an instance of
- *  (@link DetailedDiff the DetailedDiff class} can be used instead.
+ *  {@link DetailedDiff the DetailedDiff class} can be used instead.
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Diff 

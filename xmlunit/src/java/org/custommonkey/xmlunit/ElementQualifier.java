@@ -39,20 +39,22 @@ package org.custommonkey.xmlunit;
 import org.w3c.dom.Element;
 
 /**
- * Interface used by the DifferenceEngine class to find elements that
- * can be compared.
+ * Interface used by the DifferenceEngine class to determine which elements can
+ * be compared within a NodeList of child nodes.
  * 
  * <br />Examples and more at 
  * <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
- * @see DifferenceEngine
+ * @see DifferenceEngine#compareNodeList(NodeList, NodeList, int,
+ * DifferenceListener)
+ * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 
 public interface ElementQualifier {
 	/**
 	 * Determine whether two elements are comparable
-	 * @param control an Element from the control XML
-	 * @param test an Element from the test XML
-	 * @return true of the elements are comparable, false otherwise
+	 * @param control an Element from the control XML NodeList
+	 * @param test an Element from the test XML NodeList
+	 * @return true if the elements are comparable, false otherwise
 	 */
-	boolean areComparable(Element control, Element test); 
+	boolean qualifyForComparison(Element control, Element test); 
 }

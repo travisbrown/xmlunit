@@ -41,8 +41,8 @@ import org.w3c.dom.Node;
 
 /**
  * Simple interface implementation that tests two elements for name
- * comparability. This class provides the default behaviour for a 
- * DifferenceEngine.
+ * comparability. This class provides the default behaviour within a
+ * DifferenceEngine (for backwards compatibility)
  * <br />Examples and more at 
  * <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  * @see DifferenceEngine#compareNodeList(NodeList, NodeList, int, DifferenceListener)
@@ -57,7 +57,7 @@ public class ElementNameQualifier implements ElementQualifier {
 	 *  their  similar namespace URI and non-namespaced tag name, 
 	 *  false otherwise
 	 */
-	public boolean areComparable(Element control, Element test) {
+	public boolean qualifyForComparison(Element control, Element test) {
 		return control != null && test !=null 
 			&& equalsNamespace(control, test)
 			&& getNonNamespacedTagName(control).equals(getNonNamespacedTagName(test));

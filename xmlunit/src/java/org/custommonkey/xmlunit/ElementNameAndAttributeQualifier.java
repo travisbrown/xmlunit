@@ -47,8 +47,17 @@ import org.w3c.dom.Element;
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
+	public static final String ALL_ATTRIBUTES = "*";
 	
 	private final String[] qualifyingAttrNames;
+	
+	/**
+	 * No-args constructor: use all attributes from all elements to determine
+	 * whether elements qualify for comparability
+	public ElementNameAndAttributeQualifier() {
+		this(ALL_ATTRIBUTES);
+	}
+	 */
 	
 	/**
 	 * Simple constructor for a single qualifying attribute name
@@ -77,8 +86,8 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 	 * name), and the presence of qualifying attributes with the same values;
 	 * false otherwise
 	 */
-	public boolean areComparable(Element control, Element test) {
-		if (super.areComparable(control, test)) {
+	public boolean qualifyForComparison(Element control, Element test) {
+		if (super.qualifyForComparison(control, test)) {
 			return areAttributesComparable(control, test);
 		}
 		return false;

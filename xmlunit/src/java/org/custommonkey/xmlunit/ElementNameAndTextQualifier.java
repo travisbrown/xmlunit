@@ -59,22 +59,20 @@ public class ElementNameAndTextQualifier extends ElementNameQualifier {
 	 * name), and the qualification of the text nodes contained within the
 	 * elements; false otherwise
 	 */
-	public boolean areComparable(Element control, Element test) {
-		if (super.areComparable(control, test)) {
-			return areComparable(extractText(control), extractText(test));
+	public boolean qualifyForComparison(Element control, Element test) {
+		if (super.qualifyForComparison(control, test)) {
+			return similar(extractText(control), extractText(test));
 		}
 		return false; 
 	}
 	
 	/**
-	 * Determine whether the text nodes qualify for further comparison based on
-	 * whether their values are the same
+	 * Determine whether the text nodes contain similar values
 	 * @param control
 	 * @param test
-	 * @return true if text nodes qualify for further comparison within a Diff,
-	 * false otherwise
+	 * @return true if text nodes are similar, false otherwise
 	*/
-	public boolean areComparable(Text control, Text test) {		
+	protected boolean similar(Text control, Text test) {		
 		if (control == null) {
 			return test == null;
 		} else if (test == null) {
@@ -84,7 +82,7 @@ public class ElementNameAndTextQualifier extends ElementNameQualifier {
 	}
 
 	/**
-	 * Extract the text from an element
+	 * Extract the normalized text from within an element
 	 * @param fromElement
 	 * @return extracted Text node (could be null)
 	 */	

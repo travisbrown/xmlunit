@@ -54,10 +54,10 @@ public class test_ElementNameQualifier extends TestCase {
 	public void testElementsNoNamespace() throws Exception {
 		Element control = document.createElement(NAME_A);
 		Element test = document.createElement(NAME_A);
-		assertTrue("nameA comparable to nameA", elementNameQualifier.areComparable(control, test));
+		assertTrue("nameA comparable to nameA", elementNameQualifier.qualifyForComparison(control, test));
 		
 		test = document.createElement(NAME_B);
-		assertFalse("nameA not comparable to nameB", elementNameQualifier.areComparable(control, test));
+		assertFalse("nameA not comparable to nameB", elementNameQualifier.qualifyForComparison(control, test));
 	}
 	
 	public void testElementsWithNamespace() throws Exception {
@@ -66,31 +66,31 @@ public class test_ElementNameQualifier extends TestCase {
 		
 		Element control = document.createElementNS(anURI, qnameQualifierA + NAME_A);
 		Element test = document.createElementNS(anURI, qnameQualifierA + NAME_A);
-		assertTrue("qualified nameA comparable to nameA", elementNameQualifier.areComparable(control, test));
+		assertTrue("qualified nameA comparable to nameA", elementNameQualifier.qualifyForComparison(control, test));
 
 		test = document.createElementNS(anURI, qnameQualifierA + NAME_B);
-		assertFalse("qualified nameA not comparable to nameB", elementNameQualifier.areComparable(control, test));
+		assertFalse("qualified nameA not comparable to nameB", elementNameQualifier.qualifyForComparison(control, test));
 		
 		String qnameQualifierB = "pgp:";
 		test = document.createElementNS(anURI, qnameQualifierB + NAME_A);
-		assertTrue("qualified nameA comparable to requalified nameA", elementNameQualifier.areComparable(control, test));
+		assertTrue("qualified nameA comparable to requalified nameA", elementNameQualifier.qualifyForComparison(control, test));
 
 		test = document.createElementNS(anURI, qnameQualifierB + NAME_B);
 				assertFalse("qualified nameA not comparable to requalifiednameB", 
-					elementNameQualifier.areComparable(control, test));
+					elementNameQualifier.qualifyForComparison(control, test));
 
 		String anotherURI = "ftp://example.com";
 		test = document.createElementNS(anotherURI, qnameQualifierA + NAME_A);
 		assertFalse("qualified nameA not comparable to anotherURI nameA", 
-			elementNameQualifier.areComparable(control, test));
+			elementNameQualifier.qualifyForComparison(control, test));
 		
 		test = document.createElementNS(anotherURI, qnameQualifierB + NAME_A);
 		assertFalse("qualified nameA comparable to requalified-anotherURI nameA",
-			elementNameQualifier.areComparable(control, test));
+			elementNameQualifier.qualifyForComparison(control, test));
 
 		test = document.createElementNS(anotherURI, qnameQualifierB + NAME_B);
 		assertFalse("qualified nameA not comparable to requalified-anotherURI nameB",
-			elementNameQualifier.areComparable(control, test));
+			elementNameQualifier.qualifyForComparison(control, test));
 	}
 		
 		
