@@ -318,7 +318,8 @@ implements DifferenceListener, ComparisonController {
         if (messages.length()==0) {
             messages.append("[identical]");
         }
-        return toAppendTo.append(messages);
+        // fix for JDK1.4 backwards incompatibility
+        return toAppendTo.append(messages.toString());
     }
 
     /**
