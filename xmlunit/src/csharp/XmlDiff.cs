@@ -64,31 +64,53 @@ namespace XmlUnit {
                 do {
                     controlRead = _controlReader.Read();
                     testRead = _testReader.Read();
-                    if (controlRead) {
-                        if(testRead) {
-                            CompareNodes(result);
-                            CheckEmptyOrAtEndElement(result, ref controlRead, ref testRead);
-                        } else {
-                            DifferenceFound(DifferenceType.CHILD_NODELIST_LENGTH_ID, result);
-                        } 
-                    }
+                	Compare(result, ref controlRead, ref testRead);
                 } while (controlRead && testRead) ;
             } catch (FlowControlException e) {       
                 Console.Out.WriteLine(e.Message);
             }
         }        
+        
+        private void Compare(DiffResult result, ref bool controlRead, ref bool testRead) {        	
+            if (controlRead) {
+                if(testRead) {
+                    CompareNodes(result);
+                    CheckEmptyOrAtEndElement(result, ref controlRead, ref testRead);
+                } else {
+                    DifferenceFound(DifferenceType.CHILD_NODELIST_LENGTH_ID, result);
+                } 
+            }
+        }
                 
         private void CompareNodes(DiffResult result) {
             XmlNodeType controlNodeType = _controlReader.NodeType;
             XmlNodeType testNodeType = _testReader.NodeType;
             if (!controlNodeType.Equals(testNodeType)) {
-                DifferenceFound(DifferenceType.NODE_TYPE_ID, controlNodeType, 
-                                testNodeType, result);
+            	CheckNodeTypes(controlNodeType, testNodeType, result);
             } else if (controlNodeType == XmlNodeType.Element) {
                 CompareElements(result);
             } else if (controlNodeType == XmlNodeType.Text) {
                 CompareText(result);
             }
+        }
+        
+        private void CheckNodeTypes(XmlNodeType controlNodeType, XmlNodeType testNodeType, DiffResult result) {        
+        	XmlReader readerToAdvance = null;
+        	if (controlNodeType.Equals(XmlNodeType.XmlDeclaration)) {
+        		readerToAdvance = _controlReader;
+        	} else if (testNodeType.Equals(XmlNodeType.XmlDeclaration)) {        			
+        		readerToAdvance = _testReader;
+        	}
+        	
+        	if (readerToAdvance != null) {
+            	DifferenceFound(DifferenceType.HAS_XML_DECLARATION_PREFIX_ID, 
+            	                controlNodeType, testNodeType, result);
+        		readerToAdvance.Read();
+        		CompareNodes(result);
+    		} else {
+            	DifferenceFound(DifferenceType.NODE_TYPE_ID, controlNodeType, 
+             	                testNodeType, result);
+    		}       
         }
         
         private void CompareElements(DiffResult result) {
@@ -152,7 +174,7 @@ namespace XmlUnit {
         }
         
         private void DifferenceFound(Difference difference, DiffResult result) {
-            result.DifferenceFound(difference);
+            result.DifferenceFound(this, difference);
             if (!ContinueComparison(difference)) {
                 throw new FlowControlException(difference);
             }
@@ -166,7 +188,7 @@ namespace XmlUnit {
                             result);
         }
         
-        public bool ContinueComparison(Difference afterDifference) {
+        private bool ContinueComparison(Difference afterDifference) {
             return !afterDifference.MajorDifference;
         }
         

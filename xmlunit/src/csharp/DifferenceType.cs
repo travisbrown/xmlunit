@@ -63,5 +63,7 @@ namespace XmlUnit {
     	/** Comparing 2 Documents only one of which has a doctype */
     	HAS_DOCTYPE_DECLARATION_ID = 21,
 	
+    	/** Comparing 2 Documents only one of which has an XML Prefix Declaration */
+    	HAS_XML_DECLARATION_PREFIX_ID = 22,
     } ;
 }

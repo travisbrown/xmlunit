@@ -3,7 +3,7 @@ namespace XmlUnit {
     
     public class DiffConfiguration {
         public static readonly WhitespaceHandling DEFAULT_WHITESPACE_HANDLING = WhitespaceHandling.All;
-        public static readonly string DEFAULT_DESCRIPTION = "";
+        public static readonly string DEFAULT_DESCRIPTION = "XmlDiff";
         public static readonly bool DEFAULT_USE_VALIDATING_PARSER = true;
         
         private readonly string _description;

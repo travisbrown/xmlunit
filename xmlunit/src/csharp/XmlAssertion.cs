@@ -37,7 +37,7 @@ namespace XmlUnit {
 
         private static void AssertXmlEquals(XmlDiff xmlDiff, bool equalOrNot) {
             DiffResult diffResult = xmlDiff.Compare();
-            Assertion.AssertEquals(xmlDiff.OptionalDescription, equalOrNot, diffResult.Equal);
+            Assertion.AssertEquals(diffResult.StringValue, equalOrNot, diffResult.Equal);
         }
         
         public static void AssertXmlIdentical(XmlDiff xmlDiff) {
@@ -106,5 +106,16 @@ namespace XmlUnit {
             XPath xpath = new XPath(anXPathExpression);
             AssertEquals(expectedValue, xpath.EvaluateXPath(inXml));
         }
+        
+        public static void AssertXslTransformResults(string xslTransform, string xmlToTransform, string expectedResult) {
+        	AssertXslTransformResults(new XmlInput(xslTransform), new XmlInput(xmlToTransform), new XmlInput(expectedResult));
+        }
+        
+        public static void AssertXslTransformResults(XmlInput xslTransform, XmlInput xmlToTransform, XmlInput expectedResult) {
+        	Xslt xslt = new Xslt(xslTransform);
+        	XmlOutput output = xslt.Transform(xmlToTransform);
+        	AssertXmlEquals(expectedResult, output.AsXml());
+        }
+
     }
 }

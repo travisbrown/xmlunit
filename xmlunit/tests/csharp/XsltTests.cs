@@ -17,17 +17,18 @@ namespace XmlUnit.Tests {
             "<xsl:template match=\"/\"><xsl:copy-of select=\".\"/></xsl:template>";
     
         public static readonly string XSLT_END = "</xsl:stylesheet>";
-        
-        [Test] public void CanPerformTransform() {
-            string identityTransform = XML_DECLARATION
+    	
+        public static readonly string IDENTITY_TRANSFORM = XML_DECLARATION
                 + XSLT_START + XSLT_TEXT_OUTPUT_NOINDENT
                 + XSLT_IDENTITY_TEMPLATE
                 + XSLT_END;
-            Xslt xslt = new Xslt(identityTransform);
+        
+        [Test] public void CanPerformTransform() {
+            Xslt xslt = new Xslt(IDENTITY_TRANSFORM);
             string input = "<qwerty>uiop</qwerty>";
             string output = new string(input.ToCharArray());
             Assertion.AssertEquals(output, xslt.Transform(input).AsString());
             Assertion.AssertEquals(output, xslt.Transform(input).AsString());
-        }
+        }                      
     }
 }

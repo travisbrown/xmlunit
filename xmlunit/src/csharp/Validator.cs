@@ -33,6 +33,7 @@ namespace XmlUnit {
                 while (validatingReader.Read()) {
                     // only interested in ValidationFailed callbacks
                 }
+                validatingReader.Close();
             }
         }
         

@@ -9,7 +9,7 @@
   
   <!-- *** You may need to edit these properties for your filesystem *** -->
   <property name="nunit.v2.assembly" value="nunit.framework.dll"/>
-  <property name="nunit.v2.bin.dir" value="D:/apps/NUnit/V2.1/bin"/>
+  <property name="nunit.v2.bin.dir" value="c:/apps/SharpDevelop/bin/nunit"/>
   
   <target name="init" description="prepare for other targets">
     <mkdir dir="${bin.dir}"/>
@@ -55,8 +55,10 @@
     <zip zipfile="${deploy.file}">
       <fileset basedir="${base.dir}">
         <includes name="LICENSE.txt"/> 
+        <includes name="NUnit.ReadMe"/> 
         <includes name="*.build"/>
         <includes name="**/*.cs"/>
+        <includes name="./tests/etc/**/*.*"/>
         <includes name="**/${nant.project.name}*.dll"/>
         <excludes name="**/AllTests.cs"/>
       </fileset>

@@ -29,26 +29,29 @@ namespace XmlUnit {
 		}
     	                   	 	                   
 		public string AsString() {
-			TextWriter writer = new StringWriter();
-	        _transform.Transform(_navigator, _xsltArgs, writer, _resolverForXmlTransformed);
-			CleanUp();
-			return writer.ToString();
+			StringWriter stringWriter = new StringWriter();
+	        Write(stringWriter);
+			return stringWriter.ToString();
 		}
 		
-		public XmlReader AsXml() {
-	        XmlReader xml = _transform.Transform(_navigator, _xsltArgs, _resolverForXmlTransformed);
-			CleanUp();
-			return xml;
+		public XmlInput AsXml() {
+	        return new XmlInput(AsString());
 		}
 		
-		public void WriteXml(XmlWriter viaXmlWriter) {			
+		public void Write(XmlWriter viaXmlWriter) {			
 	        _transform.Transform(_navigator, _xsltArgs, viaXmlWriter, _resolverForXmlTransformed);
 			CleanUp();
 		}
 		
-		public void WriteStream(Stream viaStream) {			
+		public void Write(Stream viaStream) {			
 	        _transform.Transform(_navigator, _xsltArgs, viaStream, _resolverForXmlTransformed);
 			CleanUp();
+		}     
+		
+		public void Write(TextWriter viaTextWriter) {
+	        _transform.Transform(_navigator, _xsltArgs, viaTextWriter, _resolverForXmlTransformed);
+			CleanUp();
 		}
+
     }
 }

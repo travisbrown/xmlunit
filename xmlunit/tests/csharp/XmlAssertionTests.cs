@@ -105,6 +105,41 @@ namespace XmlUnit.Tests {
                                                 MY_SOLAR_SYSTEM,
                                                 "False");
         }
+        
+        [Test] public void AssertXslTransformResultsWorksWithStrings() {
+        	string xslt = XsltTests.IDENTITY_TRANSFORM;
+        	string someXml = "<a><b>c</b><b/></a>";
+        	XmlAssertion.AssertXslTransformResults(xslt, someXml, someXml);
+        }
+        
+        [Test] public void AssertXslTransformResultsWorksWithXmlInput() {
+        	StreamReader xsl = GetStreamReader(".\\..\\tests\\etc\\animal.xsl");
+        	XmlInput xslt = new XmlInput(xsl);
+        	StreamReader xml = GetStreamReader(".\\..\\tests\\etc\\testAnimal.xml");
+        	XmlInput xmlToTransform = new XmlInput(xml);
+        	XmlInput expectedXml = new XmlInput("<dog/>");
+        	XmlAssertion.AssertXslTransformResults(xslt, xmlToTransform, expectedXml);
+        }
+        
+        [Test] public void AssertXslTransformResultsCatchesFalsePositive() {
+        	StreamReader xsl = GetStreamReader(".\\..\\tests\\etc\\animal.xsl");
+        	XmlInput xslt = new XmlInput(xsl);
+        	StreamReader xml = GetStreamReader(".\\..\\tests\\etc\\testAnimal.xml");
+        	XmlInput xmlToTransform = new XmlInput(xml);
+        	XmlInput expectedXml = new XmlInput("<cat/>");
+        	bool exceptionExpected = true;
+        	try {
+        		XmlAssertion.AssertXslTransformResults(xslt, xmlToTransform, expectedXml);
+        		exceptionExpected = false;
+        		Assertion.Fail("Expected dog not cat!");
+        	} catch (AssertionException e) {
+        		AvoidUnusedVariableCompilerWarning(e);
+        		if (!exceptionExpected) {
+        			throw e;
+        		}
+        	}
+        }
+
 
         private void AvoidUnusedVariableCompilerWarning(AssertionException e) {
             string msg = e.Message;
