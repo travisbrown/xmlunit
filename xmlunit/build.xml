@@ -18,6 +18,7 @@
     <delete includeEmptyDirs="true" >
       <fileset dir="${out.dir}" includes="**/*.class"/>
       <fileset dir="${test.report.dir}" includes="**/TEST*.txt"/>
+      <fileset dir="${dist.dir}"/>
     </delete> 
   </target>
 
@@ -91,7 +92,7 @@
   </target>
 
   <target name="jar" depends="clean,setDistVersion,compile">
-    <jar jarfile="${lib.dir}/xmlunit${xmlunit.version}.jar"
+    <jar jarfile="${lib.dir}/xmlunit-${xmlunit.version}.jar"
        basedir="${out.dir}"
        excludes="**/test_*.class"
     />
@@ -109,6 +110,27 @@
         <zipfileset prefix="xmlunit" dir="${src.dir}/site"
             includes="*.pdf,example.html"/>
     </zip>
+  </target>
+
+  <target name="src" depends="clean">
+    <property name="dist.name"
+      value="${ant.project.name}-${xmlunit.version}"/>
+    <copy todir="${dist.dir}/${dist.name}">
+      <fileset dir="${basedir}">
+        <include name="${src.dir}/**"/>
+        <include name="${test.dir}/**"/>
+        <include name="ISSUES"/>
+        <include name="LICENSE.txt"/>
+        <include name="README.txt"/>
+        <include name="build.xml"/>
+        <include name="build.properties"/>
+      </fileset>
+    </copy>
+    <tar tarfile="${dist.name}-src.tar" basedir="${dist.dir}">
+    </tar>
+    <gzip zipfile="${dist.name}-src.tgz"
+      src="${dist.name}-src.tar" />
+    <delete file="${dist.name}-src.tar" />
   </target>
 
 </project>
