@@ -180,7 +180,7 @@ public class test_ElementNameAndAttributeQualifier extends TestCase {
 	}
 
 	public void setUp() throws Exception {
-		document = XMLUnit.getControlParser().newDocument();
+		document = XMLUnit.newControlParser().newDocument();
 	}
 	
 	public static TestSuite suite() {

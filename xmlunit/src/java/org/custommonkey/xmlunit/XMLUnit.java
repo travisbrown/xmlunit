@@ -51,6 +51,7 @@ import java.io.StringReader;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.EntityResolver;
 
 /**
  * Allows access to project control parameters such as which Parser to use and
@@ -62,6 +63,9 @@ public final class XMLUnit {
     private static DocumentBuilderFactory testBuilderFactory;
     private static TransformerFactory transformerFactory;
     private static boolean ignoreWhitespace = false;
+    private static EntityResolver testEntityResolver = null;
+    private static EntityResolver controlEntityResolver = null;
+
 
     private static final String STRIP_WHITESPACE_STYLESHEET
         = new StringBuffer(XMLConstants.XML_DECLARATION)
@@ -98,10 +102,30 @@ public final class XMLUnit {
      * @return parser for control values
      * @throws ParserConfigurationException
      */
-    public static DocumentBuilder getControlParser()
+    public static DocumentBuilder newControlParser()
     throws ParserConfigurationException {
         controlBuilderFactory = getControlDocumentBuilderFactory();
-        return controlBuilderFactory.newDocumentBuilder() ;
+        DocumentBuilder builder = controlBuilderFactory.newDocumentBuilder() ;
+        if(controlEntityResolver!=null){
+            builder.setEntityResolver(controlEntityResolver);
+        }
+        return builder;
+    }
+
+    /**
+     * Sets an EntityResolver to be added to all new test parsers.
+     * Setting to null will reset to the default EntityResolver
+     */
+    public static void setTestEntityResolver(EntityResolver resolver) {
+        testEntityResolver = resolver;
+    }
+
+    /**
+     * Sets an EntityResolver to be added to all new control parsers.
+     * Setting to null will reset to the default EntityResolver
+     */
+    public static void setControlEntityResolver(EntityResolver resolver) {
+        controlEntityResolver = resolver;
     }
 
     /**
@@ -145,10 +169,36 @@ public final class XMLUnit {
      * @return parser for test values
      * @throws ParserConfigurationException
      */
-    public static DocumentBuilder getTestParser()
+    public static DocumentBuilder newTestParser()
     throws ParserConfigurationException {
         testBuilderFactory = getTestDocumentBuilderFactory();
-        return testBuilderFactory.newDocumentBuilder();
+        DocumentBuilder builder = testBuilderFactory.newDocumentBuilder();
+        if(testEntityResolver!=null){
+            builder.setEntityResolver(testEntityResolver);
+        }
+        return builder;
+    }
+
+    /**
+     * Get the <code>DocumentBuilder</code> instance used to parse the test XML
+     * in an XMLTestCase.
+     * @return parser for test values
+     * @deprecated use newTestParser()
+     */
+    public static DocumentBuilder getTestParser()
+    throws ParserConfigurationException {
+        return newTestParser();
+    }
+
+    /**
+     * Get the <code>DocumentBuilder</code> instance used to parse the test XML
+     * in an XMLTestCase.
+     * @return parser for control values
+     * @deprecated use newControlParser()
+     */
+    public static DocumentBuilder getControlParser()
+    throws ParserConfigurationException {
+        return newControlParser();
     }
 
     /**
@@ -280,7 +330,7 @@ public final class XMLUnit {
      */
     public static Document buildControlDocument(String fromXML)
     throws SAXException, IOException, ParserConfigurationException {
-        return buildDocument(getControlParser(), new StringReader(fromXML));
+        return buildDocument(newControlParser(), new StringReader(fromXML));
     }
 
     /**
@@ -294,7 +344,7 @@ public final class XMLUnit {
      */
     public static Document buildControlDocument(InputSource fromSource)
     throws IOException, SAXException, ParserConfigurationException {
-        return buildDocument(getControlParser(), fromSource);
+        return buildDocument(newControlParser(), fromSource);
     }
 
     /**
@@ -308,7 +358,7 @@ public final class XMLUnit {
      */
     public static Document buildTestDocument(String fromXML)
     throws SAXException, IOException, ParserConfigurationException {
-        return buildDocument(getTestParser(), new StringReader(fromXML));
+        return buildDocument(newTestParser(), new StringReader(fromXML));
     }
 
     /**
@@ -322,7 +372,7 @@ public final class XMLUnit {
      */
     public static Document buildTestDocument(InputSource fromSource)
     throws IOException, SAXException, ParserConfigurationException {
-        return buildDocument(getTestParser(), fromSource);
+        return buildDocument(newTestParser(), fromSource);
     }
 
     /**

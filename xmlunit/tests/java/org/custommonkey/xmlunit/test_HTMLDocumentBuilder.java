@@ -86,7 +86,7 @@ public class test_HTMLDocumentBuilder extends XMLTestCase {
 
     public void setUp() throws Exception {
         xHtmlDocument = XMLUnit.buildControlDocument(xHtml);
-        builder = new TolerantSaxDocumentBuilder(XMLUnit.getTestParser());
+        builder = new TolerantSaxDocumentBuilder(XMLUnit.newTestParser());
         parser = new HTMLDocumentBuilder(builder);
 
     }

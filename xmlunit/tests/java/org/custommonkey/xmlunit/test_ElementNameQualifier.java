@@ -95,7 +95,7 @@ public class test_ElementNameQualifier extends TestCase {
 		
 		
 	public void setUp() throws Exception {
-		document = XMLUnit.getControlParser().newDocument();
+		document = XMLUnit.newControlParser().newDocument();
 		elementNameQualifier = new ElementNameQualifier();
 	}
 

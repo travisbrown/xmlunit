@@ -650,7 +650,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     public void setUp() throws Exception {
         resetListener();
         engine = new DifferenceEngine(PSEUDO_DIFF);
-        DocumentBuilder documentBuilder = XMLUnit.getControlParser();
+        DocumentBuilder documentBuilder = XMLUnit.newControlParser();
         document = documentBuilder.newDocument();
     }
 

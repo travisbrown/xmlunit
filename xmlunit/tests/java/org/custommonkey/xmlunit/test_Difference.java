@@ -40,7 +40,7 @@ public class test_Difference extends TestCase {
     		+ ") " + ORIGINAL.getDescription();
     	assertEquals("Original", originalAsString, ORIGINAL.toString());
     	
-    	Document document = XMLUnit.getControlParser().newDocument();
+    	Document document = XMLUnit.newControlParser().newDocument();
     	
     	Node controlNode = document.createComment("control");
     	NodeDetail controlNodeDetail = new NodeDetail(controlNode.getNodeValue(),

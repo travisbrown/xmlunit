@@ -107,7 +107,7 @@ public class test_XpathNodeTracker extends TestCase {
 	}
 
 	public void testNodes() throws Exception {
-		Document doc = XMLUnit.getControlParser().newDocument();
+		Document doc = XMLUnit.newControlParser().newDocument();
 		Element element = doc.createElementNS("http://example.com/xmlunit", "eg:root");
 		xpathNodeTracker.visited(element);
 		assertEquals("root element", "/root[1]", xpathNodeTracker.toXpathString());
@@ -138,7 +138,7 @@ public class test_XpathNodeTracker extends TestCase {
 	}
 
 	public void testRepeatNodesForTestTracker() throws Exception {
-		Document doc = XMLUnit.getControlParser().newDocument();
+		Document doc = XMLUnit.newControlParser().newDocument();
 		final Element element = doc.createElement("repeated");
 		final Element copy = doc.createElement("repeated");
 		
@@ -171,7 +171,7 @@ public class test_XpathNodeTracker extends TestCase {
 	}
 	
 	public void testRepeatNodesForControlTracker() throws Exception {
-		Document doc = XMLUnit.getControlParser().newDocument();
+		Document doc = XMLUnit.newControlParser().newDocument();
 		Element element = doc.createElement("repeated");
 
 		xpathNodeTracker.visited(element);

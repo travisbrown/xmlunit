@@ -43,7 +43,7 @@ in build.properties</fail>
     </javac>
   </target>
 
-  <target name="test" depends="clean,compile">
+  <target name="test" depends="compile">
     <mkdir dir="${test.report.dir}"/>
     <junit printsummary="yes" haltonfailure="no" fork="yes">
       <sysproperty key="basedir" value="${basedir}"/>

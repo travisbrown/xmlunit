@@ -41,6 +41,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Test case for XMLUnit
@@ -61,10 +63,22 @@ public class test_XMLUnit extends TestCase{
      * Test overiding the SAX parser used to parse control documents
      */
     public void testSetControlParser() throws Exception {
-        Object before = XMLUnit.getControlParser();
+        Object before = XMLUnit.newControlParser();
         XMLUnit.setControlParser(getDocumentBuilderFactoryImplClass());
         assertEquals("should be different", false,
-            before == XMLUnit.getControlParser());
+            before == XMLUnit.newControlParser());
+    }
+
+    public void testSetTestEntityResolver() {
+        EntityResolver resolver = new DefaultHandler();
+        XMLUnit.setTestEntityResolver(resolver);
+        fail("//assertEquals(resolver, XMLUnit.newTestParser().getEntityResolver());");
+    }
+
+    public void testSetControlEntityResolver() {
+        EntityResolver resolver = new DefaultHandler();
+        XMLUnit.setControlEntityResolver(resolver);
+        fail("//assertEquals(resolver, XMLUnit.newControlParser().getEntityResolver());");
     }
 
     public void testIgnoreWhitespace() throws Exception {
@@ -89,10 +103,10 @@ public class test_XMLUnit extends TestCase{
      * Test overiding the SAX parser used to parse test documents
      */
     public void testSetTestParser() throws Exception {
-        Object before = XMLUnit.getTestParser();
+        Object before = XMLUnit.newTestParser();
         XMLUnit.setTestParser(getDocumentBuilderFactoryImplClass());
         assertEquals("should be different", false,
-            before==XMLUnit.getTestParser());
+            before==XMLUnit.newTestParser());
     }
 
     public void testSetTransformerFactory() throws Exception {

@@ -85,7 +85,7 @@ public class test_Diff extends TestCase{
     private Document aDocument;
 
     public void setUp() throws Exception {
-        aDocument = XMLUnit.getControlParser().newDocument();
+        aDocument = XMLUnit.newControlParser().newDocument();
     }
 
     public void testToString(){

@@ -85,7 +85,7 @@ public class test_ElementNameAndTextQualifier extends TestCase {
 	}
 	
 	public void setUp() throws Exception {
-		document = XMLUnit.getControlParser().newDocument();
+		document = XMLUnit.newControlParser().newDocument();
 		elementNameAndTextQualifier = new ElementNameAndTextQualifier();
 	}
 

@@ -132,7 +132,7 @@ public class test_TolerantSaxDocumentBuilder extends XMLTestCase {
     }
 
     public void setUp() throws Exception {
-        builder = new TolerantSaxDocumentBuilder(XMLUnit.getTestParser());
+        builder = new TolerantSaxDocumentBuilder(XMLUnit.newTestParser());
         parser = SAXParserFactory.newInstance().newSAXParser();
     }
 

@@ -96,8 +96,8 @@ implements DifferenceListener, ComparisonController {
      */
     public Diff(Reader control, Reader test) throws SAXException, IOException,
     ParserConfigurationException {
-        this(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
-            XMLUnit.buildDocument(XMLUnit.getTestParser(), test));
+        this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
+            XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
     }
 
     /**
@@ -122,8 +122,8 @@ implements DifferenceListener, ComparisonController {
 	 */
 	public Diff(InputSource control, InputSource test) throws SAXException, IOException,
 	ParserConfigurationException {
-		this(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
-			XMLUnit.buildDocument(XMLUnit.getTestParser(), test));
+		this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
+			XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
 	}
 
 	/**

@@ -73,7 +73,7 @@ public class NodeTest {
      */
     public NodeTest(Reader reader) throws SAXException,
     ParserConfigurationException, IOException {
-        this(XMLUnit.buildDocument(XMLUnit.getControlParser(), reader));
+        this(XMLUnit.buildDocument(XMLUnit.newControlParser(), reader));
     }
 
     /**

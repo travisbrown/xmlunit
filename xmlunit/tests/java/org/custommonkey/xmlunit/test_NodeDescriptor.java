@@ -151,7 +151,7 @@ public class test_NodeDescriptor extends TestCase {
 	}
 
 	public void setUp() throws Exception {
-		aDocument = XMLUnit.getControlParser().newDocument();
+		aDocument = XMLUnit.newControlParser().newDocument();
 		stringBuffer = new StringBuffer();
 	}
 			

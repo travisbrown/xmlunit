@@ -50,10 +50,6 @@ public class test_BugFixes extends TestCase {
         XMLUnit.setTransformerFactory("org.apache.xalan.processor.TransformerFactoryImpl");
     }
 
-    public test_BugFixes() {
-        super();
-    }
-
     /**
      * Return the test suite containing the bug fix tests
      */
