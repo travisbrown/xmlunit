@@ -55,8 +55,9 @@ public class test_Validator extends XMLTestCase {
     private File tempDTDFile;
 
     public void testXSchema() throws Exception{
-        XMLUnit.setSAXParserFactory("org.apache.xerces.jaxp.SAXParserFactoryImpl");
-        validator = new Validator(new FileReader("tests/etc/BookXsdGenerated.xml"));
+    	File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/BookXsdGenerated.xml");
+    	assertTrue("xsdFile exists", xsdFile.exists());
+        validator = new Validator(new FileReader(xsdFile));
 
         validator.useXMLSchema(true);
 
