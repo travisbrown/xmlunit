@@ -1,4 +1,4 @@
-XMLUnit version 0.5
+XMLUnit version 0.6
 
 To run this software you will need:
 - junit (http://www.junit.org/)
@@ -10,6 +10,23 @@ Enjoy!
 http://xmlunit.sourceforge.com
 
 Changes in this version:
+- NEW DetailedDiff class to extract all the differences between two pieces of XML
+- NEW HTMLDocumentBuilder and TolerantSaxDocumentBuilder classes added to enable
+  XML assertions to be made against badly formed HTML documents (uses the Swing
+  html parser)
+- toString() method to return identity and description added to Difference class
+- assertXMLEqual and assertXMLNotEqual with (Document, Document) arguments added
+  to XMLTestCase
+- XMLTestCase now implements the XSLTConstants (and by implication the
+  XMLConstants interface)
+- Fixes for defects raised by danny zapata (handling namespaces), aakture (handling
+  redundant whitespace in XMLUnit.getIgnoreWhitespace), and Craeg strong
+  (handling nested XSL include/import in Transform)
+Thanks for the feedack guys!
+timBacon@primeEight.co.uk
+June 2002
+
+Changes in version 0.5:
 - NEW assertion methods in XMLTestCase: assertXMLEqual, assertXMLNotEqual,
   assertXpathsEqual, assertXpathsNotEqual,
   assertXpathValuesEqual, assertXpathValuesNotEqual, assertXpathEvaluatesTo,
