@@ -79,6 +79,8 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 
 	/**
 	 * Determine whether two elements qualify for further Difference comparison.
+	 * @param differenceEngine the DifferenceEngine instance wanting to
+	 * determine if the elements are comparable
 	 * @param control
 	 * @param test
 	 * @return true if the two elements qualify for further comparison based on
