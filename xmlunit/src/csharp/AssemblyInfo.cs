@@ -10,9 +10,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("XmlUnit")]
 [assembly: AssemblyDescription("NUnit extension for Xml testing")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("http://xmlunit.sf.net/")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("http://xmlunit.sf.net/")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -34,14 +34,18 @@ namespace XmlUnit {
         }
         
         private XmlReader CreateXmlReader(XmlInput forInput) {
-            XmlReader xmlReader = forInput.CreateXmlReader(
-                _diffConfiguration.BaseURI, _diffConfiguration.WhitespaceHandling);
+            XmlReader xmlReader = forInput.CreateXmlReader();
+        	
+        	if (xmlReader is XmlTextReader) {
+        		((XmlTextReader) xmlReader ).WhitespaceHandling = _diffConfiguration.WhitespaceHandling;
+        	}
             
-            if (!_diffConfiguration.UseValidatingParser) {
-                return xmlReader;
+            if (_diffConfiguration.UseValidatingParser) {
+	            XmlValidatingReader validatingReader = new XmlValidatingReader(xmlReader);
+	            return validatingReader;
             }
-            XmlValidatingReader validatingReader = new XmlValidatingReader(xmlReader);
-            return validatingReader;
+            
+            return xmlReader;
         }
         
         public DiffResult Compare() {

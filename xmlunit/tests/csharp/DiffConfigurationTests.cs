@@ -44,7 +44,7 @@ namespace XmlUnit.Tests {
         }
                 
         [Test] public void CanConfigureNotToUseValidatingParser() {
-            DiffConfiguration diffConfiguration = new DiffConfiguration(false, ".");
+            DiffConfiguration diffConfiguration = new DiffConfiguration(false);
             Assertion.AssertEquals(false, diffConfiguration.UseValidatingParser);
             
             FileStream controlFileStream = File.Open(ValidatorTests.VALID_FILE, 

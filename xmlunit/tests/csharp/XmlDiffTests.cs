@@ -1,4 +1,4 @@
-﻿namespace XmlUnit.Tests {
+namespace XmlUnit.Tests {
     using XmlUnit;
     using NUnit.Framework;
     using System.IO;

@@ -26,7 +26,7 @@ namespace XmlUnit {
                 
         private XPathNavigator GetNavigator(XmlInput forXmlInput) {            
             XPathDocument xpathDocument = 
-                new XPathDocument(forXmlInput.CreateDefaultXmlReader());
+                new XPathDocument(forXmlInput.CreateXmlReader());
             return xpathDocument.CreateNavigator();
         }
                 

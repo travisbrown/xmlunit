@@ -53,18 +53,24 @@ namespace XmlUnit {
             AssertEquals(xmlDiff.OptionalDescription, identicalOrNot, diffResult.Identical);
         }
         
+        public static void AssertXmlValid(string someXml) {
+            AssertXmlValid(new XmlInput(someXml));
+        }
+        
         public static void AssertXmlValid(string someXml, string baseURI) {
-            TextReader reader = new StringReader(someXml);
-            AssertXmlValid(reader, baseURI);
+            AssertXmlValid(new XmlInput(someXml, baseURI));
+        }
+        
+        public static void AssertXmlValid(TextReader reader) {
+            AssertXmlValid(new XmlInput(reader));
         }
         
         public static void AssertXmlValid(TextReader reader, string baseURI) {
-            Validator validator = new Validator(reader, baseURI);
-            AssertXmlValid(validator);
+            AssertXmlValid(new XmlInput(reader, baseURI));
         }
         
-        public static void AssertXmlValid(XmlInput xmlInput, string baseURI) {
-            Validator validator = new Validator(xmlInput, baseURI);
+        public static void AssertXmlValid(XmlInput xmlInput) {
+            Validator validator = new Validator(xmlInput);
             AssertXmlValid(validator);
         }
         

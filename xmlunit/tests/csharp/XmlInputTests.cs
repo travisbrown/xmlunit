@@ -17,13 +17,13 @@ namespace XmlUnit.Tests {
         
         [Test] public void StringInputTranslatesToXmlReader() {
             XmlInput input = new XmlInput(INPUT);
-            string actual = ReadOuterXml(CreateXmlReader(input));
+            string actual = ReadOuterXml(input.CreateXmlReader());
             Assertion.AssertEquals(_expected, actual);
         }
         
         [Test] public void TextReaderInputTranslatesToXmlReader() {
             XmlInput input = new XmlInput(new StringReader(INPUT));
-            string actual = ReadOuterXml(CreateXmlReader(input));
+            string actual = ReadOuterXml(input.CreateXmlReader());
             Assertion.AssertEquals(_expected, actual);
         }
         
@@ -34,7 +34,7 @@ namespace XmlUnit.Tests {
             writer.Flush();
             stream.Seek(0, SeekOrigin.Begin);
             XmlInput input = new XmlInput(stream);
-            string actual = ReadOuterXml(CreateXmlReader(input));
+            string actual = ReadOuterXml(input.CreateXmlReader());
             try {
                 Assertion.AssertEquals(_expected, actual);
             } finally {
@@ -49,11 +49,6 @@ namespace XmlUnit.Tests {
             } finally {
                 forReader.Close();
             }
-        }
-        
-        private XmlReader CreateXmlReader(XmlInput forInput) {
-            XmlReader reader = forInput.CreateXmlReader(".", WhitespaceHandling.All);
-            return reader;
         }
         
         [Test] public void NotEqualsNull() {

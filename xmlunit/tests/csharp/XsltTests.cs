@@ -13,9 +13,6 @@ namespace XmlUnit.Tests {
         public static readonly string XSLT_TEXT_OUTPUT_NOINDENT =
             "<xsl:output method=\"xml\" encoding=\"UTF-8\" omit-xml-declaration=\"yes\" indent=\"no\"/>";
     
-//        public static readonly string XSLT_STRIP_WHITESPACE =
-//            "<xsl:strip-space elements=\"*\"/>";
-    
         public static readonly string XSLT_IDENTITY_TEMPLATE =
             "<xsl:template match=\"/\"><xsl:copy-of select=\".\"/></xsl:template>";
     
@@ -29,7 +26,8 @@ namespace XmlUnit.Tests {
             Xslt xslt = new Xslt(identityTransform);
             string input = "<qwerty>uiop</qwerty>";
             string output = new string(input.ToCharArray());
-            Assertion.AssertEquals(output, xslt.Transform(input));
+            Assertion.AssertEquals(output, xslt.Transform(input).AsString());
+            Assertion.AssertEquals(output, xslt.Transform(input).AsString());
         }
     }
 }

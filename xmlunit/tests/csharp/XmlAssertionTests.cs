@@ -45,7 +45,7 @@ namespace XmlUnit.Tests {
         [Test] public void AssertXmlValidTrueForValidFile() {
             StreamReader reader = GetStreamReader(ValidatorTests.VALID_FILE);
             try {
-                XmlAssertion.AssertXmlValid(reader, ValidatorTests.BASE_URI);
+                XmlAssertion.AssertXmlValid(reader);
             } finally {
                 reader.Close();
             }
@@ -54,7 +54,7 @@ namespace XmlUnit.Tests {
         [Test] public void AssertXmlValidFalseForInvalidFile() {
             StreamReader reader = GetStreamReader(ValidatorTests.INVALID_FILE);
             try {
-                XmlAssertion.AssertXmlValid(reader, ValidatorTests.BASE_URI);
+                XmlAssertion.AssertXmlValid(reader);
                 Assertion.Fail("Expected assertion failure");
             } catch(AssertionException e) {
                 AvoidUnusedVariableCompilerWarning(e);

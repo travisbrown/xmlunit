@@ -3,66 +3,66 @@ namespace XmlUnit {
     using System.Xml;
     
     public class XmlInput {
-        private delegate XmlReader XmlInputTranslator(string baseURI, WhitespaceHandling whitespaceHandling);
-        
-        private object _originalInput;
-        private XmlInputTranslator _translateInput;
-        
-        public XmlInput(string someXml) {
-            _originalInput = someXml;
-            _translateInput = new XmlInputTranslator(TranslateString);
+        private delegate XmlReader XmlInputTranslator(object originalInput, string baseURI);
+        private readonly string _baseURI;
+        private readonly object _originalInput;
+        private readonly XmlInputTranslator _translateInput;
+    	private static readonly string CURRENT_FOLDER = ".";
+    	
+    	private XmlInput(string baseURI, object someXml, XmlInputTranslator translator) {
+    		_baseURI = baseURI;
+    	     _originalInput = someXml;
+            _translateInput = translator;
         }
         
-        public XmlReader WhitespaceAdjusted(XmlTextReader xmlTextReader, WhitespaceHandling whitespaceHandling) {
-            xmlTextReader.WhitespaceHandling = whitespaceHandling;
-            return xmlTextReader;
+        public XmlInput(string someXml, string baseURI) :
+        	this(baseURI, someXml, new XmlInputTranslator(TranslateString)) {
         }
         
-        private XmlReader TranslateString(string baseURI, WhitespaceHandling whitespaceHandling) {
-            return WhitespaceAdjusted(
-                new XmlTextReader(baseURI, new StringReader((string) _originalInput)),
-                whitespaceHandling);
+        public XmlInput(string someXml) :
+        	this(someXml, CURRENT_FOLDER) {
         }
         
-        public XmlInput(Stream someXml) {
-            _originalInput = someXml;
-            _translateInput = new XmlInputTranslator(TranslateStream);
+        private static XmlReader TranslateString(object originalInput, string baseURI) {
+            return new XmlTextReader(baseURI, new StringReader((string) originalInput));
+        }
+        
+        public XmlInput(Stream someXml, string baseURI) :
+        	this(baseURI, someXml, new XmlInputTranslator(TranslateStream)) {
+        }
+        
+        public XmlInput(Stream someXml) :
+        	this(someXml, CURRENT_FOLDER) {
         }
                 
-        private XmlReader TranslateStream(string baseURI, WhitespaceHandling whitespaceHandling) {
-            return WhitespaceAdjusted(
-                new XmlTextReader(baseURI, new StreamReader((Stream) _originalInput)),
-                whitespaceHandling);
+        private static XmlReader TranslateStream(object originalInput, string baseURI) {
+            return new XmlTextReader(baseURI, new StreamReader((Stream) originalInput));
         }
         
-        public XmlInput(TextReader someXml) {
-            _originalInput = someXml;
-            _translateInput = new XmlInputTranslator(TranslateReader);
+        public XmlInput(TextReader someXml, string baseURI) :
+        	this(baseURI, someXml, new XmlInputTranslator(TranslateReader)) {
+        }
+        
+        public XmlInput(TextReader someXml) :
+        	this(someXml, CURRENT_FOLDER) {
         }
                 
-        private XmlReader TranslateReader(string baseURI, WhitespaceHandling whitespaceHandling) {
-            return WhitespaceAdjusted(
-                new XmlTextReader(baseURI, (TextReader) _originalInput),
-                whitespaceHandling);
+        private static XmlReader TranslateReader(object originalInput, string baseURI) {
+            return new XmlTextReader(baseURI, (TextReader) originalInput);
         }
         
-        public XmlInput(XmlReader someXml) {
-            _originalInput = someXml;
-            _translateInput = new XmlInputTranslator(NullTranslator);
+        public XmlInput(XmlReader someXml) :
+        	this(null, someXml, new XmlInputTranslator(NullTranslator)) {
         }
                 
-        private XmlReader NullTranslator(string baseURI, WhitespaceHandling whitespaceHandling) {
-            return (XmlReader) _originalInput;
+        private static XmlReader NullTranslator(object originalInput, string baseURI) {
+            return (XmlReader) originalInput;
         }
         
-        public XmlReader CreateXmlReader(string baseURI, WhitespaceHandling whitespaceHandling) {
-            return _translateInput(baseURI, whitespaceHandling);
+        public XmlReader CreateXmlReader() {
+            return _translateInput(_originalInput, _baseURI);
         }
-        
-        internal XmlReader CreateDefaultXmlReader() {
-            return CreateXmlReader(".", WhitespaceHandling.All); 
-        }
-        
+                
         public override bool Equals(object other) {
             if (other != null && other is XmlInput) {
                 return _originalInput.Equals(((XmlInput)other)._originalInput);

@@ -5,47 +5,44 @@ namespace XmlUnit {
         public static readonly WhitespaceHandling DEFAULT_WHITESPACE_HANDLING = WhitespaceHandling.All;
         public static readonly string DEFAULT_DESCRIPTION = "";
         public static readonly bool DEFAULT_USE_VALIDATING_PARSER = true;
-        public static readonly string DEFAULT_BASE_URI = ".";
         
         private readonly string _description;
         private readonly bool _useValidatingParser;
-        private readonly string _baseURI;
         private readonly WhitespaceHandling _whitespaceHandling;
         
         public DiffConfiguration(string description, 
-                                 bool useValidatingParser, string baseURI, 
+                                 bool useValidatingParser,  
                                  WhitespaceHandling whitespaceHandling) {
             _description = description;
             _useValidatingParser = useValidatingParser;
-            _baseURI = baseURI;
             _whitespaceHandling = whitespaceHandling;
         }
         
         public DiffConfiguration(string description, 
                                  WhitespaceHandling whitespaceHandling)
         : this (description, 
-                DEFAULT_USE_VALIDATING_PARSER, DEFAULT_BASE_URI, 
+                DEFAULT_USE_VALIDATING_PARSER,  
                 whitespaceHandling) {}
         
         public DiffConfiguration(WhitespaceHandling whitespaceHandling)
         : this(DEFAULT_DESCRIPTION, 
-               DEFAULT_USE_VALIDATING_PARSER, DEFAULT_BASE_URI, 
+               DEFAULT_USE_VALIDATING_PARSER,  
                whitespaceHandling) {}
         
         public DiffConfiguration(string description) 
         : this(description, 
-               DEFAULT_USE_VALIDATING_PARSER, DEFAULT_BASE_URI, 
+               DEFAULT_USE_VALIDATING_PARSER,  
                DEFAULT_WHITESPACE_HANDLING) {}
                 
-        public DiffConfiguration(bool useValidatingParser, string baseURI) 
+        public DiffConfiguration(bool useValidatingParser) 
         : this(DEFAULT_DESCRIPTION, 
-               useValidatingParser, baseURI, 
+               useValidatingParser, 
                DEFAULT_WHITESPACE_HANDLING) {
         }
         
         public DiffConfiguration() 
         : this(DEFAULT_DESCRIPTION, 
-               DEFAULT_USE_VALIDATING_PARSER, DEFAULT_BASE_URI, 
+               DEFAULT_USE_VALIDATING_PARSER,  
                DEFAULT_WHITESPACE_HANDLING) {}
         
         public string Description {
@@ -59,13 +56,7 @@ namespace XmlUnit {
                 return _useValidatingParser;
             }
         }
-        
-        public string BaseURI {
-            get {
-                return _baseURI;
-            }
-        }
-        
+                
         public WhitespaceHandling WhitespaceHandling {
             get {
                 return _whitespaceHandling;

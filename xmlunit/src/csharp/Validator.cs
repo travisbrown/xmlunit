@@ -8,22 +8,16 @@ namespace XmlUnit {
         private bool isValid = true;
         private string validationMessage;
         private readonly XmlValidatingReader validatingReader;
-        
-        public Validator(TextReader reader, string baseURI) 
-            :this(new XmlInput(reader), baseURI) {
-        }
-            
-        public Validator(XmlInput input, string baseURI) 
-            : this(input, baseURI, WhitespaceHandling.All) {
-        }
-        
-        public Validator(XmlInput input, string baseURI, 
-                         WhitespaceHandling whitespaceHandling) {
-            XmlReader xmlReader = input.CreateXmlReader(baseURI, WhitespaceHandling.All);
-            validatingReader = new XmlValidatingReader(xmlReader);          
+    	
+    	private Validator(XmlReader xmlInputReader) {
+            validatingReader = new XmlValidatingReader(xmlInputReader);          
             AddValidationEventHandler(new ValidationEventHandler(ValidationFailed));            
+    	}
+
+        public Validator(XmlInput input) :
+        	this(input.CreateXmlReader()) {
         }
-                        
+                                
         public void AddValidationEventHandler(ValidationEventHandler handler) {
             validatingReader.ValidationEventHandler += handler;
         }
