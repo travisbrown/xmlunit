@@ -25,6 +25,24 @@ public class XMLTestCase extends TestCase{
         super(name);
     }
 
+    public void setIgnoreWhitespace(boolean ignore){
+        XMLUnit.setIgnoreWhitespace(ignore);
+    }
+
+    /**
+     * Overide default sax parser used to parser documents
+     */
+    public void setControlParser(String parser){
+        XMLUnit.setControlParser(parser);
+    }
+
+    /**
+     * Overide default sax parser used to parser documents
+     */
+    public void setTestParser(String parser){
+        XMLUnit.setTestParser(parser);
+    }
+
     /** 
      * Compare XML documents provided by two Reader classes
      * @throws JDOMException Error thrown in response to an error passing xml doc
@@ -75,7 +93,18 @@ public class XMLTestCase extends TestCase{
      * @param test XML to be tested
      */
     public void assertXMLEqual(String control, String test) throws JDOMException{
-        assert(compareXML(control, test).similar());
+        Diff diff = compareXML(control, test);
+        assert(diff.toString(), diff.similar());
+    }
+
+    /**
+     * Assert that two XML documents are the similar
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     */
+    public void assertXMLEqual(Reader control, Reader test) throws JDOMException{
+        Diff diff = compareXML(control, test);
+        assert(diff.toString(), diff.similar());
     }
 
     /**
@@ -85,7 +114,19 @@ public class XMLTestCase extends TestCase{
      * @param test XML to be tested
      */
     public void assertXMLEqual(String err, String control, String test) throws JDOMException{
-        assert(err, compareXML(control, test).similar());
+        Diff diff = compareXML(control, test);
+        assert(err + ", " + diff.toString(), diff.similar());
+    }
+
+    /**
+     * Assert that two XML documents are the similar
+     * @param err Message to be displayed on assertion failure
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     */
+    public void assertXMLEqual(String err, Reader control, Reader test) throws JDOMException{
+        Diff diff = compareXML(control, test);
+        assert(err + ", " + diff.toString(), diff.similar());
     }
 
     /**
@@ -94,7 +135,8 @@ public class XMLTestCase extends TestCase{
      * @param test XML to be tested
      */
     public void assertXMLNotEqual(String control, String test) throws JDOMException{
-        assert(!compareXML(control, test).similar());
+        Diff diff = compareXML(control, test);
+        assert(diff.toString(), !diff.similar());
     }
 
     /**
@@ -104,6 +146,28 @@ public class XMLTestCase extends TestCase{
      * @param test XML to be tested
      */
     public void assertXMLNotEqual(String err, String control, String test) throws JDOMException{
-        assert(err, !compareXML(control, test).similar());
+        Diff diff = compareXML(control, test);
+        assert(err + ", " + diff.toString(), !diff.similar());
+    }
+
+    /**
+     * Assert that two XML documents are the NOT similar
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     */
+    public void assertXMLNotEqual(Reader control, Reader test) throws JDOMException{
+        Diff diff = compareXML(control, test);
+        assert(diff.toString(), !diff.similar());
+    }
+
+    /**
+     * Assert that two XML documents are the NOT similar
+     * @param err Message to be displayed on assertion failure
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     */
+    public void assertXMLNotEqual(String err, Reader control, Reader test) throws JDOMException{
+        Diff diff = compareXML(control, test);
+        assert(err + ", " + diff.toString(), !diff.similar());
     }
 }

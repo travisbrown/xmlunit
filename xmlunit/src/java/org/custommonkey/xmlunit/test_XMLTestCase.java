@@ -1,6 +1,7 @@
 package org.custommonkey.xmlunit;
 
 import junit.framework.*;
+import java.io.*;
 
 /**
  * Test case used to test the XMLTestCase
@@ -43,6 +44,21 @@ public class test_XMLTestCase extends XMLTestCase{
         };
     }
 
+    public void testSetParsers(){
+        setControlParser("org.apache.xerces.parsers.SAXParser");
+        setTestParser("org.apache.xerces.parsers.SAXParser");
+    }
+
+    public void testIgnoreWhitespace() throws Exception {
+        setIgnoreWhitespace(true);
+        String test = "<test>   asdc   </test>";
+        String control = "<test>asdc</test>";
+
+        assertXMLEqual(control,test);
+        setIgnoreWhitespace(false);
+        assertXMLNotEqual(control,test);
+    }
+
     /**
      *  Test for the compareXML method.
      */
@@ -53,6 +69,22 @@ public class test_XMLTestCase extends XMLTestCase{
             assert("!compareXML case " + i + " failed",
                 !compareXML(control[i], test[i]).similar());
         }
+    }
+
+    /**
+     * Test the comparision of two files
+     */
+    public void testCompareFiles() throws Exception {
+        assertXMLEqual(new FileReader("tests/test1.xml"),
+            new FileReader("tests/test1.xml"));
+        assertXMLNotEqual(new FileReader("tests/test1.xml"),
+            new FileReader("tests/test2.xml"));
+
+        try{
+            assertXMLNotEqual(new FileReader("nofile.xml"),
+                new FileReader("nofile.xml"));
+            fail("Expecting FileNotFoundException");
+        }catch(FileNotFoundException e){}
     }
 
     /**
