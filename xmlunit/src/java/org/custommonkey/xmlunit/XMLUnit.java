@@ -420,7 +420,7 @@ public final class XMLUnit {
      * @return current version
      */
     public static String getVersion() {
-        return "@@version@@"; 
+        return "1.0"; 
     }
 
 }

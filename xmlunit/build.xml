@@ -125,7 +125,7 @@
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="${docs.dir}/**/*.html,${test.dir}/etc/*.html"/>
         <zipfileset prefix="xmlunit" dir="${src.dir}/site"
-            includes="*.pdf"/>
+            includes="*.pdf,example.html"/>
     </zip>
   </target>
 

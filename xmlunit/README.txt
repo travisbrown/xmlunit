@@ -17,11 +17,11 @@ Enjoy!
 http://xmlunit.sourceforge.net
 
 Changes in this version:
-- DifferenceListener interface refactored: single method now provides the XPath location 
+- DifferenceListener interface refactored: single method now provides the NodeDetail 
   of nodes that differ when a comparison is performed
-- NEW NodeDetail class added to supply details of compared nodes in a Difference
+- NEW NodeDetail class added to supply details of compared nodes including XPath location!
 - NEW ElementQualifier interface added so that documents containing elements with 
-  repeated names can be compared using attribute values to determine which of the 
+  repeated names can be compared using attribute or text values to determine which of the 
   candidate elements are actually comparable (fixes various feature requests / posted bugs)
 - NEW ElementNameQualifier, ElementNameAndTextQualifier and ElementNameAndAttributeQualifier
   classes added to provide the default (backwards compatible) and extended 
@@ -35,7 +35,7 @@ Changes in this version:
 - PDF overview document added to distribution and content updated
 - Updated Javadocs on website
 tim.bacon@thoughtworks.com
-Novmeber/December 2002
+November/December 2002
 
 Changes in version 0.8:
 - Changes to compiled jar in distribution required for compatibility with JUnit 3.8
