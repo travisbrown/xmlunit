@@ -1,4 +1,6 @@
 <project name="xmlunit" description="XmlUnit for .Net" default="compile">
+  <property name="project.version" value="0.1"/>
+  <property name="deploy.file" value="${nant.project.name}${project.version}.zip"/>
   <property name="base.dir" value="${nant.project.basedir}"/>
   <property name="src.dir" value="${base.dir}/src/csharp"/>
   <property name="tests.src.dir" value="${base.dir}/tests/csharp"/>
@@ -47,7 +49,20 @@
   	<exec basedir="${bin.dir}" workingdir="${bin.dir}" program="${nunit.v2.bin.dir}/nunit-console.exe" commandline="/assembly:${nant.project.name}.tests.dll"/>
   </target>
   
-  <target name="all" description="execute all tasks in the project" depends="clean,compile,test"/>
+  <target name="deploy" description="zip all code for deployment" depends="test">
+    <delete file="${deploy.file}"/>
+    <zip zipfile="${deploy.file}">
+      <fileset basedir="${base.dir}">
+        <includes name="LICENSE.txt"/> 
+        <includes name="*.build"/>
+        <includes name="**/*.cs"/>
+        <includes name="**/${nant.project.name}*.dll"/>
+        <excludes name="**/AllTests.cs"/>
+      </fileset>
+    </zip>
+  </target>
+  
+  <target name="all" description="execute all tasks in the project" depends="clean,compile,test,deploy"/>
   
 </project>
 
