@@ -1,4 +1,4 @@
-http://xmlunit.sourceforge.com
+XMLUnit version 0.5
 
 To run this software you will need:
 - junit (http://www.junit.org/)
@@ -7,17 +7,55 @@ To run this software you will need:
 in your classpath
 
 Enjoy!
+http://xmlunit.sourceforge.com
 
 Changes in this version:
+- NEW assertion methods in XMLTestCase: assertXMLEqual, assertXMLNotEqual,
+  assertXpathsEqual, assertXpathsNotEqual,
+  assertXpathValuesEqual, assertXpathValuesNotEqual, assertXpathEvaluatesTo,
+  assertXMLValid, assertXMLIdentical, assertNodeTestPasses
+- NEW DifferenceEngine and Difference classes used by the Diff class to
+  facilitate comparison across multiple namespaces and for more node types
+  (DocumentType, Comment, CDATASection, and ProcessingInstruction
+  as well as Element, Attribute and Text)
+- Diff messages now more descriptive
+- NEW SimpleXpathEngine class for testing Xpath expressions
+- NEW SimpleSerializer class
+- TransformerFactory setter and getter, and utility buildDocument() methods
+  added to XMLUnit class
+- 'global' but non-static methods in XMLTestCase deprecated (XMLUnit static
+  methods should be used instead)
+- Xalan and Xerces specified as default JAXP implementations in the 'test'
+  target of the ant build file (to get around limitations in the Crimson parser)
+timBacon@primeEight.co.uk
+April 2002
+
+Features added in version 0.4:
 - NEW Validator class for validation against DTDs
-- NEW NodeTest class, NodeTester interface, AbstractNodeTester and CountingNodeTester classes for validating individual Nodes in a DOM tree (NB: requires support for DOM Traversal in your DOM implementation)
+- NEW NodeTest class, NodeTester interface, AbstractNodeTester and
+  CountingNodeTester classes for validating individual Nodes in a DOM tree
+  (NB: requires support for DOM Traversal in your DOM implementation)
 - cleaner separation of source and test code through directory structure
 - better documentation
 - replacement of all deprecated JUnit assert() with assertEquals() calls
-
-Features coming in version 0.5:
-- Diff support for non-element nodes
-- Validator support for XML schema validation
-
 timBacon@primeEight.co.uk
 March 2002
+
+Features added in version 0.3:
+- NEW Transform class added to support for JAXP/Trax compliant XSLT engines
+- Diff class extended to support Transform class
+- more testcases added
+- removed external dependency on JDOM
+timBacon@primeEight.co.uk
+October 2001
+
+Original source:
+- Diff class to describe differences between DOM documents
+- XMLUnit class to act as a Diff factory
+- XMLTestCase extension to JUnit TestCase
+jeff@customMonkey.org
+April 2001
+
+Features planned for future releases:
+- Validator support for XML schema validation (didn't make it into version 0.5)
+- some SOAP-specific functionality
