@@ -7,12 +7,7 @@
     <property name="out.dir" value="classes"/>
     <property name="dist.dir" value="dist"/>
     <property name="docs.dir" value="doc"/>
-    <property name="test.report.dir" value="junit"/>
-    <!-- The location of junit.jar -->
-    <property name="junit.libdir" value="d:/apps/junit/junit3.8.1"/>
-    <!-- The location of jar files for xml parsing and xsl transforms, eg xalan/bin -->
-    <property name="xmlxsl.libdir" value="d:/apps/xalan-j_2_4_D1/bin"/>
-    <mkdir dir="${src.dir}/etc"/>
+    <property file="build.properties"/>
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${out.dir}"/>
     <mkdir dir="${dist.dir}"/>
@@ -30,25 +25,18 @@
     <mkdir dir="${out.dir}"/>
     <javac srcdir="${src.dir}/java:${test.dir}/java" destdir="${out.dir}" debug="on">
       <classpath>
-        <fileset dir="${xmlxsl.libdir}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${junit.libdir}">
-            <include name="*.jar"/>
-        </fileset>
+        <pathelement location="${xmlxsl.lib}"/>
+        <pathelement location="${junit.lib}"/>
         <pathelement path="${java.class.path}"/>
       </classpath>
     </javac>
-    <copy todir="${out.dir}/etc">
-      <fileset dir="${src.dir}/etc"/>
-    </copy>
   </target>
 
   <target name="test" depends="clean,compile">
     <mkdir dir="${test.report.dir}"/>
     <junit printsummary="yes" haltonfailure="no" fork="yes">
-    	<!--
-          <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="basedir" value="${basedir}"/>
+      <!--
           <sysproperty key="javax.xml.parsers.DocumentBuilderFactory"
             value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
           <sysproperty key="javax.xml.parsers.SAXParserFactory"
@@ -58,12 +46,8 @@
         -->
       <classpath>
         <pathelement location="${out.dir}"/>
-        <fileset dir="${xmlxsl.libdir}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${junit.libdir}">
-            <include name="*.jar"/>
-        </fileset>
+        <pathelement location="${xmlxsl.lib}"/>
+        <pathelement location="${junit.lib}"/>
         <pathelement path="${java.class.path}"/>
       </classpath>
       <formatter type="xml"/>
@@ -74,19 +58,17 @@
       </batchtest>
     </junit>
 
-	<junitreport todir="${test.report.dir}">
-	  <fileset dir="${test.report.dir}">
-	    <include name="TEST-*.xml"/>
-	  </fileset>
-	  <report format="frames" todir="${test.report.dir}/html"/>
-	</junitreport>
-
-
+    <junitreport todir="${test.report.dir}">
+      <fileset dir="${test.report.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${test.report.dir}/html"/>
+    </junitreport>
   </target>
 
   <target name="setDistVersion" depends="init">
     <replace dir="${src.dir}" token="@@version@@" value="${xmlunit.version}"
-       includes="**/*.java"/>
+      includes="**/*.java"/>
   </target>
 
   <target name="docs" depends="init">
@@ -130,4 +112,3 @@
   </target>
 
 </project>
-
