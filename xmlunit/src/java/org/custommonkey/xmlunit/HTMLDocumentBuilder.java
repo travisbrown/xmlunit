@@ -59,7 +59,6 @@ import org.xml.sax.helpers.AttributesImpl;
  * the Swing html parser classes.
  * This allows XML assertions to be made against badly formed HTML.
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
- * @todo Add examples of usage with HTMLUnit...
  * @see TolerantSaxDocumentBuilder
  */
 public class HTMLDocumentBuilder {

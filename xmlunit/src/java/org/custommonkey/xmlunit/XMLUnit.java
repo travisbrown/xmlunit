@@ -1,5 +1,5 @@
 /*
-******************************************************************
+*****************************************************************
 Copyright (c) 2001, Jeff Martin, Tim Bacon
 All rights reserved.
 
@@ -201,7 +201,7 @@ public final class XMLUnit {
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
-     * @decremented use Diff constructor directly
+     * @deprecated use Diff constructor directly
      */
     public static Diff compare(Reader control, Reader test) throws SAXException,
     IOException, ParserConfigurationException {
@@ -216,7 +216,7 @@ public final class XMLUnit {
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
-     * @decremented use Diff constructor directly
+     * @deprecated use Diff constructor directly
      */
     public static Diff compare(InputSource control, InputSource test) throws SAXException,
     IOException, ParserConfigurationException {
@@ -231,7 +231,7 @@ public final class XMLUnit {
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
-     * @decremented use Diff constructor directly
+     * @deprecated use Diff constructor directly
      */
     public static Diff compare(String control, Reader test) throws SAXException,
     IOException, ParserConfigurationException {
@@ -246,7 +246,7 @@ public final class XMLUnit {
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
-     * @decremented use Diff constructor directly
+     * @deprecated use Diff constructor directly
      */
     public static Diff compare(Reader control, String test) throws SAXException,
     IOException, ParserConfigurationException {
@@ -261,7 +261,7 @@ public final class XMLUnit {
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
-     * @decremented use Diff constructor directly
+     * @deprecated use Diff constructor directly
      */
     public static Diff compare(String control, String test) throws SAXException,
     IOException, ParserConfigurationException {
@@ -420,7 +420,7 @@ public final class XMLUnit {
      * @return current version
      */
     public static String getVersion() {
-        return "@@version@@";
+        return "@@version@@"; 
     }
 
 }

@@ -67,7 +67,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @see #testEntityReference(EntityReference)
      * @see #testNotation(Notation)
      * @see #testProcessingInstruction(ProcessingInstruction)
-     * @see @see #testText(Text)
+     * @see #testText(Text)
      */
     public void testNode(Node aNode, NodeTest forTest) throws NodeTestException {
         switch (aNode.getNodeType()) {

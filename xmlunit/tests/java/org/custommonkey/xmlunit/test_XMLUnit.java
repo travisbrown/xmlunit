@@ -74,11 +74,11 @@ public class test_XMLUnit extends TestCase{
         String test="<test>  monkey   </test>";
         String control="<test>monkey</test>";
         assertEquals("Should be similar", true,
-            XMLUnit.compare(control, test).similar());
+            new Diff(control, test).similar());
         try {
             XMLUnit.setIgnoreWhitespace(false);
             assertEquals("Should be different", false,
-                XMLUnit.compare(control, test).similar());
+                new Diff(control, test).similar());
         } finally {
             // restore default setting
             XMLUnit.setIgnoreWhitespace(false);
