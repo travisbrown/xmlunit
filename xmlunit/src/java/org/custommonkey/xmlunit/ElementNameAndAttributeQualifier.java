@@ -107,20 +107,29 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 	 */
 	protected boolean areAttributesComparable(Element control, Element test) {
 		String controlValue, testValue;
-		String[] qualifyingAttributes;
-		if (qualifyingAttrNames == ALL_ATTRIBUTES) {
-			NamedNodeMap namedNodeMap = control.getAttributes();  
-			qualifyingAttributes = new String[namedNodeMap.getLength()];
+		Attr[] qualifyingAttributes;
+		NamedNodeMap namedNodeMap = control.getAttributes();
+		if (qualifyingAttrNames == ALL_ATTRIBUTES) {  
+			qualifyingAttributes = new Attr[namedNodeMap.getLength()];
 			for (int n=0; n < qualifyingAttributes.length; ++n) {
-				qualifyingAttributes[n] = ((Attr) namedNodeMap.item(n)).getName();
+				qualifyingAttributes[n] = (Attr) namedNodeMap.item(n);
 			}
 		} else {
-			qualifyingAttributes = qualifyingAttrNames;
+			qualifyingAttributes = new Attr[qualifyingAttrNames.length];
+			for (int n=0; n < qualifyingAttrNames.length; ++n) {
+				qualifyingAttributes[n] = (Attr) namedNodeMap.getNamedItem(qualifyingAttrNames[n]);
+			} 
 		}
 			
+		String nsURI;
 		for (int i=0; i < qualifyingAttributes.length; ++i) {
-			controlValue = control.getAttribute(qualifyingAttributes[i]);
-			testValue = test.getAttribute(qualifyingAttributes[i]);
+			nsURI = qualifyingAttributes[i].getNamespaceURI(); 
+			controlValue = qualifyingAttributes[i].getNodeValue();
+			if (nsURI == null || nsURI.length() == 0) {
+				testValue = test.getAttribute(qualifyingAttributes[i].getName());
+			} else {
+				testValue = test.getAttributeNS(nsURI, qualifyingAttributes[i].getLocalName());
+			}
 			if (controlValue == null) {
 				if (testValue != null) {
 					return false;

@@ -137,6 +137,48 @@ public class test_ElementNameAndAttributeQualifier extends TestCase {
 			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 	}	
 
+	public void testNamespacedQualifyingAttribute() throws Exception {
+		final String attrName = "id";
+		final String nsURI = "http://xmlunit.sourceforge.net/tests";
+
+		elementNameAndAttributeQualifier = new ElementNameAndAttributeQualifier();
+		testAssertionsFor(attrName, nsURI, new boolean[] {false, false});
+
+		elementNameAndAttributeQualifier = new ElementNameAndAttributeQualifier(attrName);
+		testAssertionsFor(attrName, nsURI, new boolean[] {true, true});
+	}
+
+	private void testAssertionsFor(String attrName, String nsURI, boolean[] expectedValues) 
+	throws Exception {
+	Element control = document.createElement(TAG_NAME);
+		control.setAttributeNS(nsURI, attrName, "1");
+
+		Element test = document.createElement(TAG_NAME);
+		assertFalse("qwerty id 1 not comparable to qwerty with no attributes",
+		elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+		test.setAttributeNS(nsURI, attrName, "1");
+		assertTrue("qwerty id 1 comparable to qwerty id 1",
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+		String otherNsURI = nsURI + "/2";
+		test.setAttributeNS(otherNsURI, attrName, "2");
+		assertTrue("qwerty id 1 comparable to qwerty id 1 and other-NS id 2",
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+		control.setAttributeNS(nsURI, "uiop","true");
+		assertEquals("qwerty id 1 && uiop comparable to qwerty id 1", expectedValues[0],
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+		test.setAttributeNS(nsURI, "uiop", "false");
+		assertEquals("qwerty id 1 && uiop comparable to qwerty id 1 && !uiop", expectedValues[1],
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+		test.setAttributeNS(nsURI, attrName, "2");
+		assertFalse("qwerty id 1 && uiop NOT comparable to qwerty id 2 && !uiop",
+			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+	}
+
 	public void setUp() throws Exception {
 		document = XMLUnit.getControlParser().newDocument();
 	}
