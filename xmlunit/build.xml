@@ -1,6 +1,6 @@
 <project name="xmlunit" default="compile" basedir=".">
   <target name="init">
-    <property name="version" value="1.0"/>
+    <property name="xmlunit.version" value="1.0"/>
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="tests"/>
     <property name="lib.dir" value="lib"/>
@@ -85,7 +85,7 @@
   </target>
 
   <target name="setDistVersion" depends="init">
-    <replace dir="${src.dir}" token="@@version@@" value="${version}"
+    <replace dir="${src.dir}" token="@@version@@" value="${xmlunit.version}"
        includes="**/*.java"/>
   </target>
 
@@ -97,7 +97,7 @@
       overview="${src.dir}/java/overview.html"
       windowtitle="XMLUnit Documentation"
       footer="&lt;p&gt;&lt;a href=&quot;http://xmlunit.sourceforge.net/&quot;&gt;XMLUnit&lt;/a&gt; is hosted by sourceforge.net&lt;/p&gt;">
-      <group title="XMLUnit v${version}"
+      <group title="XMLUnit v${xmlunit.version}"
         packages="org.custommonkey.xmlunit*"/>
       <classpath>
         <fileset dir="${lib.dir}">
@@ -109,21 +109,23 @@
   </target>
 
   <target name="jar" depends="clean,setDistVersion,compile">
-    <jar jarfile="${lib.dir}/xmlunit${version}.jar"
+    <jar jarfile="${lib.dir}/xmlunit${xmlunit.version}.jar"
        basedir="${out.dir}"
        excludes="**/test_*.class"
     />
   </target>
 
   <target name="dist" depends="jar,docs">
-    <zip zipfile="${dist.dir}/xmlunit${version}.zip">
+    <zip zipfile="${dist.dir}/xmlunit${xmlunit.version}.zip">
         <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="**/xmlunit${version}.jar"/>
+            includes="**/xmlunit${xmlunit.version}.jar"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd"
-            excludes="${out.dir}/*,bugs/*,${test.report.dir}"/>
+            excludes="${out.dir}/*,bugs/*,${test.report.dir}/*"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="${docs.dir}/**/*.html,**/overview.html,${test.dir}/etc/*.html"/>
+            includes="${docs.dir}/**/*.html,${test.dir}/etc/*.html"/>
+        <zipfileset prefix="xmlunit/${docs.dir}" dir="${src.dir}/site"
+            includes="*.pdf"/>
     </zip>
   </target>
 
