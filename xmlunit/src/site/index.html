@@ -59,7 +59,8 @@ and sometime it doesn't.</p>
           <p>The list goes on and on. The Choice is yours.
           </p>
           <p>The current release is here -&gt; <a href=
-          "http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=83804">XMLUnit 0.5</a>, 10th April 2002</p>
+          "http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=83804">XMLUnit 0.5</a>, 10th April 2002 - 
+<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/README?rev=1.2&content-type=text/vnd.viewcvs-markup">Release Notes</a></p>
 
           <p><a href="doc">Javadocs</a></p>
           <p><a href="example.html">Example</a></p>

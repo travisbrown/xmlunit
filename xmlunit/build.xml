@@ -6,7 +6,7 @@
   <property name="dist.dir" value="dist"/>
   <property name="docs.dir" value="doc"/>
   <property name="test.report.dir" value="junit"/>
-  <property name="xml.parser" value="${ant.home}/lib/xerces.jar"/>
+  <property name="xml.parser" value="${ant.home}/lib/xercesImpl.jar"/>
   <property name="xsl.engine" value="${ant.home}/lib/xalan.jar"/>
 
   <target name="prepare">
@@ -41,7 +41,7 @@
 
   <target name="test" depends="compile">
     <mkdir dir="${test.report.dir}"/>
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
+    <junit printsummary="yes" haltonfailure="yes" fork="yes">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="javax.xml.parsers.DocumentBuilderFactory"
         value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
