@@ -1,0 +1,8 @@
+KNOWN ISSUES
+============================================================================
+In the JUnit 3.7 there are some problems around loading XML classes.
+
+1. Why do I get an error (ClassCastException or LinkageError) using the GUI TestRunners?
+http://junit.sourceforge.net/doc/faq/faq.htm#runners_1
+2. Why do I get a LinkageError when using XML interfaces in my TestCase?
+http://junit.sourceforge.net/doc/faq/faq.htm#runners_2
