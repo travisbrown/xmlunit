@@ -44,6 +44,7 @@ import org.w3c.dom.Element;
  * <br />Examples and more at 
  * <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  * @see DifferenceEngine#compareNodeList(NodeList, NodeList, int, DifferenceListener)
+ * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 	
@@ -59,7 +60,7 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 	}
 
 	/**
-	 * Extended constructor for multiplle qualifying attribute names
+	 * Extended constructor for multiple qualifying attribute names
 	 * @param attrNames the array of values to use to qualify whether two
 	 * elements can be compared further for differences
 	 */

@@ -38,58 +38,67 @@ package org.custommonkey.xmlunit;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
- * Simple interface implementation that tests two elements for name
- * comparability. This class provides the default behaviour for a 
- * DifferenceEngine.
+ * More complex interface implementation that tests two elements for tag name
+ * and text content comparability. 
  * <br />Examples and more at 
  * <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  * @see DifferenceEngine#compareNodeList(NodeList, NodeList, int, DifferenceListener)
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
-public class ElementNameQualifier implements ElementQualifier {
+public class ElementNameAndTextQualifier extends ElementNameQualifier {
 	/**
 	 * Determine whether two elements qualify for further Difference comparison.
 	 * @param control
 	 * @param test
-	 * @return true if the two elements qualify for further comparison based on 
-	 *  their  similar namespace URI and non-namespaced tag name, 
-	 *  false otherwise
+	 * @return true if the two elements qualify for further comparison based on
+	 * both the superclass qualification (namespace URI and non- namespaced tag
+	 * name), and the qualification of the text nodes contained within the
+	 * elements; false otherwise
 	 */
 	public boolean areComparable(Element control, Element test) {
-		return control != null && test !=null 
-			&& equalsNamespace(control, test)
-			&& getNonNamespacedTagName(control).equals(getNonNamespacedTagName(test));
-	}
-	/**
-	 * Determine whether two nodes are defined by the same namespace URI 
-	 * @param control
-	 * @param test
-	 * @return true if the two nodes are both defined by the same namespace URI
-	 *  (including the default - empty - namespace), false otherwise
-	 */
-	protected boolean equalsNamespace(Node control, Node test) {
-		String controlNS = control.getNamespaceURI();
-		String testNS = test.getNamespaceURI();
-		if (controlNS == null) {
-			return testNS == null;
+		if (super.areComparable(control, test)) {
+			return areComparable(extractText(control), extractText(test));
 		}
-		return controlNS.equals(testNS);
+		return false; 
 	}
 	
 	/**
-	 * Strip any namespace information off the element tag name
-	 * @param element
-	 * @return the element localName if the element is namespaced,
-	 *  or the tagName otherwise 
-	 */
-	protected String getNonNamespacedTagName(Element element) {
-		String tagName = element.getLocalName();
-		if (tagName == null) {
-			return element.getTagName();
+	 * Determine whether the text nodes qualify for further comparison based on
+	 * whether their values are the same
+	 * @param control
+	 * @param test
+	 * @return true if text nodes qualify for further comparison within a Diff,
+	 * false otherwise
+	*/
+	public boolean areComparable(Text control, Text test) {		
+		if (control == null) {
+			return test == null;
+		} else if (test == null) {
+			return false;
 		}
-		return tagName;
-	} 
+		return control.getNodeValue().equals(test.getNodeValue());
+	}
+
+	/**
+	 * Extract the text from an element
+	 * @param fromElement
+	 * @return extracted Text node (could be null)
+	 */	
+	protected Text extractText(Element fromElement) {
+		fromElement.normalize();
+		NodeList fromNodeList = fromElement.getChildNodes(); 
+		Node currentNode;
+		for (int i=0; i < fromNodeList.getLength(); ++i) {
+			currentNode = fromNodeList.item(i);
+			if (currentNode.getNodeType() == Node.TEXT_NODE) {
+				return (Text) currentNode;
+			}
+		}
+		return null;
+	}			
 
 }

@@ -197,14 +197,21 @@ public class test_Diff extends TestCase{
             true, diff.similar());
     }
     
-    public void testRepeatedElementNames() throws Exception {
+    public void testRepeatedElementNamesWithAttributeQualification() throws Exception {
     	Diff diff = buildDiff("<root><node id=\"1\"/><node id=\"2\"/></root>", 
     		"<root><node id=\"2\"/><node id=\"1\"/></root>");
     	diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
     	assertFalse("should not be identical: " + diff.toString(), diff.identical());
     	assertTrue("should be similar: " + diff.toString(), diff.similar());
     }
-
+    
+	public void testRepeatedElementNamesWithTextQualification() throws Exception {
+			Diff diff = buildDiff("<root><node>1</node><node>2</node></root>",
+				"<root><node>2</node><node>1</node></root>");
+			diff.overrideElementQualifier(new ElementNameAndTextQualifier());
+			assertFalse("should not be identical: " + diff.toString(), diff.identical());
+			assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
     public void testDiffStringWithAttributes() throws Exception {
         final String fruitBat = "<bat type=\"fruit\"/>",
             longEaredBat = "<bat type=\"longeared\"/>";
