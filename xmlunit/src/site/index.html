@@ -12,7 +12,7 @@
   </style>
 </head>
 <body>
-<table width="100%" height="100%">
+<table width="100%" height="100%" border="0">
   <tbody>
     <tr>
       <td colspan="2"><img align="left" src="xmlunit.png"
@@ -20,22 +20,21 @@
  href="http://sourceforge.net"><img align="right"
  src="http://sourceforge.net/sflogo.php?group_id=23187" width="88"
  height="31" border="0" alt="SourceForge Logo"></a><br>
-      <h1>XMLUnit - <a href="http://www.junit.org/">JUnit</a> testing
-for XML</h1>
+      <h1>XMLUnit - <a href="http://www.junit.org/">JUnit</a> and <a href="http://nunit.org/">NUnit</a> testing for XML</h1>
       </td>
     </tr>
     <tr>
-      <td valign="top">
-      <p>For those of you who've got into it you'll know that test
-driven development is great.           It gives you the confidence to
-change code safe in the knowledge that if something breaks you'll know
-about it.           Except for those bits you don't know how to test.
-Until now XML has been one of them.           Oh sure you can use <code><b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>.equals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>);</code>
-but is that really gonna work when some joker decides to output a <code>&lt;stuff/&gt;</code>,
-damned right it's not.</p>
-      <p>XML can be used for just about anything so deciding if two
-documents are equal to each other isn't           as easy as a character
-for character match. Sometimes</p>
+      <td valign="top" colspan="2">
+      <p>For those of you who've got into it you'll know that test driven development is great.
+      It gives you the confidence to change code safe in the knowledge that if something breaks you'll know about it.
+      Except for those bits you don't know how to test. Until now XML has been one of them.
+      Oh sure you can use
+      <code><b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>.equals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>);</code>
+			but is that really gonna work when some joker decides to output a
+			<code><b>&lt;stuff/&gt;</b></code>? -- damned right it's not ;-)</p>
+      <p>XML can be used for just about anything
+      so deciding if two documents are equal to each other isn't as easy as a character for character match.
+      Sometimes</p>
       <table bgcolor="black">
         <tbody>
           <tr>
@@ -49,9 +48,26 @@ for character match. Sometimes</p>
           </tr>
         </tbody>
       </table>
-      <p>and sometimes it doesn't... With XMLUnit you get the control,
-and you get to decide.</p>
-      <p>XMLUnit provides a single JUnit extension class, <code>XMLTestCase</code>,
+      <p>and sometimes it doesn't...
+      With XMLUnit you get the control, and you get to decide.</p>
+     	</td>
+     </tr>
+     <tr>
+      <td>
+      <h2>XMLUnit for Java</h2>
+      </td>
+      <td width="240px">
+      <img src="http://www.junit.org/images/junitlogo.gif" alt="JUnit logo" border="0"/>
+      </td>
+     </tr>
+     <tr>
+      <td colspan="2">
+      <p>The current release is <a
+			 href="http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=155097">XMLUnit
+			1.0</a>, April 2003 (release notes are <a
+			 href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/README.txt?rev=1.10&amp;content-type=text/vnd.viewcvs-markup">here</a>)</p>
+      </p>
+      <p>XMLUnit for Java provides a single JUnit extension class, <code>XMLTestCase</code>,
 and a set of supporting classes           (e.g. <code>Diff</code>, <code>DetailedDiff</code>,<code>Transform</code>,<code>SimpleXpathEngine</code>,<code>Validator</code>,<code>NodeTest</code>)
 that allow assertions to be made about:</p>
       <ul>
@@ -59,121 +75,66 @@ that allow assertions to be made about:</p>
         <li>The outcome of transforming a piece of XML using XSLT</li>
         <li>The evaluation of an XPath expression on a piece of XML</li>
         <li>The validity of a piece of XML</li>
-        <li>Individual nodes in a piece of XML that are exposed by DOM
-Traversal</li>
+        <li>Individual nodes in a piece of XML that are exposed by DOM Traversal</li>
       </ul>
-      <p>XMLUnit can also treat  HTML content (even badly-formed HTML)
-as valid XML           to allow these assertions to be made about the
-content of web pages too.</p>
-      <p>The list goes on and on. The choice is yours!</p>
-      <p>The current release is <a
- href="http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=155097">XMLUnit
-1.0</a>, April 2003 (release notes are <a
- href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/README.txt?rev=1.10&amp;content-type=text/vnd.viewcvs-markup">here</a>)</p>
-      <table border="0" cellspacing="5" cellpadding="5">
-        <tbody>
-          <tr>
-            <td><a href="XMLUnit.pdf">Read the overview document (PDF)</a></td>
-            <td><a href="example.html">See some example code</a></td>
-            <td><a href="doc">Browse the Javadocs</a></td>
-            <td><a
- href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/">
-Visit the CVS repository</a></td>
-          </tr>
-        </tbody>
-      </table>
+      <p>XMLUnit for Java can also treat HTML content (even badly-formed HTML) as valid XML
+      to allow these assertions to be made about the content of web pages too.</p>
+
+			      <table border="0" cellspacing="5" cellpadding="5">
+			        <tbody>
+			          <tr>
+			            <td><a href="XMLUnit.pdf">Read the overview document (PDF)</a></td>
+			            <td><a href="example.html">See some example code</a></td>
+			            <td><a href="doc">Browse the Javadocs</a></td>
+			            <td><a
+			 href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/src/java">Visit the CVS repository</a>
+			 						</td>
+			          </tr>
+			        </tbody>
+      			</table>
       </td>
-      <td valign="top">
-      <table bgcolor="black" cellspacing="2" width="200">
-        <tbody>
-          <tr>
-            <td style="font-size: smaller;">
-            <table bgcolor="white" cellspacing="5">
-              <tbody>
-                <tr>
-                  <td align="right">
-                  <h2>News</h2>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="font-size: smaller;"> 		
-                  <dl compact="compact">
-                    <a
- href="http://sourceforge.net/forum/forum.php?forum_id=212678"><b>XMLUnit
-version 1. 0 finally available!</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>timbacon - 2003-04-25 08:42</i>- &nbsp;<a
- href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-It's been a long time coming&nbsp;but it's worth the wait! Now supplies
-the XPath location of differences and allows greater configurability.
-Plus the obligatory API enhancements and fixes... now available from CVS
-and as a file download.
-                    <hr width="100%" size="1" noshade="noshade"><a
- href="http://sourceforge.net/forum/forum.php?forum_id=212678"><b>XMLUnit
-version 0.8 available</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>timbacon - 2002-09-22 09:25</i>&nbsp;- &nbsp;<a
- href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-Contains minor API enhancements and fix for ClassCastException
-encountered occasionally with DetailedDiff class... now available from
-CVS and as a file download.
-                    <hr width="100%" size="1" noshade="noshade"><a
- href="http://sourceforge.net/forum/forum.php?forum_id=205194"><b>XMLUnit
-version 0.7 available</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>timbacon - 2002-08-25 09:15</i>&nbsp;- &nbsp;<a
- href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-Upgrade available with enhanced DifferenceListener interface,
-assertXpathExists method, access to javax.xml.transform.Transformer
-methods, and fix for NullPointerException in DetailedDiff class.
-                    <hr width="100%" size="1" noshade="noshade"><a
- href="http://sourceforge.net/forum/forum.php?forum_id=185137"><b>XMLUnit
-version 0.6 released</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>timbacon - 2002-06-11 06:54</i>&nbsp;- &nbsp;<a
- href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-DetailedDiff class added to expose all XML differences...
-HtmlDocumentBuilder class added to allow XMLUnit to work with HTML that
-is not well-formed XML... plus some fixes (mainly for namespace
-handling). Enjoy!
-                    <hr width="100%" size="1" noshade="noshade"><a
- href="http://sourceforge.net/forum/forum.php?forum_id=168189"><b>0.5
-release now available!</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>timbacon - 2002-04-09 17:40</i>&nbsp;- &nbsp;<a
- href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-As previously trailed we now have Xpath support... plus some
-refactorings to allow comparisons of many more node types while
-producing more detailed difference messages. All with expanded
-documentation :-))
-                    <hr width="100%" size="1" noshade="noshade"><a
- href="http://sourceforge.net/forum/forum.php?forum_id=162530"><b>New
-release!</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>timbacon - 2002-03-20 13:51</i>&nbsp;- &nbsp;<a
- href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-Version 0.4 now available... and 0.5 (with XPath support) is under
-development.
-                    <hr width="100%" size="1" noshade="noshade"><a
- href="http://sourceforge.net/forum/forum.php?forum_id=120954"><b>0.3
-Release</b></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<i>custommonkey - 2001-10-30 11:14</i>&nbsp;-
-&nbsp;<a href="http://sourceforge.net/projects/xmlunit/">XML Unit</a><br>
-New release of XMLUnit sees the addition of XSLT support and the
-removal of dependencies on JDOM
-                    <hr width="100%" size="1" noshade="noshade">
-                    <div align="center"><a
- href="http://sourceforge.net/news/?group_id=23187">[News archive]</a></div>
-                  </dl>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+     </tr>
+     <tr>
+      <td>
+      <h2>XMLUnit for .Net</h2>
+      </td>
+      <td width="240px">
+      <img src="http://nunit.org/img/logo.gif" alt="NUnit logo" border="0"/>
+      </td>
+     </tr>
+     <tr>
+      <td colspan="2">
+      <p>The current release is <a
+			 href="http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=177256">XmlUnit .Net 0.1</a>, August 2003</p>
+      </p>
+      <p>XMLUnit for .Net provides NUnit extension classes written in C#, e.g.
+      <code>XmlAssertion</code>, <code>XmlDiff</code>, <code>DiffResult</code>, and <code>XmlUnitConfiguration</code>
+			that allow assertions to be made about the differences between two pieces of XML</p>
+			<p>Please note that this code base is not as advanced as its Java counterpart,
+			in particular there is no handling of namespaces, validation, or DOM-style documents.
+			The code should evolve fairly quickly so please do visit
+			<a
+			 href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/src/csharp">the CVS repository</a>
       </td>
     </tr>
     <tr>
-      <td valign="bottom" colspan="2">
-      <p style="font-size: smaller;">Brought to you by, <a
- href="http://www.custommonkey.org/">CustomMonkey.org</a> and <a
- href="http://www.primeeight.co.uk/">PrimeEight.co.uk</a></p>
+  	  <td colspan="2">
+  	  <h2>News</h2>
+  	  <p>
+  	  RSS feeds are available for
+  	  <a href="http://sourceforge.net/export/rss2_projnews.php?group_id=23187&rss_fulltext=1&go"><img src="https://images.sourceforge.net/images/xml.png" border="0" alt="RSS feed"/>Project news releases</a> and
+  	  <a href="http://sourceforge.net/export/rss2_projfiles.php?group_id=23187&go"><img src="https://images.sourceforge.net/images/xml.png" border="0" alt="RSS feed"/>Project file releases</a>
+  	  .</p>
+  	  <p>
+  	  An archive of the project news is available <a href="http://sourceforge.net/news/?group_id=23187">here</a>.
+  	  </p>
+  	  </td>
+    </tr>
+    <tr>
+      <td valign="bottom" align="right" colspan="2">
+      <p style="font-size: smaller;">Brought to you by <a
+ href="http://coachspot.blogspot.com/">Tim Bacon</a> and <a
+ href="http://www.custommonkey.org/">Jeff Martin</a></p>
       </td>
     </tr>
   </tbody>
