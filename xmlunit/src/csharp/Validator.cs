@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     using System.IO;
     using System.Xml;
     using System.Xml.Schema;
@@ -25,26 +25,24 @@
         }
         
         private void Validate() {
-            hasValidated = true;
-            while (validatingReader.Read()) {
-                // only interested in ValidationFailed callbacks
+            if (!hasValidated) {
+                hasValidated = true;
+                while (validatingReader.Read()) {
+                    // only interested in ValidationFailed callbacks
+                }
             }
         }
         
         public bool IsValid {
             get {
-                if (!hasValidated) {
-                    Validate();
-                }
+                Validate();
                 return isValid;
             }
         }
         
         public string ValidationMessage {
             get {
-                if (!hasValidated) {
-                    Validate();
-                }
+                Validate();
                 return validationMessage;
             }
             
