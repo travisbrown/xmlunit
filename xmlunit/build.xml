@@ -1,6 +1,6 @@
 <project name="xmlunit" default="compile" basedir=".">
   <!-- The properties junit.lib, xmlxsl.lib, and test.report.dir should be defined in your build.properties file -->
-  <target name="init">
+  <target name="props">
     <property name="xmlunit.version" value="1.0"/>
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="tests"/>
@@ -9,6 +9,15 @@
     <property name="dist.dir" value="dist"/>
     <property name="docs.dir" value="doc"/>
     <property file="build.properties"/>
+  </target>
+
+  <target name="check-props" unless="test.report.dir">
+    <fail>Please provide the
+values for junit.lib, xmlxsl.lib, and test.report.dir
+in build.properties</fail>
+  </target>
+
+  <target name="init" depends="props,check-props">
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${out.dir}"/>
     <mkdir dir="${test.report.dir}"/>
@@ -96,7 +105,7 @@
   </target>
 
   <target name="jar" depends="clean,setDistVersion,compile">
-    <jar jarfile="${lib.dir}/xmlunit${xmlunit.version}.jar"
+    <jar jarfile="${lib.dir}/xmlunit-${xmlunit.version}.jar"
        basedir="${out.dir}"
        excludes="**/test_*.class"
     />
