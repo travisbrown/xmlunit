@@ -107,7 +107,8 @@
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/xmlunit${version}.jar"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd"/>
+            includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd"
+            excludes="${out.dir}/*,bugs/*"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="${docs.dir}/**/*.html,**/overview.html"/>
     </zip>

@@ -23,6 +23,8 @@ Changes in this version:
   XMLTestCase class
 - Additional methods added to Transform class to complete wrapping of 
   javax.xml.Transformer class, requested by tCantegrel
+tim.bacon@thoughtworks.com
+August 2002
   
 Changes in version 0.6
 - NEW DetailedDiff class to extract all the differences between two pieces of XML
