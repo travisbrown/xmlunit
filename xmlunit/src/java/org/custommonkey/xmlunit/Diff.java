@@ -1,38 +1,3 @@
-/*
-******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of the xmlunit.sourceforge.net nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written
-      permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-******************************************************************
-*/
-
 package org.custommonkey.xmlunit;
 
 import java.io.IOException;
@@ -52,7 +17,7 @@ import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.SAXException;
 
 /**
- * Compares and describes the differences between XML documents.
+ * Compares and describes any difference between XML documents.
  * Two documents are either:
  * <br /><ul>
  * <li><i>identical</i>: the content and sequence of the nodes in the documents
@@ -63,9 +28,14 @@ import org.xml.sax.SAXException;
  * <li><i>different</i>: the contents of the documents are fundamentally
  *  different</li>
  * </ul>
- * <br />The differences between compared documents are contained in a
+ * <br />
+ *  The difference between compared documents is contained in a
  *  message buffer held in this class, accessible either through the
  *  <code>appendMessage</code> or <code>toString</code> methods.
+ *  NB: When comparing documents, the comparison is halted as soon as the
+ *  status (identical / similar / different) is known with certainty. For a
+ *  list of all differences between the documents an instance of
+ *  (@link DetailedDiff the DetailedDiff class} can be used instead.
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Diff implements DifferenceListener, DifferenceConstants {
@@ -102,18 +72,6 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     }
 
     /**
-     * Construct a Diff that compares the XML in two Documents using a specific
-     * DifferenceEngine
-     */
-    public Diff(Document controlDoc, Document testDoc,
-    DifferenceEngine comparator) {
-        this.controlDoc = controlDoc;
-        this.testDoc = testDoc;
-        this.differenceEngine = comparator;
-        this.messages = new StringBuffer();
-    }
-
-    /**
      * Construct a Diff that compares the XML in a control Document against the
      * result of a transformation
      */
@@ -124,9 +82,54 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     }
 
     /**
-     * Top of the recursive comparison code tree
+     * Construct a Diff that compares the XML in two Documents using a specific
+     * DifferenceEngine
      */
-    private void compare() {
+    public Diff(Document controlDoc, Document testDoc,
+    DifferenceEngine comparator) {
+        this.controlDoc = getWhitespaceManipulatedDocument(controlDoc);
+        this.testDoc = getWhitespaceManipulatedDocument(testDoc);
+        this.differenceEngine = comparator;
+        this.messages = new StringBuffer();
+    }
+
+    /**
+     * Construct a Diff from a prototypical instance.
+     * Used by extension subclasses
+     * @param prototype a prototypical instance
+     */
+    protected Diff(Diff prototype) {
+        this.controlDoc = prototype.controlDoc;
+        this.testDoc = prototype.testDoc;
+        this.differenceEngine = prototype.differenceEngine;
+        this.messages = new StringBuffer();
+    }
+
+    /**
+     * If {@link XMLUnit#getIgnoreWhitespace whitespace is ignored} in
+     *  differences then manipulate the content to strip the redundant whitespace
+     * @param originalDoc a document making up one half of this difference
+     * @return the original document with redundant whitespace removed if
+     *  differences ignore whitespace
+     */
+    private Document getWhitespaceManipulatedDocument(Document originalDoc) {
+        if (!XMLUnit.getIgnoreWhitespace()) {
+            return originalDoc;
+        }
+        try {
+            Transform whitespaceStripper = XMLUnit.getStripWhitespaceTransform(
+                originalDoc);
+            return whitespaceStripper.getResultDocument();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessageAndLocation() + "\n" + e.getCause());
+        }
+    }
+
+    /**
+     * Top of the recursive comparison execution tree
+     */
+    protected final void compare() {
         if (compared) {
             return;
         }
@@ -162,7 +165,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
      * @param test
      */
     private void appendComparingWhat(StringBuffer buf, Node control, Node test) {
-        buf.append(": comparing ");
+        buf.append(" - comparing ");
         appendNodeDetail(buf, control, true);
         buf.append(" to ");
         appendNodeDetail(buf, test, true);
@@ -181,7 +184,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
             return;
         }
         if (notRecursing) {
-            buf.append('<');
+            buf.append(XMLConstants.OPEN_START_NODE);
         }
         switch (aNode.getNodeType()) {
             case Node.ATTRIBUTE_NODE:
@@ -199,27 +202,31 @@ public class Diff implements DifferenceListener, DifferenceConstants {
                 break;
             case Node.TEXT_NODE:
                 appendNodeDetail(buf, aNode.getParentNode(), false);
-                buf.append(" ...>")
-                    .append(aNode.getNodeValue()).append("</");
+                buf.append(" ...").append(XMLConstants.CLOSE_NODE)
+                    .append(aNode.getNodeValue())
+                    .append(XMLConstants.OPEN_END_NODE);
                 appendNodeDetail(buf, aNode.getParentNode(), false);
                 break;
             case Node.CDATA_SECTION_NODE:
-                buf.append("![CDATA[").append(aNode.getNodeValue())
-                    .append("]]");
+                buf.append(XMLConstants.START_CDATA)
+                    .append(aNode.getNodeValue())
+                    .append(XMLConstants.END_CDATA);
                 break;
             case Node.COMMENT_NODE:
-                buf.append("!--").append(aNode.getNodeValue())
-                    .append("--");
+                buf.append(XMLConstants.START_COMMENT)
+                    .append(aNode.getNodeValue())
+                    .append(XMLConstants.END_COMMENT);
                 break;
             case Node.PROCESSING_INSTRUCTION_NODE:
                 ProcessingInstruction instr = (ProcessingInstruction) aNode;
-                buf.append('?').append(instr.getTarget())
+                buf.append(XMLConstants.START_PROCESSING_INSTRUCTION)
+                    .append(instr.getTarget())
                     .append(' ').append(instr.getData())
-                    .append('?');
+                    .append(XMLConstants.END_CDATA);
                 break;
             case Node.DOCUMENT_TYPE_NODE:
                 DocumentType type = (DocumentType) aNode;
-                buf.append("!DOCTYPE ").append(type.getName());
+                buf.append(XMLConstants.START_DOCTYPE).append(type.getName());
                 if (type.getPublicId()!=null
                 && type.getPublicId().length() > 0) {
                     buf.append(" PUBLIC \"").append(type.getPublicId())
@@ -239,7 +246,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
 
         }
         if (notRecursing) {
-            buf.append('>');
+            buf.append(XMLConstants.CLOSE_NODE);
         }
     }
 
@@ -253,10 +260,10 @@ public class Diff implements DifferenceListener, DifferenceConstants {
      */
     private void appendDifference(String expected, String actual, Node control,
     Node test, Difference difference) {
-        messages.append("\n Expected ")
+        messages.append(" Expected ")
             .append(difference.getDescription())
-            .append(" ").append(expected)
-            .append(" but was ").append(actual);
+            .append(" '").append(expected)
+            .append("' but was '").append(actual).append("'");
         appendComparingWhat(messages, control, test);
     }
 
@@ -268,11 +275,12 @@ public class Diff implements DifferenceListener, DifferenceConstants {
      * @param test
      * @param comparingWhat
      */
-    public final void differenceFound(String expected, String actual,
+    public void differenceFound(String expected, String actual,
     Node control, Node test, Difference difference) {
         identical = false;
+        messages.append('\n');
         if (difference.isRecoverable()) {
-            messages.append("[similar]");
+            messages.append("[dissimilar]");
         } else {
             similar = false;
             messages.append("[different]");
@@ -285,10 +293,19 @@ public class Diff implements DifferenceListener, DifferenceConstants {
      * @param control
      * @param test
      */
-    public final void skippedComparison(Node control, Node test) {
+    public void skippedComparison(Node control, Node test) {
         System.err.println("DifferenceListener.skippedComparison: "
-            + "unhandled control node type=" + control.getNodeType()
-            + ", unhandled test node type=" + test.getNodeType());
+            + "unhandled control node type=" + control
+            + ", unhandled test node type=" + test);
+    }
+
+    /**
+     * DifferenceListener implementation.
+     * @param afterDifference
+     * @return true if the difference is not recoverable, false otherwise
+     */
+    public boolean haltComparison(Difference afterDifference) {
+        return !afterDifference.isRecoverable();
     }
 
     /**
@@ -316,4 +333,3 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     }
 
 }
-

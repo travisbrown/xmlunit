@@ -1,38 +1,3 @@
-/*
-******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of the xmlunit.sourceforge.net nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written
-      permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-******************************************************************
-*/
-
 package org.custommonkey.xmlunit;
 
 import org.w3c.dom.Attr;
@@ -237,6 +202,15 @@ public class DifferenceEngine implements DifferenceConstants {
     }
 
     /**
+     * @param aNode
+     * @return true if the node has a namespace
+     */
+    private boolean isNamespaced(Node aNode) {
+        String namespace = aNode.getNamespaceURI();
+        return namespace != null && namespace.length() > 0;
+    }
+
+    /**
      * Compare 2 elements and their attributes
      * @param control
      * @param test
@@ -245,8 +219,13 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareElement(Element control, Element test,
     DifferenceListener listener) throws DifferenceFoundException {
-        compare(control.getTagName(), test.getTagName(), control, test,
-            listener,ELEMENT_TAG_NAME);
+        if (isNamespaced(control)) {
+            compare(control.getLocalName(), test.getLocalName(), control, test,
+                listener,ELEMENT_TAG_NAME);
+        } else {
+            compare(control.getTagName(), test.getTagName(), control, test,
+                listener,ELEMENT_TAG_NAME);
+        }
 
         NamedNodeMap controlAttr = control.getAttributes();
         NamedNodeMap testAttr = test.getAttributes();
@@ -254,14 +233,30 @@ public class DifferenceEngine implements DifferenceConstants {
             new Integer(testAttr.getLength()),
             control, test, listener, ELEMENT_NUM_ATTRIBUTES);
 
+        compareElementAttributes(control, test, controlAttr, testAttr,
+            listener);
+    }
+
+    private void compareElementAttributes(Element control, Element test,
+    NamedNodeMap controlAttr, NamedNodeMap testAttr,
+    DifferenceListener listener) throws DifferenceFoundException {
         for (int i=0; i < controlAttr.getLength(); ++i) {
             Attr nextAttr = (Attr) controlAttr.item(i);
             Attr compareTo = null;
             String attrName = nextAttr.getName();
-            if (test.hasAttribute(attrName)) {
-                compareTo = test.getAttributeNode(attrName);
+            if (isXMLNSAttribute(nextAttr)) {
+                // xml namespacing is handled in compareNodeBasics
+            } else if (testAttr.getNamedItem(attrName) != null) {
+                compareTo = (Attr) testAttr.getNamedItem(attrName);
                 compareAttribute(nextAttr, compareTo, listener);
-                String testAttrName = testAttr.item(i).getNodeName();
+                Attr attributeItem = (Attr) testAttr.item(i);
+
+                String testAttrName;
+                if (attributeItem == null) {
+                    testAttrName = "[attribute absent]";
+                } else {
+                    testAttrName = testAttr.item(i).getNodeName();
+                }
                 compare(attrName, testAttrName,
                     nextAttr, compareTo, listener, ATTR_SEQUENCE);
             } else {
@@ -269,6 +264,15 @@ public class DifferenceEngine implements DifferenceConstants {
                     ATTR_NAME_NOT_FOUND);
             }
         }
+    }
+
+    /**
+     * @param attribute
+     * @return true if the attribute represents a namespace declaration
+     */
+    private boolean isXMLNSAttribute(Attr attribute) {
+        return XMLConstants.XMLNS_PREFIX.equals(attribute.getPrefix()) ||
+            XMLConstants.XMLNS_PREFIX.equals(attribute.getName());
     }
 
     /**
@@ -392,7 +396,7 @@ public class DifferenceEngine implements DifferenceConstants {
             listener.differenceFound(
                 String.valueOf(expected), String.valueOf(actual),
                 control, test, difference);
-            if (!difference.isRecoverable()) {
+            if (listener.haltComparison(difference)) {
                 throw flowControlException;
             }
         }
@@ -440,4 +444,3 @@ public class DifferenceEngine implements DifferenceConstants {
     private DifferenceFoundException flowControlException =
         new DifferenceFoundException();
 }
-

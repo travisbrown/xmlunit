@@ -1,38 +1,3 @@
-/*
-******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of the xmlunit.sourceforge.net nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written
-      permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-******************************************************************
-*/
-
 package org.custommonkey.xmlunit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -41,6 +6,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import java.io.IOException;
 import java.io.Reader;
@@ -60,6 +26,15 @@ public final class XMLUnit {
     private static TransformerFactory transformerFactory;
     private static boolean ignoreWhitespace = false;
 
+    private static final String STRIP_WHITESPACE_STYLESHEET
+        = new StringBuffer(XMLConstants.XML_DECLARATION)
+        .append(XSLTConstants.XSLT_START)
+        .append(XSLTConstants.XSLT_XML_OUTPUT_NOINDENT)
+        .append(XSLTConstants.XSLT_STRIP_WHITESPACE)
+        .append(XSLTConstants.XSLT_IDENTITY_TEMPLATE)
+        .append(XSLTConstants.XSLT_END)
+        .toString();
+
     /**
      * Private constructor.
      * Makes class non-instantiable
@@ -77,7 +52,7 @@ public final class XMLUnit {
     public static void setControlParser(String className)
     throws FactoryConfigurationError {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", className);
-        controlBuilderFactory = DocumentBuilderFactory.newInstance();
+        controlBuilderFactory = getControlDocumentBuilderFactory();
     }
     /**
      * Get the <code>DocumentBuilder</code> instance used to parse the control
@@ -88,9 +63,32 @@ public final class XMLUnit {
     public static DocumentBuilder getControlParser()
     throws ParserConfigurationException {
         if (controlBuilderFactory == null) {
-            controlBuilderFactory = DocumentBuilderFactory.newInstance();
+            controlBuilderFactory = getControlDocumentBuilderFactory();
         }
         return controlBuilderFactory.newDocumentBuilder() ;
+    }
+
+    /**
+     * Get the <code>DocumentBuilderFactory</code> instance used to instantiate
+     * parsers for the control XML in an XMLTestCase.
+     * @return factory for control parsers
+     */
+    public static DocumentBuilderFactory getControlDocumentBuilderFactory() {
+        if (controlBuilderFactory == null) {
+            controlBuilderFactory = DocumentBuilderFactory.newInstance();
+            controlBuilderFactory.setNamespaceAware(true);
+        }
+        return controlBuilderFactory;
+    }
+    /**
+     * Override the <code>DocumentBuilderFactory</code> used to instantiate
+     * parsers for the control XML in an XMLTestCase.
+     */
+    public static void setControlDocumentBuilderFactory(DocumentBuilderFactory factory) {
+        if (factory == null) {
+            throw new IllegalArgumentException("Cannot set control DocumentBuilderFactory to null!");
+        }
+        controlBuilderFactory = factory;
     }
 
     /**
@@ -102,7 +100,7 @@ public final class XMLUnit {
     public static void setTestParser(String className)
     throws FactoryConfigurationError {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", className);
-        testBuilderFactory = DocumentBuilderFactory.newInstance();
+        testBuilderFactory = getTestDocumentBuilderFactory();
     }
     /**
      * Get the <code>DocumentBuilder</code> instance used to parse the test XML
@@ -113,16 +111,43 @@ public final class XMLUnit {
     public static DocumentBuilder getTestParser()
     throws ParserConfigurationException {
         if (testBuilderFactory == null) {
-            testBuilderFactory = DocumentBuilderFactory.newInstance();
+            testBuilderFactory = getTestDocumentBuilderFactory();
         }
         return testBuilderFactory.newDocumentBuilder();
     }
 
     /**
+     * Get the <code>DocumentBuilderFactory</code> instance used to instantiate
+     * parsers for the test XML in an XMLTestCase.
+     * @return factory for test parsers
+     */
+    public static DocumentBuilderFactory getTestDocumentBuilderFactory() {
+        if (testBuilderFactory == null) {
+            testBuilderFactory = DocumentBuilderFactory.newInstance();
+            testBuilderFactory.setNamespaceAware(true);
+        }
+        return testBuilderFactory;
+    }
+    /**
+     * Override the <code>DocumentBuilderFactory</code> used to instantiate
+     * parsers for the test XML in an XMLTestCase.
+     */
+    public static void setTestDocumentBuilderFactory(DocumentBuilderFactory factory) {
+        if (factory == null) {
+            throw new IllegalArgumentException("Cannot set test DocumentBuilderFactory to null!");
+        }
+        testBuilderFactory = factory;
+    }
+
+    /**
      * Whether to ignore whitespace when comparing node values.
+     * This method also invokes <code>setIgnoringElementContentWhitespace()</code>
+     *  on the underlying control AND test document builder factories.
      */
     public static void setIgnoreWhitespace(boolean ignore){
         ignoreWhitespace = ignore;
+        getControlDocumentBuilderFactory().setIgnoringElementContentWhitespace(ignore);
+        getTestDocumentBuilderFactory().setIgnoringElementContentWhitespace(ignore);
     }
 
     /**
@@ -283,7 +308,21 @@ public final class XMLUnit {
      * to perform DTD validation
      */
     public static SAXParserFactory getSAXParserFactory() {
-        return SAXParserFactory.newInstance();
+        SAXParserFactory newFactory = SAXParserFactory.newInstance();
+        newFactory.setNamespaceAware(true);
+        return newFactory;
+    }
+
+    /**
+     * Obtain the transformation that will strip whitespace from a DOM containing
+     *  empty Text nodes
+     * @param forDocument
+     * @return a <code>Transform</code> to do the whitespace stripping
+     * @throws TransformerConfigurationException
+     */
+    public static Transform getStripWhitespaceTransform(Document forDocument)
+    throws TransformerConfigurationException {
+        return new Transform(forDocument, STRIP_WHITESPACE_STYLESHEET);
     }
 
     /**
@@ -291,7 +330,7 @@ public final class XMLUnit {
      * @return current version
      */
     public static String getVersion() {
-        return "0.5";
+        return "0.6";
     }
-}
 
+}
