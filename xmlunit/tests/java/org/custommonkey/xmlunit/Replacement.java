@@ -39,7 +39,7 @@ package org.custommonkey.xmlunit;
 /**
  * Performs replacement of one String by another String
  *  within one or more Strings.
- * This was required but a code refactoring made it redundant and I don't have
+ * This was once required but a code refactoring made it redundant and I don't have
  *  the heart to kill it off...!
  */
 public class Replacement {

@@ -68,7 +68,25 @@ public class Difference {
         this.description = description;
         this.recoverable = recoverable;
     }
+    
+    /**
+     * Clone-like constructor from prototype Difference 
+     * where recoverable value has been overridden by a DifferenceListener
+     */
+    protected Difference(Difference prototype) {
+        this(prototype, prototype.isRecoverable());
+    }
 
+    /**
+     * Clone-like constructor from prototype Difference 
+     * where recoverable value has been overridden by a DifferenceListener
+     */
+    protected Difference(Difference prototype, boolean recoverable) {
+        this.id = prototype.getId();
+        this.description = prototype.getDescription();
+        this.recoverable = recoverable;
+    }
+    
     /**
      * @return the id
      */
@@ -88,6 +106,21 @@ public class Difference {
      */
     public boolean isRecoverable() {
         return recoverable;
+    }
+    
+    /**
+     * Now that Differences can be constructed from prototypes
+     * we need to be able to compare them to those in DifferenceConstants
+     */
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        } else if (other instanceof Difference) {
+            Difference otherDifference = (Difference) other;
+            return id == otherDifference.getId();
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -80,8 +80,10 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     private boolean similar = true;
     private boolean identical = true;
     private boolean compared = false;
+    private boolean haltComparison = false;
     private StringBuffer messages;
     private DifferenceEngine differenceEngine;
+    private DifferenceListener differenceListenerDelegate;
 
     /**
      * Construct a Diff that compares the XML in two Strings
@@ -169,8 +171,8 @@ public class Diff implements DifferenceListener, DifferenceConstants {
         if (compared) {
             return;
         }
-        differenceEngine.compare(controlDoc.getDocumentElement(),
-            testDoc.getDocumentElement(), this);
+        differenceEngine.compare(controlDoc,
+            testDoc, this);
         compared = true;
     }
 
@@ -274,6 +276,12 @@ public class Diff implements DifferenceListener, DifferenceConstants {
                         .append('"');
                 }
                 break;
+            case Node.DOCUMENT_NODE:
+                buf.append("Document Node ")
+                .append(XMLConstants.OPEN_START_NODE)
+                .append("...")
+                .append(XMLConstants.CLOSE_NODE);
+                break;
             default:
                 buf.append("!--NodeType ").append(aNode.getNodeType())
                     .append(' ').append(aNode.getNodeName())
@@ -288,60 +296,108 @@ public class Diff implements DifferenceListener, DifferenceConstants {
 
     /**
      * Append a meaningful message to the buffer of messages
+     * @param appendTo the messages buffer
      * @param expected
      * @param actual
      * @param control
      * @param test
      * @param difference
      */
-    private void appendDifference(String expected, String actual, Node control,
+    private void appendDifference(StringBuffer appendTo, 
+    String expected, String actual, Node control,
     Node test, Difference difference) {
-        messages.append(" Expected ")
+        appendTo.append(" Expected ")
             .append(difference.getDescription())
             .append(" '").append(expected)
             .append("' but was '").append(actual).append("'");
-        appendComparingWhat(messages, control, test);
+        appendComparingWhat(appendTo, control, test);
     }
 
     /**
      * DifferenceListener implementation.
+     * If the {@link Diff#overrideDifferenceListener overrideDifferenceListener} 
+     * method has been called then the interpretation of the difference
+     * will be delegated.
      * @param expected
      * @param actual
      * @param control
      * @param test
      * @param comparingWhat
+     * @return a DifferenceListener.RETURN_... constant indicating how the
+     *    difference was interpreted. 
+     * Always RETURN_ACCEPT_DIFFERENCE if the call is not delegated.
      */
-    public void differenceFound(String expected, String actual,
+    public int differenceFound(String expected, String actual,
     Node control, Node test, Difference difference) {
-        identical = false;
-        messages.append('\n');
-        if (difference.isRecoverable()) {
-            messages.append("[dissimilar]");
-        } else {
-            similar = false;
-            messages.append("[different]");
+        int returnValue = RETURN_ACCEPT_DIFFERENCE;    
+        if (differenceListenerDelegate != null) {
+            returnValue = differenceListenerDelegate.differenceFound(
+                expected, actual, control, test, difference);
+        } 
+
+        switch (returnValue) {
+            case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
+                return returnValue;
+            case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
+                identical = false;
+                haltComparison = false;
+                break;
+            case RETURN_ACCEPT_DIFFERENCE:
+                identical = false;
+                if (difference.isRecoverable()) {
+                    haltComparison = false;
+                } else {
+                    similar = false;
+                    haltComparison = true;
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(returnValue
+                    + " is not a defined DifferenceListener.RETURN_... value");
         }
-        appendDifference(expected, actual, control, test, difference);
+        if (haltComparison) {
+            messages.append("\n[different]");
+        } else {
+            messages.append("\n[dissimilar]");
+        }
+        appendDifference(messages, expected, actual, 
+            control, test, difference);
+        return returnValue;
     }
 
     /**
      * DifferenceListener implementation.
+     * If the {@link Diff#overrideDifferenceListener  overrideDifferenceListener} 
+     * method has been called then the call will be delegated 
+     * otherwise a message is printed to <code>System.err</code>.
      * @param control
      * @param test
      */
     public void skippedComparison(Node control, Node test) {
-        System.err.println("DifferenceListener.skippedComparison: "
-            + "unhandled control node type=" + control
-            + ", unhandled test node type=" + test);
+        if (differenceListenerDelegate != null) {
+            differenceListenerDelegate.skippedComparison(control, test);
+        } else {
+            System.err.println("DifferenceListener.skippedComparison: "
+                + "unhandled control node type=" + control
+                + ", unhandled test node type=" + test);
+        }
     }
 
     /**
      * DifferenceListener implementation.
+     * If the {@link Diff#overrideDifferenceListener  overrideDifferenceListener} 
+     * method has been called then the call will be delegated 
+     * otherwise the return value is true if the difference is 
+     * not recoverable, or false if the difference is recoverable.
      * @param afterDifference
-     * @return true if the difference is not recoverable, false otherwise
+     * @return true if the comparison should be halted
      */
     public boolean haltComparison(Difference afterDifference) {
-        return !afterDifference.isRecoverable();
+        if (differenceListenerDelegate != null) {
+            return differenceListenerDelegate.haltComparison(afterDifference);
+        } else {
+            return haltComparison;
+        }
     }
 
     /**
@@ -366,6 +422,14 @@ public class Diff implements DifferenceListener, DifferenceConstants {
         StringBuffer buf = new StringBuffer(getClass().getName());
         appendMessage(buf);
         return buf.toString();
+    }
+    /**
+     * Override the <code>DifferenceListener</code> used to determine how 
+     * to handle differences that are found.
+     * @param delegate the DifferenceListener instance to delegate handling to.
+     */
+    public void overrideDifferenceListener(DifferenceListener delegate) {
+        this.differenceListenerDelegate = delegate;
     }
 
 }

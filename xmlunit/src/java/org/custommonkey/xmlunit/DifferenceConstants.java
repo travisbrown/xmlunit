@@ -121,4 +121,8 @@ public interface DifferenceConstants {
     /** Comparing 2 nodes with children whose nodes are in different sequence*/
     public static final Difference CHILD_NODELIST_SEQUENCE =
         new Difference(20, "sequence of child nodes", true);
+    
+    /** Comparing 2 Documents only one of which has a doctype */
+    public static final Difference HAS_DOCTYPE_DECLARATION = 
+        new Difference(21, "presence of doctype declaration", true);
 }

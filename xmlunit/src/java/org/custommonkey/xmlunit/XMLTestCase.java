@@ -46,6 +46,7 @@ import javax.xml.transform.TransformerConfigurationException;
 
 import junit.framework.TestCase;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 
@@ -714,17 +715,79 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * Assert the value of an Xpath expression in an DOM Document
      * @param expectedValue
      * @param xpathExpression
-     * @param inXMLString
+     * @param inDocument
      * @throws TransformerException
      * @throws TransformerConfigurationException
      * @see SimpleXpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathEvaluatesTo(String expectedValue,
     String xpathExpression, Document inDocument)
-    throws TransformerException, TransformerConfigurationException {
-        SimpleXpathEngine SimpleXpathEngine = new SimpleXpathEngine();
+    throws TransformerException {
+        SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
         assertEquals(expectedValue,
-            SimpleXpathEngine.evaluate(xpathExpression, inDocument));
+            simpleXpathEngine.evaluate(xpathExpression, inDocument));
+    }
+
+    /**
+     * Assert that a specific XPath exists in some given XML
+     * @param inXpathExpression
+     * @param inXMLString
+     * @see SimpleXpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertXpathExists(String xPathExpression, 
+    String inXMLString) 
+    throws TransformerException, ParserConfigurationException,
+    IOException, SAXException {
+        Document inDocument = XMLUnit.buildControlDocument(inXMLString);
+        assertXpathExists(xPathExpression, inDocument);
+    }
+    
+    /**
+     * Assert that a specific XPath exists in some given XML
+     * @param inXpathExpression
+     * @param inDocument
+     * @see SimpleXpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertXpathExists(String xPathExpression, 
+    Document inDocument) 
+    throws TransformerException {
+        SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
+            xPathExpression, inDocument);
+        int matches = nodeList.getLength();
+        assertTrue("Expecting to find matches for Xpath " + 
+            xPathExpression, matches > 0);
+    }
+
+    /**
+     * Assert that a specific XPath does NOT exist in some given XML
+     * @param inXpathExpression
+     * @param inXMLString
+     * @see SimpleXpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertNotXpathExists(String xPathExpression, 
+    String inXMLString) 
+    throws TransformerException, ParserConfigurationException,
+    IOException, SAXException {
+        Document inDocument = XMLUnit.buildControlDocument(inXMLString);
+        assertNotXpathExists(xPathExpression, inDocument);
+    }
+    
+    /**
+     * Assert that a specific XPath does NOT exist in some given XML
+     * @param inXpathExpression
+     * @param inDocument
+     * @see SimpleXpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertNotXpathExists(String xPathExpression, 
+    Document inDocument) 
+    throws TransformerException {
+        SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
+            xPathExpression, inDocument);
+        int matches = nodeList.getLength();
+        assertEquals("Should be zero matches for Xpath " + 
+            xPathExpression, 0, matches);
     }
 
     /**

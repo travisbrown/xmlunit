@@ -230,7 +230,7 @@ public class HTMLDocumentBuilder {
                     handleSAXException(e);
                 }
             } else {
-                trace("Unhandled comment " + data);
+                trace("Unhandled comment " + new String(data));
             }
         }
 

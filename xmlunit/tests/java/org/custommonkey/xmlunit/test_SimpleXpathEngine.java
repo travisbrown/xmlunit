@@ -58,42 +58,42 @@ public class test_SimpleXpathEngine extends TestCase {
         + testAttrNames[1] + "=\"is the answer \">free your code from its chains"
         + "</nodeWithAttributes></test>";
     private Document testDocument;
-    private SimpleXpathEngine SimpleXpathEngine = new SimpleXpathEngine();
+    private SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
 
     public void testGetXPathResultNode() throws Exception {
-        Node result = SimpleXpathEngine.getXPathResultNode("test", testDocument);
+        Node result = simpleXpathEngine.getXPathResultNode("test", testDocument);
         SimpleSerializer serializer = new SimpleSerializer();
         serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         assertEquals(testString, serializer.serialize(result.getFirstChild()));
     }
 
     public void testGetMatchingNodesNoMatches() throws Exception {
-        NodeList nodeList = SimpleXpathEngine.getMatchingNodes("toast", testDocument);
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes("toast", testDocument);
         assertEquals(0, nodeList.getLength());
     }
 
     public void testGetMatchingNodesMatchRootElement() throws Exception {
-        NodeList nodeList = SimpleXpathEngine.getMatchingNodes("test", testDocument);
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes("test", testDocument);
         assertEquals(1, nodeList.getLength());
         assertEquals(Node.ELEMENT_NODE, nodeList.item(0).getNodeType());
     }
 
     public void testGetMatchingNodesMatchElement() throws Exception {
-        NodeList nodeList = SimpleXpathEngine.getMatchingNodes(
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
             "test/nodeWithoutAttributes", testDocument);
         assertEquals(2, nodeList.getLength());
         assertEquals(Node.ELEMENT_NODE, nodeList.item(0).getNodeType());
     }
 
     public void testGetMatchingNodesMatchText() throws Exception {
-        NodeList nodeList = SimpleXpathEngine.getMatchingNodes(
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
             "test//text()", testDocument);
         assertEquals(3, nodeList.getLength());
         assertEquals(Node.TEXT_NODE, nodeList.item(0).getNodeType());
     }
 
     public void testGetMatchingNodesCheckSubNodes() throws Exception {
-        NodeList nodeList = SimpleXpathEngine.getMatchingNodes(
+        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
             "test/nodeWithAttributes", testDocument);
         assertEquals(1, nodeList.getLength());
         Node aNode;
@@ -121,7 +121,7 @@ public class test_SimpleXpathEngine extends TestCase {
     }
 
     public void testEvaluate() throws Exception {
-        String result = SimpleXpathEngine.evaluate(
+        String result = simpleXpathEngine.evaluate(
             "count(test//node())", testDocument);
         assertEquals("3 elements and 3 text nodes", "6", result);
     }

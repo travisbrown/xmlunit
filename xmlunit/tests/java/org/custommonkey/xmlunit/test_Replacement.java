@@ -80,6 +80,12 @@ public class test_Replacement extends TestCase {
             "some other words altogether");
         assertEquals("Here aresome other words altogether...",
             replacement.replace("Here are a whole bunch of words..."));
+        
+        replacement = new Replacement("pp", "p");
+        assertEquals("hapy", replacement.replace("happy"));
+        assertEquals("happy", replacement.replace("happppy"));
+        assertEquals("tap", replacement.replace("tapp"));
+        assertEquals("paw", replacement.replace("ppaw"));
     }
 
     public void testNullReplacebyString() {

@@ -336,6 +336,62 @@ public class test_XMLTestCase extends XMLTestCase{
             }
         }
     }
+    
+    public void testDocumentAssertXpathExists() throws Exception {
+        Document controlDoc = XMLUnit.buildControlDocument(xpathNodesControlXML);
+        assertXpathExists("/trees/fruit/apples/yum", controlDoc);
+        assertXpathExists("//tree[@evergreen='false']", controlDoc);
+        try {
+            assertXpathExists("//tree[@evergreen='idunno']", controlDoc);
+            fail("Xpath does not exist");
+        } catch (AssertionFailedError e) {
+            // expected
+        }
+    }
+    
+    public void testStringAssertXpathExists() throws Exception {
+        assertXpathExists("/trees/fruit/apples/yum", xpathNodesControlXML);
+        assertXpathExists("//tree[@evergreen='false']", xpathNodesControlXML);
+        try {
+            assertXpathExists("//tree[@evergreen='idunno']", xpathNodesControlXML);
+            fail("Xpath does not exist");
+        } catch (AssertionFailedError e) {
+            // expected
+        }
+    }
+
+    public void testDocumentAssertNotXpathExists() throws Exception {
+        Document controlDoc = XMLUnit.buildControlDocument(xpathNodesControlXML);
+        assertNotXpathExists("//tree[@evergreen='idunno']", controlDoc);
+        try {
+            assertNotXpathExists("/trees/fruit/apples/yum", controlDoc);
+            fail("Xpath does exist, once");
+        } catch (AssertionFailedError e) {
+            // expected
+        }
+        try {
+            assertNotXpathExists("//tree[@evergreen='false']", controlDoc);
+            fail("Xpath does exist many times");
+        } catch (AssertionFailedError e) {
+            // expected
+        }
+    }
+    
+    public void testStringAssertNotXpathExists() throws Exception {
+        assertNotXpathExists("//tree[@evergreen='idunno']", xpathNodesControlXML);
+        try {
+            assertNotXpathExists("/trees/fruit/apples/yum", xpathNodesControlXML);
+            fail("Xpath does exist, once");
+        } catch (AssertionFailedError e) {
+            // expected
+        }
+        try {
+            assertNotXpathExists("//tree[@evergreen='false']", xpathNodesControlXML);
+            fail("Xpath does exist many times");
+        } catch (AssertionFailedError e) {
+            // expected
+        }
+    }
 
     public test_XMLTestCase(String name) {
         super(name);

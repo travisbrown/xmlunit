@@ -1,4 +1,4 @@
-XMLUnit version 0.6
+XMLUnit version 0.7
 
 To run this software you will need:
 - junit (http://www.junit.org/)
@@ -6,10 +6,25 @@ To run this software you will need:
 - a JAXP/Trax compliant XSLT engine (e.g. Apache Xalan)
 in your classpath
 
+If you want to build the source code you will also need Ant (http://jakarta.apache.org/ant)
+
 Enjoy!
 http://xmlunit.sourceforge.com
 
 Changes in this version:
+- DifferenceListener interface extended to allow more user control over how to
+  evaluate differences between control and test XML
+- NEW IgnoreTextAndAttributeValuesDifferenceListener class added to allow
+  difference evaluation solely on the basis of tag and attribute names (ignoring
+  differences between text and attribute values completely)
+- Fixes for a defect in the DetailedDiff class that caused a 
+  NullPointerException, raised by eBernhard and bob
+- Additional methods assertXpathExists and assertNotXpathExists added to 
+  XMLTestCase class
+- Additional methods added to Transform class to complete wrapping of 
+  javax.xml.Transformer class, requested by tCantegrel
+  
+Changes in version 0.6
 - NEW DetailedDiff class to extract all the differences between two pieces of XML
 - NEW HTMLDocumentBuilder and TolerantSaxDocumentBuilder classes added to enable
   XML assertions to be made against badly formed HTML documents (uses the Swing

@@ -38,8 +38,13 @@ package org.custommonkey.xmlunit;
 
 import junit.framework.*;
 import junit.textui.TestRunner;
+
+import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.Document;
+
+import java.io.File;
+import java.io.FileReader;
 import java.io.Reader;
 
 /**
@@ -98,6 +103,19 @@ public class test_DetailedDiff extends test_Diff {
         assertExpectedDifferencesFirstForecastControl(differences, detailedDiff);
     }
 
+    public void testLargeFiles() throws Exception {
+        File test, control;
+        control = new File(test_Constants.BASEDIR  
+            + "/tests/etc/controlDetail.xml");
+        test = new File(test_Constants.BASEDIR 
+            + "/tests/etc/testDetail.xml");
+        Diff prototype = new Diff(new FileReader(control), 
+            new FileReader(test));
+        DetailedDiff detailedDiff = new DetailedDiff(prototype);
+        List differences = detailedDiff.getAllDifferences();
+        assertEquals(1402, differences.size());
+    }
+    
     protected Diff buildDiff(Document control, Document test) {
         return new DetailedDiff(super.buildDiff(control, test));
     }

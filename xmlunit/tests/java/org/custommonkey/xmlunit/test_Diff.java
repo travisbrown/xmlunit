@@ -40,8 +40,12 @@ import junit.framework.*;
 import junit.textui.TestRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.Reader;
 
 /**
@@ -202,6 +206,43 @@ public class test_Diff extends TestCase{
             + " 'fruit' but was 'longeared' - comparing <bat type=\"fruit\"...> to <bat type=\"longeared\"...>",
             diff.toString());
     }
+    
+    public void testXMLWithDTD() throws Exception {
+        String aDTDpart = "<!DOCTYPE test ["
+            + "<!ELEMENT assertion EMPTY>"
+            + "<!ATTLIST assertion result (pass|fail) \"fail\">"
+            + "<!ELEMENT test (assertion)*>";
+        String aDTD = aDTDpart + "]>";
+        String xmlWithoutDTD = "<test>"
+            + "<assertion result=\"pass\"/>"
+            + "<assertion result=\"fail\"/>"
+            + "</test>";
+        String xmlWithDTD = aDTD + xmlWithoutDTD;
+        Diff diff = buildDiff(xmlWithDTD, xmlWithoutDTD);
+        assertTrue("similar. " + diff.toString(), diff.similar());
+        assertTrue("not identical. " + diff.toString(), !diff.identical());
+        
+        File tempDtdFile = new File(test_Constants.BASEDIR + "/tests/etc/test.dtd");
+        FileWriter dtdWriter = new FileWriter(tempDtdFile);
+        dtdWriter.write(aDTD);
+        try {
+            String xmlWithExternalDTD = "<!DOCTYPE test SYSTEM \"" 
+                + tempDtdFile.toURL().toExternalForm() + "\">"
+                + xmlWithoutDTD;
+            diff = buildDiff(xmlWithDTD, xmlWithExternalDTD);
+            assertTrue("similar again. " + diff.toString(), diff.similar());
+            assertTrue("not identical again. " + diff.toString(), !diff.identical());             
+        } finally {
+            tempDtdFile.delete();
+        }
+
+        String anotherDTD = aDTDpart 
+            + "<!ELEMENT comment (ANY)>" + "]>";            
+        String xmlWithAnotherDTD = anotherDTD + xmlWithoutDTD;
+        diff = buildDiff(xmlWithDTD, xmlWithAnotherDTD);
+        assertTrue("similar. " + diff.toString(), diff.similar());
+        assertTrue("amd identical as DTD content is not compared. " + diff.toString(), diff.identical());        
+    }
 
     /**
      * Raised by aakture 25.04.2002
@@ -284,6 +325,43 @@ public class test_Diff extends TestCase{
         assertTrue("c-"+reverseDiff.toString(), reverseDiff.similar());
         assertTrue("d-"+reverseDiff.toString(), !reverseDiff.identical());
     }
+    
+    public void testOverrideDifferenceListener() throws Exception {
+        String control = "<vehicles><car colour=\"white\">ford fiesta</car>"
+            +"<car colour=\"red\">citroen xsara</car></vehicles>";
+        String test = "<vehicles><car colour=\"white\">nissan primera</car>"
+            +"<car colour=\"blue\">peugot 206</car></vehicles>";
+        Diff diff = buildDiff(control, test);
+        assertTrue("initially " + diff.toString(), 
+            !diff.similar());
+        
+        Diff diffWithIdenticalOverride = buildDiff(control, test);
+        diffWithIdenticalOverride.overrideDifferenceListener(
+            new OverrideDifferenceListener(
+                DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL));
+        assertTrue("now identical" 
+            + diffWithIdenticalOverride.toString(),
+            diffWithIdenticalOverride.identical());
+        
+        Diff diffWithSimilarOverride = buildDiff(control, test);
+        diffWithSimilarOverride.overrideDifferenceListener(
+            new OverrideDifferenceListener(
+                DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR));
+        assertTrue("no longer identical" 
+            + diffWithSimilarOverride.toString(),
+            !diffWithSimilarOverride.identical());
+        assertTrue("but still similar" 
+            + diffWithSimilarOverride.toString(),
+            diffWithSimilarOverride.similar());
+        
+        Diff diffWithOverride = buildDiff(control, test);
+        diffWithOverride.overrideDifferenceListener(
+            new OverrideDifferenceListener(
+                DifferenceListener.RETURN_ACCEPT_DIFFERENCE));
+        assertTrue("default behaviour" 
+            + diffWithOverride.toString(),
+            !diffWithOverride.similar());
+    }
 
     protected Diff buildDiff(Document control, Document test) {
         return new Diff(control, test);
@@ -305,7 +383,6 @@ public class test_Diff extends TestCase{
         super(name);
     }
 
-
     /**
      * Handy dandy main method to run this suite with text-based TestRunner
      */
@@ -318,5 +395,23 @@ public class test_Diff extends TestCase{
      */
     public static TestSuite suite(){
         return new TestSuite(test_Diff.class);
+    }
+    
+    private class OverrideDifferenceListener 
+    implements DifferenceListener {
+        private final int overrideValue;
+        private OverrideDifferenceListener(int overrideValue) {
+            this.overrideValue = overrideValue;
+        }
+        public int differenceFound(String expected, String actual,
+        Node control, Node test, Difference difference) {
+            return overrideValue;
+        }
+        public void skippedComparison(Node control, Node test) {
+        }
+        public boolean haltComparison(Difference afterDifference) {
+            return !(overrideValue == RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL
+            || afterDifference.isRecoverable());
+        }
     }
 }

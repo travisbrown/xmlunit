@@ -44,10 +44,26 @@ import org.w3c.dom.Node;
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public interface DifferenceListener {
+    /** 
+     * Standard return value for the <code>differenceFound</code> method.
+     * Indicates that the <code>Difference</code> is interpreted as defined 
+     * in {@link DifferenceConstants DifferenceConstants}.
+     */
+    public final int RETURN_ACCEPT_DIFFERENCE = 0;
+    /** 
+     * Override return value for the <code>differenceFound</code> method.
+     * Indicates that the nodes identified as being different should be 
+     * interpreted as being identical.
+     */
+    public final int RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL = 1;
+    /** 
+     * Override return value for the <code>differenceFound</code> method.
+     * Indicates that the nodes identified as being different should be 
+     * interpreted as being similar.
+     */
+    public final int RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR = 2;
     /**
      * Receive notification that 2 nodes are different.
-     * If the difference is {@link Difference#isRecoverable recoverable} the
-     *  DifferenceEngine will continue node comparisons, otherwise it will halt.
      * @param expected the control node value being compared
      * @param actual the test node value being compared
      * @param control the control node being compared
@@ -55,8 +71,10 @@ public interface DifferenceListener {
      * @param difference one of the constant Differfence instances defined in
      *  {@link DifferenceConstants DifferenceConstants} describing the
      *  cause of the difference
+     * @return int one of the RETURN_... constants describing how this difference
+     *  was interpreted
      */
-    public void differenceFound(String expected, String actual,
+    public int differenceFound(String expected, String actual,
         Node control, Node test, Difference difference);
 
     /**

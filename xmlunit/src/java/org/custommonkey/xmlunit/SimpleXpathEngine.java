@@ -60,16 +60,15 @@ import org.w3c.dom.NodeList;
  * this approach seemed to be the simplest thing that could possibly work...)
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
-public class SimpleXpathEngine {
+public class SimpleXpathEngine implements XSLTConstants {
 
     /**
      * What every XSL transform needs
      * @return
      */
     private StringBuffer getXSLTBase() {
-        return new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-            .append("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">")
-            ;
+        return new StringBuffer(XML_DECLARATION)
+            .append(XSLT_START);
     }
 
     /**

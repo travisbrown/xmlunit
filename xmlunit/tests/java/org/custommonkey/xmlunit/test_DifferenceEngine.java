@@ -313,7 +313,6 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
             + "<elem attr=\"" + ATTR_B + "\">" + TEXT_B + "</elem></root>");
 
         engine.compare(controlDocument, testDocument, listener);
-        assertEquals(true, listener.nodesSkipped);
 
         Node control = controlDocument.getDocumentElement().getFirstChild();
         Node test = testDocument.getDocumentElement().getFirstChild();
@@ -374,6 +373,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     private void assertDifferentChildren(Node control, Node test,
     Difference expectedDifference, boolean fatal) {
         try {
+            engine.compareHasChildNodes(control, test, listener);
             engine.compareNodeChildren(control, test, listener);
             if (fatal) {
                 fail("Expected fatal difference");
@@ -528,7 +528,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         public int comparingWhat = -1;
         public boolean different = false;
         public boolean nodesSkipped = false;
-        public void differenceFound(String expected, String actual,
+        public int differenceFound(String expected, String actual,
             Node control, Node test, Difference difference) {
                 this.expected = expected;
                 this.actual = actual;
@@ -536,6 +536,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
                 this.test = test;
                 this.comparingWhat = difference.getId();
                 this.different = !difference.isRecoverable();
+                return RETURN_ACCEPT_DIFFERENCE;
         }
         public void skippedComparison(Node control, Node test) {
             nodesSkipped = true;

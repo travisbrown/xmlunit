@@ -40,6 +40,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -95,6 +96,7 @@ public class DifferenceEngine implements DifferenceConstants {
     protected void compareNode(Node control, Node test,
     DifferenceListener listener) throws DifferenceFoundException {
         compareNodeBasics(control, test, listener);
+        boolean isDocumentNode = false;
 
         switch (control.getNodeType()) {
             case Node.ELEMENT_NODE:
@@ -118,11 +120,44 @@ public class DifferenceEngine implements DifferenceConstants {
             case Node.TEXT_NODE:
                 compareText((Text)control, (Text)test, listener);
                 break;
+            case Node.DOCUMENT_NODE:
+                isDocumentNode = true;
+                compareDocument((Document)control, (Document) test, listener);
+                break;
             default:
                 listener.skippedComparison(control, test);
         }
 
-        compareNodeChildren(control, test, listener);
+        compareHasChildNodes(control, test, listener);
+        if (isDocumentNode) {
+            Element controlElement = ((Document)control).getDocumentElement();
+            Element testElement = ((Document)test).getDocumentElement();
+            if (controlElement!=null && testElement!=null) {
+                compareNode(controlElement, testElement, listener);
+            }
+        } else {
+            compareNodeChildren(control, test, listener);
+        }
+    }
+    
+    /**
+     * Compare two Documents for doctype and then element differences
+     * @param control
+     * @param test
+     * @param listener
+     * @throws DifferenceFoundException
+     */
+    protected void compareDocument(Document control, Document test, 
+    DifferenceListener listener) throws DifferenceFoundException {
+        DocumentType controlDoctype = control.getDoctype();
+        DocumentType testDoctype = test.getDoctype();
+        compare(getNullOrNotNull(controlDoctype), 
+            getNullOrNotNull(testDoctype), 
+            controlDoctype, testDoctype, listener, 
+            HAS_DOCTYPE_DECLARATION);
+        if (controlDoctype!=null && testDoctype!=null) {
+            compareNode(controlDoctype, testDoctype, listener);
+        }
     }
 
     /**
@@ -154,7 +189,7 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param listener
      * @throws DifferenceFoundException
      */
-    protected void compareNodeChildren(Node control, Node test,
+    protected void compareHasChildNodes(Node control, Node test,
     DifferenceListener listener) throws DifferenceFoundException {
         Boolean controlHasChildren = control.hasChildNodes()
             ? Boolean.TRUE : Boolean.FALSE;
@@ -162,7 +197,18 @@ public class DifferenceEngine implements DifferenceConstants {
             ? Boolean.TRUE : Boolean.FALSE;
         compare(controlHasChildren, testHasChildren, control, test,
             listener, HAS_CHILD_NODES);
+    }
 
+    /**
+     * Compare the number of children, and if the same, compare the actual
+     *  children via their NodeLists.
+     * @param control
+     * @param test
+     * @param listener
+     * @throws DifferenceFoundException
+     */
+    protected void compareNodeChildren(Node control, Node test,
+    DifferenceListener listener) throws DifferenceFoundException {
         if (control.hasChildNodes() && test.hasChildNodes()) {
             NodeList controlChildren = control.getChildNodes();
             NodeList testChildren = test.getChildNodes();
@@ -194,6 +240,7 @@ public class DifferenceEngine implements DifferenceConstants {
     int numNodes, DifferenceListener listener) throws DifferenceFoundException {
         Node nextControl, nextTest = null;
         int j = 0;
+        int lastTestNode = test.getLength() - 1;
         boolean matchName, noMatch;
         String tagName = null;
         short matchNodeType;
@@ -203,12 +250,13 @@ public class DifferenceEngine implements DifferenceConstants {
             if (nextControl instanceof Element) {
                 matchName = true;
                 tagName = nextControl.getNodeName();
-
             } else {
                 matchName = false;
             }
             matchNodeType = nextControl.getNodeType();
-            j = i;
+            int startAt = ( i > lastTestNode ? lastTestNode : i);
+            j = startAt;
+            
             noMatch = true;
 
             while (noMatch) {
@@ -220,14 +268,13 @@ public class DifferenceEngine implements DifferenceConstants {
                     noMatch = false;
                 } else {
                     ++j;
-                    if (j == numNodes) {
+                    if (j > lastTestNode) {
                         j = 0;
                     }
-                    if (j == i) {
+                    if (j == startAt) {
                         // been through all children
                         noMatch = false;
                     }
-
                 }
             }
             nextTest = test.item(j);

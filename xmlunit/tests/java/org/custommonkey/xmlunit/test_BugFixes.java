@@ -73,6 +73,7 @@ public class test_BugFixes extends TestCase {
         suite.addTest(new test_Transform("testXSLIncludeWithoutSystemId"));
         suite.addTest(new test_Diff("testNamespaceIssues"));
         suite.addTest(new test_Diff("testDefaultNamespace"));
+        suite.addTest(new test_DetailedDiff("testLargeFiles"));
         return suite;
     }
 }

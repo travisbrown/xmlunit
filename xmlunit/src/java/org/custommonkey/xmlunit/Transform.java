@@ -44,12 +44,15 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.Properties;
+
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
@@ -238,5 +241,44 @@ public class Transform {
      */
     public void setOutputProperties(Properties outputProperties) {
         transformer.setOutputProperties(outputProperties);
+    }
+    
+    /**
+     * Add a parameter for the transformation
+     * @param name
+     * @param value
+     */
+    public void setParameter(String name, Object value) {
+        transformer.setParameter(name, value);
+    }
+    
+    /**
+     * See a parameter used for the transformation
+     * @param name
+     * @return the parameter value
+     */
+    public Object getParameter(String name) {
+        return transformer.getParameter(name);
+    }
+    
+    /**
+     * Clear parameters used for the transformation 
+     */
+    public void clearParameters() {
+        transformer.clearParameters();
+    }
+    
+    /**
+     * Set the URIResolver for the transformation
+     */
+    public void setURIResolver(URIResolver uriResolver) {
+        transformer.setURIResolver(uriResolver);
+    }
+        
+    /**
+     * Set the ErrorListener for the transformation
+     */
+    public void setErrorListener(ErrorListener errorListener) {
+        transformer.setErrorListener(errorListener);
     }
 }
