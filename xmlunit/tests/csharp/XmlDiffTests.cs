@@ -98,16 +98,24 @@
         }
         
         [Test] public void NotEqualResultForDifferentTextElements() {
-            string[] input1 = {"<a>text</a>", "<a>text<b>more text</b></a>", "<a><b>text</b>more text</a>"};
-            string[] input2 = {"<a>some text</a>", "<a>text<b>text</b></a>", "<a>more text<b>text</b></a>"};
+            string[] input1 = {"<a>text</a>", "<a>text<b>more text</b></a>", 
+                                "<a><b>text</b>more text</a>"};
+            string[] input2 = {"<a>some text</a>", "<a>text<b>text</b></a>", 
+                                "<a>more text<b>text</b></a>"};
             AssertExpectedResult(input1, input2, false);
         }
         
         [Test] public void CanDistinguishElementClosureAndEmptyElement() {
-            string[] input1 = {"<a><b>text</b></a>"};
-            string[] input2 = {"<a><b/>text</a>"};
+            string[] input1 = {"<a><b>text</b></a>", "<a>text<b>more text</b></a>"};
+            string[] input2 = {"<a><b/>text</a>", "<a>text<b/>more text</a>"};
             AssertExpectedResult(input1, input2, false);
             
+        }
+        
+        [Test] public void NotEqualResultForDifferentLengthElements() {
+            string[] input1 = {"<a>text</a>", "<a><b>text</b><c>more text</c></a>"};
+            string[] input2 = {"<a>text<b/></a>", "<a><b>text</b>more text<c/></a>"};
+            AssertExpectedResult(input1, input2, false);
         }
         
     }

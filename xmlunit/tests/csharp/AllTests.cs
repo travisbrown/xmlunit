@@ -27,6 +27,7 @@
             new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();            
             new XmlDiffTests().NotEqualResultForDifferentTextElements();
             new XmlDiffTests().CanDistinguishElementClosureAndEmptyElement();
+            new XmlDiffTests().NotEqualResultForDifferentLengthElements();
 
             new DifferenceTests().ToStringContainsId();
             

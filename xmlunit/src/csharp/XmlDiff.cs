@@ -54,28 +54,14 @@
                     if (controlRead) {
                         if(testRead) {
                             CompareNodes(result);
-                            if (_controlReader.IsEmptyElement) {
-                                if (!_testReader.IsEmptyElement) {
-                                    testRead = _testReader.Read();
-                                    if (!testRead || _testReader.NodeType != XmlNodeType.EndElement) {
-                                        DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
-                                    }
-                                }
-                            } else {
-                                if (_testReader.IsEmptyElement) {
-                                    controlRead = _controlReader.Read();
-                                    if (!controlRead || _controlReader.NodeType != XmlNodeType.EndElement) {
-                                        DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
-                                    }
-                                }
-                            }
+                            CheckAndCloseNonEmptyElements(result, ref controlRead, ref testRead);
                         } else {
                             DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
                         } 
                     }
                 } while (controlRead && testRead) ;
             } catch (FlowControlException e) {       
-                Console.Error.WriteLine(e.Message);
+                Console.Out.WriteLine(e.Message);
             }
         }        
                 
@@ -154,6 +140,25 @@
         
         public bool ContinueComparison(Difference afterDifference) {
             return !afterDifference.MajorDifference;
+        }
+        
+        private void CheckAndCloseNonEmptyElements(DiffResult result, 
+                                                   ref bool controlRead, ref bool testRead) {
+            if (_controlReader.IsEmptyElement) {
+                if (!_testReader.IsEmptyElement) {
+                    testRead = _testReader.Read();
+                    if (!testRead || _testReader.NodeType != XmlNodeType.EndElement) {
+                        DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
+                    }
+                }
+            } else {
+                if (_testReader.IsEmptyElement) {
+                    controlRead = _controlReader.Read();
+                    if (!controlRead || _controlReader.NodeType != XmlNodeType.EndElement) {
+                        DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
+                    }
+                }
+            }
         }
         
         private class FlowControlException : ApplicationException {
