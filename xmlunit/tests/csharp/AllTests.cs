@@ -1,0 +1,32 @@
+using NUnit.Framework;
+
+namespace XmlUnit.Tests
+{
+
+    [TestFixture]
+    public class AllTests : Assertion {
+        static DiffResultTests diffTest(){
+            DiffResultTests test = new DiffResultTests();
+            test.CreateDiffResult();
+            return test;
+        }
+        public static void Main (string[]args) {
+            diffTest().NewDiffResultIsEqualAndIdentical();
+            diffTest().NotEqualOrIdenticalAfterMajorDifferenceFound();
+            diffTest().NotIdenticalButEqualAfterMinorDifferenceFound();
+
+            new XmlDiffTests().EqualResultForSameReader();
+            new XmlDiffTests().SameResultForTwoInvocations();
+            new XmlDiffTests().EqualResultForSameEmptyElements();
+            new XmlDiffTests().NotEqualResultForEmptyVsNotEmptyElements();
+            new XmlDiffTests().NotEqualResultForDifferentElements();
+            new XmlDiffTests().NotEqualResultForDifferentNumberOfAttributes();
+            new XmlDiffTests().NotEqualResultForDifferentAttributeValues();
+            new XmlDiffTests().NotEqualResultForDifferentAttributeNames();
+            new XmlDiffTests().EqualResultForDifferentAttributeSequences();
+            new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();
+
+            new DifferenceTests().ToStringContainsId();
+        }
+    }
+}
