@@ -1,7 +1,7 @@
-using NUnit.Framework;
+﻿namespace XmlUnit.Tests.All {
+    using NUnit.Framework;
+    using XmlUnit.Tests;
 
-namespace XmlUnit.Tests
-{
 
     [TestFixture]
     public class AllTests : Assertion {
@@ -24,9 +24,15 @@ namespace XmlUnit.Tests
             new XmlDiffTests().NotEqualResultForDifferentAttributeValues();
             new XmlDiffTests().NotEqualResultForDifferentAttributeNames();
             new XmlDiffTests().EqualResultForDifferentAttributeSequences();
-            new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();
+            new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();            
+            new XmlDiffTests().NotEqualResultForDifferentTextElements();
+            new XmlDiffTests().CanDistinguishElementClosureAndEmptyElement();
 
             new DifferenceTests().ToStringContainsId();
+            
+            new XmlUnitConfigurationTests().DefaultConfiguredWhitespaceHandlingAll();
+            new XmlUnitConfigurationTests().CanConfigureWhitespaceHandlingSignificant();
+            new XmlUnitConfigurationTests().CanConfigureWhitespaceHandlingNone();
         }
     }
 }

@@ -10,6 +10,7 @@
         public static Difference ELEMENT_NUM_ATTRIBUTES = new Difference(DifferenceType.ELEMENT_NUM_ATTRIBUTES_ID, true);
         public static Difference ATTR_VALUE = new Difference(DifferenceType.ATTR_VALUE_ID, true);
         public static Difference ATTR_NAME_NOT_FOUND = new Difference(DifferenceType.ATTR_NAME_NOT_FOUND_ID, true);
+        public static Difference TEXT_VALUE = new Difference(DifferenceType.TEXT_VALUE_ID, true);
         
     }
 }

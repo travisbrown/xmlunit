@@ -9,9 +9,9 @@
             get {
                 return _whitespaceHandling;
             }
-//          NOT TESTED!!!  set {
-//                _whitespaceHandling = value;
-//            }
+            set {
+                _whitespaceHandling = value;
+            }
         }
     }
 }
