@@ -1,6 +1,7 @@
 <project name="XMLUnit" default="compile" basedir=".">
   <property name="src.dir" value="src" />
   <property name="format" value="plain" />
+  <property name="version" value="0.1"/>
 
   <path id="classpath">
     <fileset dir="lib">
@@ -9,7 +10,12 @@
   </path>
 
   <target name="compile" depends="prepare" description="Compile Java Source">
-    <javac srcdir="${src.dir}/java" destdir="classes" classpathref="classpath"/>
+    <javac
+      srcdir="${src.dir}/java"
+      destdir="classes"
+      classpathref="classpath"
+      debug="on"
+    />
   </target>
 
   <target name="docs" depends="prepare">
@@ -20,13 +26,13 @@
       sourcepath="${src.dir}/java"/>
   </target>
 
-  <target name="prepare" description="Prepare for compile">
+  <target name="prepare">
     <mkdir dir="build/docs/api"/>
     <mkdir dir="classes"/>
     <mkdir dir="tests"/>
   </target>
 
-  <target name="clean" description="Remove class files">
+  <target name="clean">
     <delete dir="classes"/>
   </target>
 
@@ -38,7 +44,17 @@
     </jar>
   </target>
 
-  <target name="test">
+  <target name="dist" depends="jar,docs">
+    <zip zipfile="xmlunit-${version}.zip">
+      <fileset dir="build"/>
+      <fileset dir="lib">
+        <include name="jdom.jar"/>
+        <include name="xerces.jar"/>
+      </fileset>
+    </zip>
+  </target>
+
+  <target name="test" depends="compile">
     <junit fork="no">
       <classpath>
         <pathelement location="classes"/>
@@ -46,7 +62,7 @@
           <include name="*.jar"/>
         </fileset>
       </classpath>
-      <formatter type="${format}"/>
+      <formatter usefile="no" type="${format}"/>
       <batchtest>
         <fileset dir="${src.dir}/java">
           <include name="**/test_*.java"/>
