@@ -45,8 +45,8 @@ public class test_XMLTestCase extends XMLTestCase{
     }
 
     public void testSetParsers(){
-        setControlParser("org.apache.xerces.parsers.SAXParser");
-        setTestParser("org.apache.xerces.parsers.SAXParser");
+        setControlParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+        setTestParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
     }
 
     public void testIgnoreWhitespace() throws Exception {
@@ -75,14 +75,18 @@ public class test_XMLTestCase extends XMLTestCase{
      * Test the comparision of two files
      */
     public void testCompareFiles() throws Exception {
-        assertXMLEqual(new FileReader("tests/test1.xml"),
-            new FileReader("tests/test1.xml"));
-        assertXMLNotEqual(new FileReader("tests/test1.xml"),
-            new FileReader("tests/test2.xml"));
+        assertXMLEqual(new FileReader(
+                test_Constants.BASEDIR + "/tests/test1.xml"),
+            new FileReader(
+                test_Constants.BASEDIR + "/tests/test1.xml"));
+        assertXMLNotEqual(new FileReader(
+                test_Constants.BASEDIR + "/tests/test1.xml"),
+            new FileReader(
+                test_Constants.BASEDIR + "/tests/test2.xml"));
 
         try{
-            assertXMLNotEqual(new FileReader("nofile.xml"),
-                new FileReader("nofile.xml"));
+            assertXMLNotEqual(new FileReader("nosuchfile.xml"),
+                new FileReader("nosuchfile.xml"));
             fail("Expecting FileNotFoundException");
         }catch(FileNotFoundException e){}
     }
@@ -97,6 +101,13 @@ public class test_XMLTestCase extends XMLTestCase{
             assertXMLNotEqual("assertXMLNotEquals test case" + i + " failed",
                 control[i], test[i]);
         }
+    }
+
+    /**
+     * Handy dandy main method to run this suite with text-based TestRunner
+     */
+    public static void main(String[] args) {
+        new junit.textui.TestRunner().run(suite());
     }
 
     /**

@@ -1,72 +1,49 @@
-<project name="XMLUnit" default="compile" basedir=".">
-  <property name="src.dir" value="src" />
-  <property name="format" value="plain" />
-  <property name="version" value="0.2"/>
-
-  <path id="classpath">
-    <fileset dir="lib">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <target name="compile" depends="prepare" description="Compile Java Source">
-    <javac
-      srcdir="${src.dir}/java"
-      destdir="classes"
-      classpathref="classpath"
-      debug="on"
-    />
+<project name="xmlunit" default="test" basedir=".">
+  <target name="init">
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="out.dir" value="classes"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="test.report.dir" value="junit"/>
+    <mkdir dir="${src.dir}/etc"/> 
+    <mkdir dir="${lib.dir}"/> 
+    <mkdir dir="${out.dir}"/> 
+    <mkdir dir="${dist.dir}"/> 
+    <mkdir dir="${test.report.dir}"/> 
   </target>
 
-  <target name="docs" depends="prepare">
-    <javadoc
-      classpathref="classpath"
-      packagenames="org.custommonkey.*"
-      destdir="build/docs/api"
-      sourcepath="${src.dir}/java"/>
+  <target name="clean" depends="init">
+    <delete includeEmptyDirs="true" >
+      <fileset dir="${out.dir}" includes="**/*.class"/>
+      <fileset dir="${test.report.dir}" includes="**/TEST*.txt"/>
+    </delete>
   </target>
 
-  <target name="prepare">
-    <mkdir dir="build/docs/api"/>
-    <mkdir dir="classes"/>
-    <mkdir dir="tests"/>
-  </target>
-
-  <target name="clean">
-    <delete dir="classes"/>
-  </target>
-
-  <target name="jar" depends="compile">
-    <jar jarfile="build/xmlunit.jar">
-      <fileset dir="classes">
-        <exclude name="**/test_*.class"/>
-      </fileset>
-    </jar>
-  </target>
-
-  <target name="dist" depends="clean,jar,docs">
-    <zip zipfile="build/src.zip">
-      <fileset dir="src"/>
-    </zip>
-    <zip zipfile="xmlunit-${version}.zip">
-      <fileset dir="build"/>
-      <fileset dir="lib">
-        <include name="jdom.jar"/>
-        <include name="xerces.jar"/>
-      </fileset>
-    </zip>
+  <target name="compile" depends="init">
+    <mkdir dir="${out.dir}"/>
+    <javac srcdir="${src.dir}/java" destdir="${out.dir}"> 
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+    </javac>
+    <copy todir="${out.dir}/etc">
+      <fileset dir="${src.dir}/etc"/>
+    </copy>
   </target>
 
   <target name="test" depends="compile">
-    <junit fork="no">
+    <mkdir dir="${test.report.dir}"/>
+    <junit printsummary="yes" haltonfailure="no">
+        <sysproperty key="basedir" value="${basedir}"/> 
       <classpath>
-        <pathelement location="classes"/>
-        <fileset dir="lib">
-          <include name="*.jar"/>
-        </fileset>
+        <pathelement location="${out.dir}"/>
+        <pathelement path="${java.class.path}"/>
       </classpath>
-      <formatter usefile="no" type="${format}"/>
-      <batchtest>
+      <formatter type="plain"/>
+      <batchtest fork="yes" todir="${test.report.dir}">
         <fileset dir="${src.dir}/java">
           <include name="**/test_*.java"/>
         </fileset>
@@ -74,4 +51,38 @@
     </junit>
   </target>
 
+  <target name="dist" depends="clean,compile">
+    <jar jarfile="${lib.dir}/xmlunit.jar"
+       basedir="${out.dir}"
+       excludes="**/test_*.class"
+    />
+
+    <zip zipfile="${dist.dir}/xmlunit0.3.zip"
+       basedir="${basedir}"
+       includes="**/*.java,**/*.txt,**/*.jar,**/*.xml,**/*.xsl"
+    />
+
+  </target>
+
+  <target name="docs" depends="compile">
+    <mkdir dir="${dist.dir}/docs"/> 
+    <javadoc packagenames="org.custommonkey.xmlunit.*"
+       sourcepath="${src.dir}/java"
+       destdir="${dist.dir}/docs"
+       author="true"
+       version="true"
+       use="true"
+       stylesheetfile="${dist.dir}/docs/javadoc.css"
+       header="&lt;a target=_top href=http://xmlunit.sourceforge.net/&gt;&lt;img border=0 src=http://xmlunit.sourceforge.net/xmlunit-small.png&gt;&lt;/a&gt;"
+       windowtitle="XMLUnit"
+       doctitle="&lt;h1&gt;API documentation&lt;/h1&gt;"
+       bottom="&lt;i&gt;Copyright &#169; 2001 Jeff Martin. All Rights Reserved.&lt;/i&gt;">
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="**/*.jar" />
+          <include name="**/*.zip" />
+        </fileset>
+      </classpath>
+    </javadoc>
+  </target>
 </project>
