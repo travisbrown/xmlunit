@@ -36,14 +36,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.StringReader;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
-
 import org.w3c.dom.Document;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.StringReader;
 
 /**
  * JUnit test for Validator
@@ -53,6 +53,15 @@ import org.w3c.dom.Document;
 public class test_Validator extends XMLTestCase {
     private Validator validator;
     private File tempDTDFile;
+
+    public void testXSchema() throws Exception{
+        XMLUnit.setSAXParserFactory("org.apache.xerces.jaxp.SAXParserFactoryImpl");
+        validator = new Validator(new FileReader("tests/etc/BookXsdGenerated.xml"));
+
+        validator.useXMLSchema(true);
+
+        validator.assertIsValid();
+    }
 
     public void testIsValidGood() throws Exception {
         String toonXML = test_Constants.XML_DECLARATION

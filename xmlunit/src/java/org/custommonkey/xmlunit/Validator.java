@@ -39,12 +39,14 @@ package org.custommonkey.xmlunit;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.w3c.dom.Document;
 import org.xml.sax.helpers.DefaultHandler;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,7 +71,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Validator extends DefaultHandler implements ErrorHandler {
-    private final InputSource validationInputSource ;
+    private final InputSource validationInputSource;
     private final SAXParser parser;
     private final StringBuffer messages;
     private final boolean usingDoctypeReader;
@@ -84,12 +86,13 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @throws SAXException
      */
     protected Validator(InputSource inputSource, boolean usingDoctypeReader)
-    throws ParserConfigurationException, SAXException {
+        throws ParserConfigurationException, SAXException {
         isValid = null;
         messages = new StringBuffer();
         SAXParserFactory factory = XMLUnit.getSAXParserFactory();
         factory.setValidating(true);
         parser = factory.newSAXParser();
+
         this.validationInputSource = inputSource;
         this.usingDoctypeReader = usingDoctypeReader;
     }
@@ -109,7 +112,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
      */
     public Validator(Document document, String systemID, String doctype)
-    throws ParserConfigurationException, SAXException {
+        throws ParserConfigurationException, SAXException {
         this(new InputStreamReader(new NodeInputStream(document)),
             systemID, doctype);
     }
@@ -124,7 +127,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
      */
     public Validator(Reader readerForValidation)
-    throws ParserConfigurationException, SAXException {
+        throws ParserConfigurationException, SAXException {
         this(new InputSource(readerForValidation),
             (readerForValidation instanceof DoctypeReader));
     }
@@ -142,7 +145,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
      */
     public Validator(Reader readerForValidation, String systemID)
-    throws ParserConfigurationException, SAXException {
+        throws ParserConfigurationException, SAXException {
         this(readerForValidation);
         validationInputSource.setSystemId(systemID);
     }
@@ -158,9 +161,22 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @throws SAXException
      */
     public Validator(Reader readerForValidation, String systemID, String doctype)
-    throws ParserConfigurationException, SAXException {
+        throws ParserConfigurationException, SAXException {
         this(new DoctypeReader(readerForValidation, doctype, systemID));
         validationInputSource.setSystemId(systemID);
+    }
+
+    /**
+     * Turn on XML Schema validation.
+     * Calling this method sets the featues http://apache.org/xml/features/validation/schema & http://apache.org/xml/features/validation/dynamic
+     * to true.
+     * <b>Currently this feature only works with the Xerces 2 XML parser</b>
+     * @param use indicate that XML Schema should be used to validate documents.
+     * @throws SAXException
+     */
+    public void useXMLSchema(boolean use) throws SAXException {
+        parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/schema", use);
+        parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/dynamic", use);
     }
 
     /**
@@ -174,11 +190,20 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
+     * Assert that a document is valid.
+     */
+    public void assertIsValid(){
+        if(!isValid()){
+            junit.framework.Assert.fail(messages.toString());
+        }
+    }
+
+    /**
      * Append any validation message(s) to the specified StringBuffer
      * @param toAppendTo
      * @return specified StringBuffer with message(s) appended
      */
-    public StringBuffer appendMessage(StringBuffer toAppendTo) {
+    private StringBuffer appendMessage(StringBuffer toAppendTo) {
         if (isValid()) {
             return toAppendTo.append("[valid]");
         }
@@ -213,7 +238,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
             isValid = Boolean.TRUE;
         } else if (usingDoctypeReader) {
             try {
-                messages.append("\nContent was: ").append( ((DoctypeReader)
+                messages.append("\nContent was: ").append(((DoctypeReader)
                     validationInputSource.getCharacterStream()).getContent());
             } catch (IOException e) {
                 // silent but deadly?
@@ -234,8 +259,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @param exception
      * @throws SAXException
      */
-    public void warning (SAXParseException exception)
-    throws SAXException {
+    public void warning(SAXParseException exception)
+        throws SAXException {
         errorHandlerException(exception);
     }
 
@@ -244,8 +269,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @param exception
      * @throws SAXException
      */
-    public void error (SAXParseException exception)
-    throws SAXException {
+    public void error(SAXParseException exception)
+        throws SAXException {
         errorHandlerException(exception);
     }
 
@@ -254,8 +279,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @param exception
      * @throws SAXException
      */
-    public void fatalError (SAXParseException exception)
-    throws SAXException {
+    public void fatalError(SAXParseException exception)
+        throws SAXException {
         errorHandlerException(exception);
     }
 
@@ -277,8 +302,6 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
     /**
      * Deal with exceptions passed to the ErrorHandler interface by the parser
-     * @param exception
-     * @throws SAXException
      */
     private void errorHandlerException(Exception e) {
         invalidate(e.getMessage());
