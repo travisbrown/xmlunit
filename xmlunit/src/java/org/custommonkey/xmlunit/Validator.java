@@ -1,11 +1,13 @@
 package org.custommonkey.xmlunit;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.w3c.dom.Document;
 import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -28,14 +30,53 @@ import javax.xml.parsers.ParserConfigurationException;
  *   to validate some XML against a completely different DTD
  * </li>
  * </ul>
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Validator extends DefaultHandler implements ErrorHandler {
     private final InputSource validationInputSource ;
     private final SAXParser parser;
     private final StringBuffer messages;
-    private final boolean canTrace;
+    private final boolean usingDoctypeReader;
 
     private Boolean isValid;
+
+    /**
+     * Baseline constructor: called by all others
+     * @param inputSource
+     * @param usingDoctypeReader
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    protected Validator(InputSource inputSource, boolean usingDoctypeReader)
+    throws ParserConfigurationException, SAXException {
+        isValid = null;
+        messages = new StringBuffer();
+        SAXParserFactory factory = XMLUnit.getSAXParserFactory();
+        factory.setValidating(true);
+        parser = factory.newSAXParser();
+        this.validationInputSource = inputSource;
+        this.usingDoctypeReader = usingDoctypeReader;
+    }
+
+    /**
+     * DOM-style constructor: allows Document validation post-manipulation
+     * of the DOM tree's contents.
+     * This takes a fairly tortuous route to validation as DOM level 2 does
+     * not allow creation of Doctype nodes.
+     * The supplied systemId and doctype name will replace any Doctype
+     * settings in the Document.
+     * @param document
+     * @param systemID
+     * @param doctype
+     * @throws ParserConfigurationException if unable to turn validation feature
+     *  on in JAXP factory
+     * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     */
+    public Validator(Document document, String systemID, String doctype)
+    throws ParserConfigurationException, SAXException {
+        this(new InputStreamReader(new NodeInputStream(document)),
+            systemID, doctype);
+    }
 
     /**
      * Basic constructor.
@@ -48,13 +89,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      */
     public Validator(Reader readerForValidation)
     throws ParserConfigurationException, SAXException {
-        isValid = null;
-        messages = new StringBuffer();
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setValidating(true);
-        parser = factory.newSAXParser();
-        validationInputSource = new InputSource(readerForValidation);
-        canTrace = (readerForValidation instanceof DoctypeReader);
+        this(new InputSource(readerForValidation),
+            (readerForValidation instanceof DoctypeReader));
     }
 
     /**
@@ -103,14 +139,14 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
     /**
      * Append any validation message(s) to the specified StringBuffer
-     * @param buf
-     * @return
+     * @param toAppendTo
+     * @return specified StringBuffer with message(s) appended
      */
-    public StringBuffer appendMessage(StringBuffer buf) {
+    public StringBuffer appendMessage(StringBuffer toAppendTo) {
         if (isValid()) {
-            return buf.append("[valid]");
+            return toAppendTo.append("[valid]");
         }
-        return buf.append(messages);
+        return toAppendTo.append(messages);
     }
 
     /**
@@ -139,7 +175,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
         if (isValid == null) {
             isValid = Boolean.TRUE;
-        } else if (canTrace) {
+        } else if (usingDoctypeReader) {
             try {
                 messages.append("\nContent was: ").append( ((DoctypeReader)
                     validationInputSource.getCharacterStream()).getContent());
@@ -192,7 +228,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * referenced in the markup DOCTYPE instruction
      * @param publicId
      * @param systemId
-     * @return
+     * @return the sax InputSource that points to the overridden systemID
      */
     public InputSource resolveEntity(String publicId, String systemId) {
         if (validationInputSource.getSystemId() != null) {
@@ -222,3 +258,4 @@ public class Validator extends DefaultHandler implements ErrorHandler {
         messages.append(message).append(' ');
     }
 }
+

@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
  * Nodes are supplied to <code>testNode</code> method by a NodeTest instance,
  * and after all the nodes in the NodeTest have been supplied the
  * <code>noMoreNodes</code> method is called.
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  * @see NodeTest
  */
 public interface NodeTester {
@@ -26,3 +27,4 @@ public interface NodeTester {
      */
     public void noMoreNodes(NodeTest forTest) throws NodeTestException ;
 }
+

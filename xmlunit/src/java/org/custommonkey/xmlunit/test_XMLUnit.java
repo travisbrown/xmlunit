@@ -1,8 +1,8 @@
 package org.custommonkey.xmlunit;
 
 import junit.framework.*;
-import java.io.*;
-import javax.xml.parsers.*;
+import junit.textui.TestRunner;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Test case for XMLUnit
@@ -51,11 +51,19 @@ public class test_XMLUnit extends TestCase{
         assertEquals("should be different", false,
             before==XMLUnit.getTestParser());
     }
+
+    public void testSetTransformerFactory() throws Exception {
+        Object before = XMLUnit.getTransformerFactory();
+        XMLUnit.setTransformerFactory(before.getClass().getName());
+        assertEquals("should be different", false,
+            before==XMLUnit.getTransformerFactory());
+    }
+
     /**
      * Handy dandy main method to run this suite with text-based TestRunner
      */
     public static void main(String[] args) {
-        new junit.textui.TestRunner().run(suite());
+        new TestRunner().run(suite());
     }
 
     /**

@@ -3,7 +3,8 @@ package org.custommonkey.xmlunit;
 /**
  * Performs replacement of one String by another String
  *  within one or more Strings.
- *  Not actually required yet...
+ * This was required but a code refactoring made it redundant and I don't have
+ *  the heart to kill it off...!
  */
 public class Replacement {
     private final char[] ofChars;

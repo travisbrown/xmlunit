@@ -15,7 +15,8 @@ import org.w3c.dom.Text;
 /**
  * Helper class.
  * Abstract interface implementation that performs Node-type checks and
- * delegates isValid() processing to subclass.
+ * delegates testNode() processing to subclass.
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  * @see NodeTest
  */
 public abstract class AbstractNodeTester implements NodeTester {
@@ -62,81 +63,81 @@ public abstract class AbstractNodeTester implements NodeTester {
     }
 
     /**
-     * Template delegator for isValid() method.
+     * Template delegator for testNode() method.
      * @param attribute
-     * @return false, always: override if required in subclass
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testAttribute(Attr attribute) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param cdata
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testCDATASection(CDATASection cdata) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param comment
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testComment(Comment comment) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param doctype
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testDocumentType(DocumentType doctype) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param element
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testElement(Element element) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param entity
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testEntity(Entity entity) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param reference
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testEntityReference(EntityReference reference) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param notation
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testNotation(Notation notation) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param instr
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testProcessingInstruction(ProcessingInstruction instr) throws NodeTestException  {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
     }
     /**
-     * Template delegator for isValid() method.
-     * @param attribute
-     * @return false, always: override if required in subclass
+     * Template delegator for testNode() method.
+     * @param text
+     * @exception NodeTestException always: override if required in subclass
      */
     public void testText(Text text) throws NodeTestException {
         throw new NodeTestException("Test fails by default in AbstractNodeTester");
@@ -149,3 +150,4 @@ public abstract class AbstractNodeTester implements NodeTester {
      */
     public abstract void noMoreNodes(NodeTest forTest) throws NodeTestException;
 }
+

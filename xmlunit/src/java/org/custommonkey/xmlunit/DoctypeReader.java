@@ -12,6 +12,7 @@ import java.io.StringReader;
  * for a character stream containing XML markup.
  * Used by Validator class to wrap a Reader when performing validation of a
  * document against a DTD.
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class DoctypeReader extends Reader {
     private static final String DOCTYPE_OPEN_DECL = "<!";
@@ -178,7 +179,8 @@ public class DoctypeReader extends Reader {
      * @param cbuf
      * @param off
      * @param len
-     * @return
+     * @return The number of characters read, or -1 if the end of the
+     *  stream has been reached
      * @throws IOException
      */
     public int read(char cbuf[], int off, int len) throws IOException {
@@ -190,8 +192,10 @@ public class DoctypeReader extends Reader {
 
     /**
      * Close the wrapped Reader
+     * @throws IOException
      */
     public void close() throws IOException {
         replacementReader.close();
     }
 }
+

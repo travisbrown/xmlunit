@@ -1,31 +1,46 @@
 package org.custommonkey.xmlunit;
 
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
-import java.io.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.xml.sax.SAXException;
 
 /**
- * Describes differences between XML documents
+ * Compares and describes the differences between XML documents.
+ * Two documents are either:
+ * <br /><ul>
+ * <li><i>identical</i>: the content and sequence of the nodes in the documents
+ *  are exactly the same.</li>
+ * <li><i>similar</i>: the content of the nodes in the documents are the same,
+ *  but the sequencing of sibling elements, values of namespace prefixes,
+ *  use of implied attributes or other minor differences may exist.</li>
+ * <li><i>different</i>: the contents of the documents are fundamentally
+ *  different</li>
+ * </ul>
+ * <br />The differences between compared documents are contained in a
+ *  message buffer held in this class, accessible either through the
+ *  <code>appendMessage</code> or <code>toString</code> methods.
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
-public class Diff{
+public class Diff implements DifferenceListener, DifferenceConstants {
     private final Document controlDoc;
     private final Document testDoc;
     private boolean similar = true;
     private boolean identical = true;
     private boolean compared = false;
-    private Element controlElement;
-    private Element testElement;
-
-    /**
-     * Old style constructor used by XMLUnit class
-     * @deprecated Not required since the addition of the new constructors
-     */
-    protected Diff() {
-        this.controlDoc = null;
-        this.testDoc = null;
-    }
+    private StringBuffer messages;
+    private DifferenceEngine differenceEngine;
 
     /**
      * Construct a Diff that compares the XML in two Strings
@@ -40,16 +55,27 @@ public class Diff{
      */
     public Diff(Reader control, Reader test) throws SAXException, IOException,
     ParserConfigurationException {
-        this(XMLUnit.getControlParser().parse(new InputSource(control)),
-            XMLUnit.getTestParser().parse(new InputSource(test)));
+        this(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
+            XMLUnit.buildDocument(XMLUnit.getTestParser(), test));
     }
 
     /**
      * Construct a Diff that compares the XML in two Documents
      */
     public Diff(Document controlDoc, Document testDoc) {
+        this(controlDoc, testDoc, new DifferenceEngine());
+    }
+
+    /**
+     * Construct a Diff that compares the XML in two Documents using a specific
+     * DifferenceEngine
+     */
+    public Diff(Document controlDoc, Document testDoc,
+    DifferenceEngine comparator) {
         this.controlDoc = controlDoc;
         this.testDoc = testDoc;
+        this.differenceEngine = comparator;
+        this.messages = new StringBuffer();
     }
 
     /**
@@ -58,8 +84,8 @@ public class Diff{
      */
     public Diff(String control, Transform testTransform) throws IOException,
     TransformerException, ParserConfigurationException, SAXException {
-        this(XMLUnit.getControlParser().parse(
-            new InputSource(new StringReader(control))), testTransform.getResultDocument());
+        this(XMLUnit.buildControlDocument(control),
+            testTransform.getResultDocument());
     }
 
     /**
@@ -69,164 +95,9 @@ public class Diff{
         if (compared) {
             return;
         }
-        if (controlDoc==null && testDoc==null) {
-            return;
-        }
-        compare(controlDoc.getDocumentElement(), testDoc.getDocumentElement());
+        differenceEngine.compare(controlDoc.getDocumentElement(),
+            testDoc.getDocumentElement(), this);
         compared = true;
-    }
-
-    /**
-     * compare XML elements recursively
-     */
-    private void compare(Element control, Element test){
-        try {
-            compareElementValues(control, test);
-            compareAttributes(control, test);
-            compareChildren(control, test);
-        } catch (ComparisonFailedException e) {
-            differenceFound(control, test);
-        }
-    }
-
-    private void compareElementValues(Element control, Element test)
-    throws ComparisonFailedException {
-        if (!identicalNodeValues(control, test)) {
-            throw new ComparisonFailedException();
-        }
-    }
-
-    private String getText(Node aNode) {
-        String text = "";
-        switch(aNode.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                NodeList children = aNode.getChildNodes();
-                int child = 0;
-                boolean noTextFound = true;
-                Node childNode;
-                while (child < children.getLength() && noTextFound ) {
-                    childNode = children.item(child);
-                    if (childNode.getNodeType()==Node.TEXT_NODE) {
-                        noTextFound = false;
-                        text = childNode.getNodeValue();
-                    }
-                    ++child;
-                }
-                break;
-            case Node.ATTRIBUTE_NODE:
-                text = aNode.getNodeValue();
-                break;
-            default:
-                break;
-        }
-        return text;
-    }
-
-    private boolean identicalNodeValues(Node control, Node test) {
-        if(control.getNodeName().equals(test.getNodeName())){
-            if(XMLUnit.getIgnoreWhitespace()){
-                if(getText(control).trim().equals(getText(test).trim())) {
-                    return true;
-                }
-            }else if(getText(control).equals(getText(test))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void compareAttributes(Element control, Element test)
-    throws ComparisonFailedException {
-        NamedNodeMap controlAttributes = control.getAttributes();
-        NamedNodeMap testAttributes = test.getAttributes();
-        int numAttributes = controlAttributes.getLength();
-        if (numAttributes!=testAttributes.getLength()) {
-            similar = false;
-        }
-
-        Node controlNextAttribute;
-        Node testNextAttribute, testMatchingAttribute;
-        String controlAttribName, controlAttribValue;
-        int attributeNum = 0;
-
-        while(similar && attributeNum < numAttributes){
-            controlNextAttribute = controlAttributes.item(attributeNum);
-            testNextAttribute = testAttributes.item(attributeNum);
-
-            controlAttribName = controlNextAttribute.getNodeName();
-            controlAttribValue = controlNextAttribute.getNodeValue();
-
-            testMatchingAttribute = test.getAttributeNode(controlAttribName);
-
-            if(testMatchingAttribute==null){
-                similar = false;
-            }else {
-                identical = identical && identicalNodeValues(testNextAttribute,
-                    testMatchingAttribute);
-                similar = identicalNodeValues(controlNextAttribute,
-                    testMatchingAttribute);
-            }
-            ++attributeNum;
-        }
-        if (!similar) {
-            throw new ComparisonFailedException();
-        }
-    }
-
-    private void compareChildren(Element control, Element test)
-    throws ComparisonFailedException {
-        NodeList controlChildren = control.getChildNodes();
-        NodeList testChildren = test.getChildNodes();
-        int numNodes = controlChildren.getLength();
-        if (numNodes!=testChildren.getLength()) {
-            similar =false;
-        }
-
-        Node controlNextChild ;
-        Element testMatchingChild ;
-        int elementNum = 0;
-        while (similar && elementNum < numNodes){
-            controlNextChild = controlChildren.item(elementNum);
-            if (controlNextChild.getNodeType()==Document.ELEMENT_NODE) {
-                testMatchingChild = getMatchingElement((Element)controlNextChild,
-                    testChildren, elementNum);
-                if(testMatchingChild==null){
-                    similar = false;
-                }else{
-                    compare((Element)controlNextChild, testMatchingChild);
-                }
-            }
-            ++elementNum;
-        }
-
-        if (!similar) {
-            throw new ComparisonFailedException();
-        }
-    }
-
-    private Element getMatchingElement(Element elementToMatch, NodeList elementList,
-    int startAt) {
-        Element matching = null;
-        int listIndex = startAt;
-        int maxIndex = elementList.getLength();
-
-        Node nextNode;
-        do {
-            nextNode = elementList.item(listIndex);
-            if (nextNode.getNodeType()==Document.ELEMENT_NODE
-            && identicalNodeValues((Element)nextNode, elementToMatch)) {
-                matching = (Element) nextNode;
-                if (listIndex!=startAt) {
-                    identical = false;
-                }
-            } else {
-                ++listIndex;
-                if (listIndex==maxIndex) {
-                    listIndex = 0;
-                }
-            }
-        } while (matching==null && listIndex!=startAt);
-        return matching;
     }
 
     /**
@@ -250,74 +121,164 @@ public class Diff{
     }
 
     /**
-     * Add a difference to the list difference between documents
+     * Append Node comparison details to message buffer
+     * @param buf
+     * @param control
+     * @param test
      */
-    protected final void differenceFound(Element control, Element test){
-        if(controlElement!=null||testElement!=null) {
-            return;
-        }
-        similar = false;
-        identical = false;
-        this.controlElement = control;
-        this.testElement = test;
-    }
-
-    public StringBuffer appendMessage(StringBuffer buf) {
-        if (identical()) {
-            return buf.append("[identical]");
-        } else if (similar) {
-            buf.append("[similar]");
-        }
-        buf.append(" Expected: ");
-        appendElement(controlElement, buf);
-        buf.append(", but was: ");
-        appendElement(testElement, buf);
-        return buf;
-    }
-
-    public String toString(){
-        StringBuffer buf = new StringBuffer(getClass().getName());
-        return appendMessage(buf).toString();
-    }
-
-    private StringBuffer appendElement(Element anElement,
-    StringBuffer appendToBuf) {
-        if(anElement==null){
-            appendToBuf.append("null");
-        }else{
-            String elementText = getText(anElement);
-            appendToBuf.append("<").append(anElement.getNodeName());
-
-            appendAttributes(anElement.getAttributes(), appendToBuf);
-
-            if(elementText==null || elementText.length()==0){
-                appendToBuf.append("/>");
-            }else{
-                appendToBuf.append(">").append(elementText)
-                    .append("</").append(anElement.getNodeName()).append(">");
-            }
-        }
-        return appendToBuf;
-    }
-
-    private StringBuffer appendAttributes(NamedNodeMap attributeMap,
-    StringBuffer appendToBuf) {
-        Node item;
-        for (int i=0; i < attributeMap.getLength(); ++i) {
-            item = attributeMap.item(i);
-            appendToBuf.append(" ").append(item.getNodeName())
-                .append("=\"").append(item.getNodeValue()).append("\"");
-        }
-        return appendToBuf;
+    private void appendComparingWhat(StringBuffer buf, Node control, Node test) {
+        buf.append(": comparing ");
+        appendNodeDetail(buf, control, true);
+        buf.append(" to ");
+        appendNodeDetail(buf, test, true);
     }
 
     /**
-     * Inner class used by internal compare() methods to flag that a comparison
-     * found dissimilarities
+     * Convert a Node into a simple String representation and append to message
+     *  buffer
+     * @param buf
+     * @param aNode
+     * @param notRecursing
      */
-    private class ComparisonFailedException extends Exception {
-        private ComparisonFailedException() {
-            super();
+    private void appendNodeDetail(StringBuffer buf, Node aNode,
+    boolean notRecursing) {
+        if (aNode==null) {
+            return;
+        }
+        if (notRecursing) {
+            buf.append('<');
+        }
+        switch (aNode.getNodeType()) {
+            case Node.ATTRIBUTE_NODE:
+                appendNodeDetail(buf,
+                    ((Attr)aNode).getOwnerElement(), false);
+                buf.append(' ')
+                    .append(aNode.getNodeName()).append("=\"")
+                    .append(aNode.getNodeValue()).append("\"...");
+                break;
+            case Node.ELEMENT_NODE:
+                    buf.append(aNode.getNodeName());
+                    if (notRecursing) {
+                        buf.append("...");
+                    }
+                break;
+            case Node.TEXT_NODE:
+                appendNodeDetail(buf, aNode.getParentNode(), false);
+                buf.append(" ...>")
+                    .append(aNode.getNodeValue()).append("</");
+                appendNodeDetail(buf, aNode.getParentNode(), false);
+                break;
+            case Node.CDATA_SECTION_NODE:
+                buf.append("![CDATA[").append(aNode.getNodeValue())
+                    .append("]]");
+                break;
+            case Node.COMMENT_NODE:
+                buf.append("!--").append(aNode.getNodeValue())
+                    .append("--");
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                ProcessingInstruction instr = (ProcessingInstruction) aNode;
+                buf.append('?').append(instr.getTarget())
+                    .append(' ').append(instr.getData())
+                    .append('?');
+                break;
+            case Node.DOCUMENT_TYPE_NODE:
+                DocumentType type = (DocumentType) aNode;
+                buf.append("!DOCTYPE ").append(type.getName());
+                if (type.getPublicId()!=null
+                && type.getPublicId().length() > 0) {
+                    buf.append(" PUBLIC \"").append(type.getPublicId())
+                        .append('"');
+                }
+                if (type.getSystemId()!=null
+                && type.getSystemId().length() > 0) {
+                    buf.append(" SYSTEM \"").append(type.getSystemId())
+                        .append('"');
+                }
+                break;
+            default:
+                buf.append("!--NodeType ").append(aNode.getNodeType())
+                    .append(' ').append(aNode.getNodeName())
+                    .append('/').append(aNode.getNodeValue())
+                    .append("--");
+
+        }
+        if (notRecursing) {
+            buf.append('>');
         }
     }
+
+    /**
+     * Append a meaningful message to the buffer of messages
+     * @param expected
+     * @param actual
+     * @param control
+     * @param test
+     * @param difference
+     */
+    private void appendDifference(String expected, String actual, Node control,
+    Node test, Difference difference) {
+        messages.append("\n Expected ")
+            .append(difference.getDescription())
+            .append(" ").append(expected)
+            .append(" but was ").append(actual);
+        appendComparingWhat(messages, control, test);
+    }
+
+    /**
+     * DifferenceListener implementation.
+     * @param expected
+     * @param actual
+     * @param control
+     * @param test
+     * @param comparingWhat
+     */
+    public final void differenceFound(String expected, String actual,
+    Node control, Node test, Difference difference) {
+        identical = false;
+        if (difference.isRecoverable()) {
+            messages.append("[similar]");
+        } else {
+            similar = false;
+            messages.append("[different]");
+        }
+        appendDifference(expected, actual, control, test, difference);
+    }
+
+    /**
+     * DifferenceListener implementation.
+     * @param control
+     * @param test
+     */
+    public final void skippedComparison(Node control, Node test) {
+        System.err.println("DifferenceListener.skippedComparison: "
+            + "unhandled control node type=" + control.getNodeType()
+            + ", unhandled test node type=" + test.getNodeType());
+    }
+
+    /**
+     * Append the message from the result of this Diff instance to a specified
+     *  StringBuffer
+     * @param toAppendTo
+     * @return specified StringBuffer with message appended
+     */
+    public StringBuffer appendMessage(StringBuffer toAppendTo) {
+        compare();
+        if (messages.length()==0) {
+            messages.append("[identical]");
+        }
+        return toAppendTo.append(messages);
+    }
+
+    /**
+     * Get the result of this Diff instance as a String
+     * @return result of this Diff
+     */
+    public String toString(){
+        StringBuffer buf = new StringBuffer(getClass().getName());
+        appendMessage(buf);
+        return buf.toString();
+    }
+
 }
+

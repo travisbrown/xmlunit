@@ -3,7 +3,8 @@ package org.custommonkey.xmlunit;
 import org.w3c.dom.Node;
 
 /**
- * Thrown by a NodeTest that fails
+ * Thrown by a NodeTest that fails.
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  * @see NodeTest
  */
 public class NodeTestException extends Exception {
@@ -42,3 +43,4 @@ public class NodeTestException extends Exception {
     }
 
 }
+

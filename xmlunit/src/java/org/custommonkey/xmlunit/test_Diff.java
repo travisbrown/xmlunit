@@ -1,9 +1,11 @@
 package org.custommonkey.xmlunit;
 
 import junit.framework.*;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
-import java.io.*;
+import junit.textui.TestRunner;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import java.io.FileReader;
 
 /**
  * Test a Diff
@@ -14,62 +16,37 @@ public class test_Diff extends TestCase{
     private Document aDocument;
 
     public void setUp() throws Exception {
-        aDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-    }
-
-    /**
-     * Test the diff.
-     */
-    public void testDifferenceFoundElement(){
-        Diff diff = new Diff();
-        assertEquals(true, diff.similar());
-        diff.differenceFound(aDocument.createElement("test"), aDocument.createElement("test"));
-        assertEquals(false, diff.similar());
+        aDocument = XMLUnit.getControlParser().newDocument();
     }
 
     public void testToString(){
-        Diff diff = new Diff();
-        Element control = aDocument.createElement("test");
-        Text controlText = aDocument.createTextNode("Monkey");
-        control.appendChild(controlText);
-        Element test = aDocument.createElement("test");
-        Text testText = aDocument.createTextNode("Chicken");
-        test.appendChild(testText);
-        diff.differenceFound(control, test);
-        assertEquals("org.custommonkey.xmlunit.Diff Expected: <test>Monkey</test>, but was: <test>Chicken</test>", diff.toString());
-        diff = new Diff();
-        control = aDocument.createElement("test");
-        control.appendChild(controlText);
-        test = aDocument.createElement("test");
-        diff.differenceFound(control, test);
-        assertEquals("org.custommonkey.xmlunit.Diff Expected: <test>Monkey</test>, but was: <test/>", diff.toString());
-    }
+        Diff diff = new Diff(aDocument, aDocument);
+        String[] animals = {"Monkey", "Chicken"};
+        String tag = "tag";
+        Element elemA = aDocument.createElement(tag);
+        elemA.appendChild(aDocument.createTextNode(animals[0]));
 
-    /**
-     * Test the diff.
-     */
-    public void testDifferenceFoundNullElement(){
-        Diff diff = new Diff();
-        assertEquals(true, diff.similar());
-        diff.differenceFound(null, aDocument.createElement("test"));
-        try{
-            assertEquals(diff.toString(), true, diff.similar());
-            fail("Throwable not thrown");
-        }catch(AssertionFailedError t){
-            assertEquals("org.custommonkey.xmlunit.Diff Expected: null, but was: <test/>",
-                diff.toString());
-        }
-        diff = new Diff();
-        diff.differenceFound(aDocument.createElement("test"), null);
-        try{
-            assertEquals(diff.toString(), true, diff.similar());
-            fail("Throwable not thrown");
-        }catch(AssertionFailedError t){
-            assertEquals("org.custommonkey.xmlunit.Diff Expected: <test/>, but was: null",
-                diff.toString());
-        }
-    }
+        Element elemB = aDocument.createElement(tag);
+        diff.differenceFound(Boolean.TRUE.toString(), Boolean.FALSE.toString(),
+            elemA, elemB, DifferenceConstants.HAS_CHILD_NODES);
 
+        assertEquals(diff.getClass().getName() +"[different]\n Expected "
+            + DifferenceConstants.HAS_CHILD_NODES.getDescription()
+            + " true but was false: comparing <tag...> to <tag...>",
+            diff.toString());
+
+        diff = new Diff(aDocument, aDocument);
+        elemB.appendChild(aDocument.createTextNode(animals[1]));
+        diff.differenceFound(animals[0], animals[1], elemA, elemB,
+            DifferenceConstants.TEXT_VALUE);
+
+        assertEquals(diff.getClass().getName() +"[different]\n Expected "
+            + DifferenceConstants.TEXT_VALUE.getDescription()
+            + " " + animals[0] + " but was " + animals[1]
+            + ": comparing <tag...> to <tag...>",
+            diff.toString());
+
+    }
 
     /**
      * Tests the compare method
@@ -147,7 +124,7 @@ public class test_Diff extends TestCase{
             "<same aaa=\"uiop\" zzz=\"qwerty\">pass</same>" );
         if (diff.identical()) {
             System.out.println(getName() + " - should not ideally be identical "
-                + "but some JAXP implementations do reorder attributes inside NamedNodeMap");
+                + "but JAXP implementations can reorder attributes inside NamedNodeMap");
         }
         assertEquals(diff.toString() + ": but should be similar",
             true, diff.similar());
@@ -195,14 +172,16 @@ public class test_Diff extends TestCase{
         final String fruitBat = "<bat type=\"fruit\"/>",
             longEaredBat = "<bat type=\"longeared\"/>";
         Diff diff = new Diff(fruitBat, longEaredBat);
-        assertEquals(diff.getClass().getName()+" Expected: " + fruitBat + ", but was: " + longEaredBat,
+        assertEquals(diff.getClass().getName() +"[different]\n Expected "
+            + DifferenceConstants.ATTR_VALUE.getDescription()
+            + " fruit but was longeared: comparing <bat type=\"fruit\"...> to <bat type=\"longeared\"...>",
             diff.toString());
     }
     /**
      * Handy dandy main method to run this suite with text-based TestRunner
      */
     public static void main(String[] args) {
-        new junit.textui.TestRunner().run(suite());
+        new TestRunner().run(suite());
     }
 
     /**
