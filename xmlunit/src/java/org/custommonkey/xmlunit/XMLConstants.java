@@ -98,4 +98,39 @@ public interface XMLConstants {
      * "!DOCTYPE"
      */
     public static final String START_DOCTYPE = "!DOCTYPE ";
+    
+    /**
+     * "/"
+     */
+    public static final String XPATH_SEPARATOR = "/";
+
+    /**
+     * "["
+     */
+    public static final String XPATH_NODE_INDEX_START = "[";
+
+    /**
+     * "]"
+     */
+    public static final String XPATH_NODE_INDEX_END = "]";
+    
+    /**
+     * "comment()"
+     */
+    public static final String XPATH_COMMENT_IDENTIFIER = "comment()";
+    
+    /**
+     * "processing-instruction()"
+     */
+    public static final String XPATH_PROCESSING_INSTRUCTION_IDENTIFIER = "processing-instruction()";
+    
+    /**
+     * "text()"
+     */
+    public static final String XPATH_CHARACTER_NODE_IDENTIFIER = "text()";
+
+    /**
+     * "&at;"
+     */
+    public static final String XPATH_ATTRIBUTE_IDENTIFIER = "@";
 }

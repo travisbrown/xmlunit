@@ -88,18 +88,17 @@ import org.xml.sax.SAXException;
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class XMLTestCase extends TestCase implements XSLTConstants {
+    /**
+     * Construct a new XML test case.
+     */
+    public XMLTestCase(){
+        super();
+    }
 
     /**
      * Construct a new test case.
-     * Subclasses must implement their own constructor which
-     * pass the name parameter to it's super class e.g.
-     * <pre>
-     * public MyXMLTestCase(String name){
-     *     super(name);
-     * }
-     * </pre>
      * @param name Name of test
-     */
+    */
     public XMLTestCase(String name){
         super(name);
     }

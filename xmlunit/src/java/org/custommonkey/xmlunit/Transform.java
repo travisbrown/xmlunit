@@ -238,6 +238,7 @@ public class Transform {
     /**
      * Override output properties specified in the transformation stylesheet
      * @param outputProperties
+     * @see Transformer#setOutputProperties(java.util.Properties)
      */
     public void setOutputProperties(Properties outputProperties) {
         transformer.setOutputProperties(outputProperties);
@@ -247,6 +248,7 @@ public class Transform {
      * Add a parameter for the transformation
      * @param name
      * @param value
+     * @see Transformer#setParameter(java.lang.String, java.lang.Object)
      */
     public void setParameter(String name, Object value) {
         transformer.setParameter(name, value);
@@ -256,6 +258,7 @@ public class Transform {
      * See a parameter used for the transformation
      * @param name
      * @return the parameter value
+     * @see Transformer#getParameter(java.lang.String)
      */
     public Object getParameter(String name) {
         return transformer.getParameter(name);
@@ -263,6 +266,7 @@ public class Transform {
     
     /**
      * Clear parameters used for the transformation 
+     * @see Transformer#clearParameters()
      */
     public void clearParameters() {
         transformer.clearParameters();
@@ -270,6 +274,7 @@ public class Transform {
     
     /**
      * Set the URIResolver for the transformation
+     * @see Transformer#setURIResolver(javax.xml.transform.URIResolver)
      */
     public void setURIResolver(URIResolver uriResolver) {
         transformer.setURIResolver(uriResolver);
@@ -277,6 +282,7 @@ public class Transform {
         
     /**
      * Set the ErrorListener for the transformation
+     * @see Transformer#setErrorListener(javax.xml.transform.ErrorListener)
      */
     public void setErrorListener(ErrorListener errorListener) {
         transformer.setErrorListener(errorListener);

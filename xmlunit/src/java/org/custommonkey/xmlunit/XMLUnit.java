@@ -209,6 +209,21 @@ public final class XMLUnit {
     }
 
     /**
+     * Compare two XML documents provided by SAX <code>InputSources</code>
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @decremented use Diff constructor directly
+     */
+    public static Diff compare(InputSource control, InputSource test) throws SAXException,
+    IOException, ParserConfigurationException {
+        return new Diff(control, test);
+    }
+
+    /**
      * Compare two XML documents provided by a string and a Reader.
      * @param control Control document
      * @param test Document to test
@@ -268,6 +283,20 @@ public final class XMLUnit {
     }
 
     /**
+     * Utility method to build a Document using the control DocumentBuilder
+     * and the specified InputSource
+     * @param fromSource
+     * @return Document representation of the String content
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
+    public static Document buildControlDocument(InputSource fromSource)
+    throws IOException, SAXException, ParserConfigurationException {
+        return buildDocument(getControlParser(), fromSource);
+    }
+
+    /**
      * Utility method to build a Document using the test DocumentBuilder
      * to parse the specified String.
      * @param fromXML
@@ -282,6 +311,20 @@ public final class XMLUnit {
     }
 
     /**
+     * Utility method to build a Document using the test DocumentBuilder
+     * and the specified InputSource
+     * @param fromSource
+     * @return Document representation of the String content
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
+    public static Document buildTestDocument(InputSource fromSource)
+    throws IOException, SAXException, ParserConfigurationException {
+        return buildDocument(getTestParser(), fromSource);
+    }
+
+    /**
      * Utility method to build a Document using a specific DocumentBuilder
      * and reading characters from a specific Reader.
      * @param withBuilder
@@ -290,9 +333,22 @@ public final class XMLUnit {
      * @throws SAXException
      * @throws IOException
      */
-    protected static Document buildDocument(DocumentBuilder withBuilder,
+    public static Document buildDocument(DocumentBuilder withBuilder,
     Reader fromReader) throws SAXException, IOException {
-        return withBuilder.parse(new InputSource(fromReader));
+        return buildDocument(withBuilder, new InputSource(fromReader));
+    }
+    /**
+     * Utility method to build a Document using a specific DocumentBuilder
+     * and a specific InputSource
+     * @param withBuilder
+     * @param fromSource
+     * @return Document built
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Document buildDocument(DocumentBuilder withBuilder,
+    InputSource fromSource) throws IOException, SAXException {
+        return withBuilder.parse(fromSource);
     }
 
     /**
@@ -364,7 +420,7 @@ public final class XMLUnit {
      * @return current version
      */
     public static String getVersion() {
-        return "0.8";
+        return "@@version@@";
     }
 
 }

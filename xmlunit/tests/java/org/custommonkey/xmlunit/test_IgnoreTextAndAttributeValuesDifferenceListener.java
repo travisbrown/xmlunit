@@ -82,8 +82,7 @@ extends TestCase {
     Difference difference, int returnValue) {
         assertEquals(difference.toString(),
             returnValue,
-            listener.differenceFound(null, null, null, null, 
-                difference));
+            listener.differenceFound(difference));
     }
     
     public void testClassInUse() throws Exception {

@@ -72,28 +72,26 @@ public class DetailedDiff extends Diff {
      * @param comparingWhat
      * @return the value supplied by the superclass implementation
      */
-    public int differenceFound(String expected, String actual,
-    Node control, Node test, Difference difference) {
-        final int returnValue = super.differenceFound(expected, actual, control, test, difference);
+    public int differenceFound(Difference difference) {
+        final int returnValue = super.differenceFound(difference);
         Difference localDifference = null;
         switch (returnValue) {
+        	case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
+        		return returnValue;
             case RETURN_ACCEPT_DIFFERENCE:
-                localDifference = new Difference(difference);
                 break;
             case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
-                localDifference = new Difference(difference, true);
+            	difference.setRecoverable(true);
                 break;
         }
-        if (localDifference != null) {
-            allDifferences.add(localDifference);
-        }
+        allDifferences.add(difference);
         return returnValue;
     }
 
     /**
-     * DifferenceListener implementation.
+     * ComparisonController implementation.
      * @param afterDifference
-     * @return false (always) as this class wants to see all differences
+     * @return false always as this class wants to see all differences
      */
     public boolean haltComparison(Difference afterDifference) {
         return false;

@@ -1,4 +1,4 @@
-XMLUnit version 0.8
+XMLUnit version 1.0
 
 To run this software you will need:
 - junit (http://www.junit.org/)
@@ -12,6 +12,16 @@ Enjoy!
 http://xmlunit.sourceforge.com
 
 Changes in this version:
+- DifferenceListener interface refactored: single method now provides the 
+  XPath location of nodes that differ in a comparison
+- NEW ComparisonController interface now used to control the operation of a 
+  DifferenceEngine instance (extracted from DifferenceListener)
+- NEW NodeDetail class added to supply details of compared nodes in a Difference
+tim.bacon@thoughtworks.com
+November 2002
+
+Changes in version 0.8:
+- Changes to compiled jar in distribution required for compatibility with JUnit 3.8
 - Fixes for a defect in the DetailedDiff class that caused a 
   ClassCastException, raised by Ryan MacLachlan
 - Small API changes for usability

@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,38 +33,53 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************
 */
-
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
+import org.w3c.dom.Node;
 
 /**
- * Regression test class for various bug fixes
+ * Parameter class for holding information about a <code>Node</code> within
+ * a Difference instance  
+ * @see Difference#getControlNodeDetail
+ * @see Difference#getTestNodeDetail
  */
-public class test_BugFixes extends TestCase {
-    public void setUp() throws Exception {
-        XMLUnit.setControlParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        XMLUnit.setTestParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        XMLUnit.setSAXParserFactory("org.apache.xerces.jaxp.SAXParserFactoryImpl");
-        XMLUnit.setTransformerFactory("org.apache.xalan.processor.TransformerFactoryImpl");
-    }
+public class NodeDetail {
+	private final String value;
+	private final Node node; 
+	private final String xpathLocation;
+	
+	/**
+	 * Constructor for NodeDetail.
+	 */
+	public NodeDetail(String value, Node node, String xpathLocation) {
+		this.value = value;
+		this.node = node;
+		this.xpathLocation = xpathLocation;
+	}
+	
+	
+	/**
+	 * Returns the node.
+	 * @return Node
+	 */
+	public Node getNode() {
+		return node;
+	}
 
-    public test_BugFixes() {
-        super();
-    }
+	/**
+	 * Returns the value.
+	 * @return String
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    /**
-     * Return the test suite containing the bug fix tests
-     */
-    public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new test_XMLUnit("testStripWhitespaceTransform"));
-        suite.addTest(new test_Diff("testXMLUnitDoesNotWorkWellWithFiles"));
-        suite.addTest(new test_Transform("testXSLIncludeWithoutSystemId"));
-        suite.addTest(new test_Diff("testNamespaceIssues"));
-        suite.addTest(new test_Diff("testDefaultNamespace"));
-        suite.addTest(new test_DetailedDiff("testLargeFiles"));
-        suite.addTest(new test_DetailedDiff("testDifferentStructure"));
-        return suite;
-    }
+	/**
+	 * Returns the xpathLocation.
+	 * @return String
+	 */
+	public String getXpathLocation() {
+		return xpathLocation;
+	}
+
 }

@@ -39,7 +39,6 @@ package org.custommonkey.xmlunit;
 import org.w3c.dom.Node;
 
 import junit.framework.*;
-import junit.textui.TestRunner;
 
 import java.io.StringReader;
 
@@ -114,12 +113,5 @@ public class test_CountingNodeTester extends TestCase {
         super(name);
     }
 
-    public static TestSuite suite() {
-        return new TestSuite(test_CountingNodeTester.class);
-    }
-
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
 }
 

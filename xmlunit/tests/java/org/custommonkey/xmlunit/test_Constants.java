@@ -44,8 +44,8 @@ import junit.framework.*;
 public class test_Constants extends TestCase
 implements XMLConstants, XSLTConstants {
     public static final String BASEDIR =
-        (System.getProperty("basedir")==null ? "." : System.getProperty("basedir"));
-//        (System.getProperty("basedir")==null ? "d:/projects/xmlunit" : System.getProperty("basedir"));
+        (System.getProperty("basedir")==null ? "d:/projects/xmlunit" : System.getProperty("basedir"));
+//        (System.getProperty("basedir")==null ? "." : System.getProperty("basedir"));
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public static final String CHUCK_JONES_RIP_DTD =

@@ -37,7 +37,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import junit.framework.*;
-import junit.textui.TestRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,26 +90,32 @@ public class test_Diff extends TestCase{
         String[] animals = {"Monkey", "Chicken"};
         String tag = "tag";
         Element elemA = aDocument.createElement(tag);
-        elemA.appendChild(aDocument.createTextNode(animals[0]));
+        Text textA = aDocument.createTextNode(animals[0]);
+        elemA.appendChild(textA);
 
         Element elemB = aDocument.createElement(tag);
-        diff.differenceFound(Boolean.TRUE.toString(), Boolean.FALSE.toString(),
-            elemA, elemB, DifferenceConstants.HAS_CHILD_NODES);
+        Difference difference = new Difference(DifferenceConstants.HAS_CHILD_NODES,
+        	new NodeDetail(Boolean.TRUE.toString(), elemA, "/tag"),
+        	new NodeDetail(Boolean.FALSE.toString(),elemB, "/tag"));
+        diff.differenceFound(difference);
 
         assertEquals(diff.getClass().getName() +"\n[different] Expected "
             + DifferenceConstants.HAS_CHILD_NODES.getDescription()
-            + " 'true' but was 'false' - comparing <tag...> to <tag...>\n",
+            + " 'true' but was 'false' - comparing <tag...> at /tag to <tag...> at /tag\n",
             diff.toString());
 
         diff = buildDiff(aDocument, aDocument);
-        elemB.appendChild(aDocument.createTextNode(animals[1]));
-        diff.differenceFound(animals[0], animals[1], elemA, elemB,
-            DifferenceConstants.TEXT_VALUE);
+        Text textB = aDocument.createTextNode(animals[1]);
+        elemB.appendChild(textB);
+        difference = new Difference(DifferenceConstants.TEXT_VALUE, 
+        	new NodeDetail(animals[0], textA, "/tag/text()"),
+        	new NodeDetail(animals[1], textB, "/tag/text()"));
+        diff.differenceFound(difference);
 
         assertEquals(diff.getClass().getName() +"\n[different] Expected "
             + DifferenceConstants.TEXT_VALUE.getDescription()
-            + " '" + animals[0] + "' but was '" + animals[1]
-            + "' - comparing <tag...> to <tag...>\n",
+            + " 'Monkey' but was 'Chicken' - comparing <tag ...>Monkey</tag> "
+            + "at /tag/text() to <tag ...>Chicken</tag> at /tag/text()\n",
             diff.toString());
 
     }
@@ -127,9 +132,6 @@ public class test_Diff extends TestCase{
         }
     }
 
-    /**
-     * Tests the compare method
-     */
     public void testIdentical() throws Exception {
         String control="<control><test>test1</test><test>test2</test></control>";
         String test="<control><test>test2</test><test>test1</test></control>";
@@ -138,9 +140,6 @@ public class test_Diff extends TestCase{
             buildDiff(control, test).identical());
     }
 
-    /**
-     * Tests the compare method
-     */
     public void testFiles() throws Exception {
         FileReader control = new FileReader(test_Constants.BASEDIR
             + "/tests/etc/test.blame.html");
@@ -204,7 +203,7 @@ public class test_Diff extends TestCase{
         assertEquals(diff.getClass().getName() +"\n[different] Expected "
             + DifferenceConstants.ATTR_VALUE.getDescription()
             + " 'fruit' but was 'longeared' - comparing "
-            + "<bat type=\"fruit\"...> to <bat type=\"longeared\"...>\n",
+            + "<bat type=\"fruit\"...> at /bat[1]/@type to <bat type=\"longeared\"...> at /bat[1]/@type\n",
             diff.toString());
     }
     
@@ -223,7 +222,8 @@ public class test_Diff extends TestCase{
         assertTrue("similar. " + diff.toString(), diff.similar());
         assertTrue("not identical. " + diff.toString(), !diff.identical());
         
-        File tempDtdFile = new File(test_Constants.BASEDIR + "/tests/etc/test.dtd");
+        File tempDtdFile = File.createTempFile(getName(), "dtd");
+        tempDtdFile.deleteOnExit();
         FileWriter dtdWriter = new FileWriter(tempDtdFile);
         dtdWriter.write(aDTD);
         try {
@@ -391,35 +391,16 @@ public class test_Diff extends TestCase{
         super(name);
     }
 
-    /**
-     * Handy dandy main method to run this suite with text-based TestRunner
-     */
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
-
-    /**
-     * Return the test suite containing this test
-     */
-    public static TestSuite suite(){
-        return new TestSuite(test_Diff.class);
-    }
-    
     private class OverrideDifferenceListener 
     implements DifferenceListener {
         private final int overrideValue;
         private OverrideDifferenceListener(int overrideValue) {
             this.overrideValue = overrideValue;
         }
-        public int differenceFound(String expected, String actual,
-        Node control, Node test, Difference difference) {
+        public int differenceFound(Difference difference) {
             return overrideValue;
         }
         public void skippedComparison(Node control, Node test) {
-        }
-        public boolean haltComparison(Difference afterDifference) {
-            return !(overrideValue == RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL
-            || afterDifference.isRecoverable());
         }
     }
 }

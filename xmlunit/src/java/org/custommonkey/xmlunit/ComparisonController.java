@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,38 +33,21 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************
 */
-
 package org.custommonkey.xmlunit;
 
-import junit.framework.*;
-
 /**
- * Regression test class for various bug fixes
+ * Callback interface used by DifferenceEngine to determine whether to halt the 
+ * node-by-node comparison of two pieces of XML
  */
-public class test_BugFixes extends TestCase {
-    public void setUp() throws Exception {
-        XMLUnit.setControlParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        XMLUnit.setTestParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        XMLUnit.setSAXParserFactory("org.apache.xerces.jaxp.SAXParserFactoryImpl");
-        XMLUnit.setTransformerFactory("org.apache.xalan.processor.TransformerFactoryImpl");
-    }
-
-    public test_BugFixes() {
-        super();
-    }
-
+public interface ComparisonController {
     /**
-     * Return the test suite containing the bug fix tests
+     * Determine whether a Difference that this listener has been notified of
+     *  should halt further XML comparison. Default behaviour for a Diff
+     *  instance is to halt if the Difference is not recoverable.
+     * @see Difference#isRecoverable
+     * @param afterDifference the last Difference passed to <code>differenceFound</code>
+     * @return true to halt further comparison, false otherwise
      */
-    public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new test_XMLUnit("testStripWhitespaceTransform"));
-        suite.addTest(new test_Diff("testXMLUnitDoesNotWorkWellWithFiles"));
-        suite.addTest(new test_Transform("testXSLIncludeWithoutSystemId"));
-        suite.addTest(new test_Diff("testNamespaceIssues"));
-        suite.addTest(new test_Diff("testDefaultNamespace"));
-        suite.addTest(new test_DetailedDiff("testLargeFiles"));
-        suite.addTest(new test_DetailedDiff("testDifferentStructure"));
-        return suite;
-    }
+    public boolean haltComparison(Difference afterDifference);
+
 }

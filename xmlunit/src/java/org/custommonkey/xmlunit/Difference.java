@@ -47,7 +47,10 @@ public class Difference {
     /** Description of the difference */
     private final String description;
     /** TRUE if the difference represents a similarity, FALSE otherwise */
-    private final boolean recoverable;
+    private boolean recoverable;
+    
+    private NodeDetail controlNodeDetail = null;
+    private NodeDetail testNodeDetail = null;
 
     /**
      * Constructor for non-similar Difference instances
@@ -69,22 +72,16 @@ public class Difference {
         this.recoverable = recoverable;
     }
     
-    /**
-     * Clone-like constructor from prototype Difference 
-     * where recoverable value has been overridden by a DifferenceListener
-     */
-    protected Difference(Difference prototype) {
-        this(prototype, prototype.isRecoverable());
-    }
 
     /**
-     * Clone-like constructor from prototype Difference 
-     * where recoverable value has been overridden by a DifferenceListener
+     * Copy constructor using prototype Difference and
+     * encountered NodeDetails
      */
-    protected Difference(Difference prototype, boolean recoverable) {
-        this.id = prototype.getId();
-        this.description = prototype.getDescription();
-        this.recoverable = recoverable;
+    protected Difference(Difference prototype, NodeDetail controlNodeDetail,
+    NodeDetail testNodeDetail) {
+        this(prototype.getId(), prototype.getDescription(), prototype.isRecoverable());
+        this.controlNodeDetail = controlNodeDetail;
+        this.testNodeDetail = testNodeDetail;
     }
     
     /**
@@ -109,6 +106,31 @@ public class Difference {
     }
     
     /**
+     * Allow the recoverable field value to be overridden.
+     * Used when an override DifferenceListener is used in conjunction with
+     * a DetailedDiff.
+     */
+    protected void setRecoverable(boolean overrideValue) {
+    	recoverable = overrideValue;
+    }
+    
+    /**
+     * @return the NodeDetail from the piece of XML used as the control 
+     * at the Node where this difference was encountered
+     */
+    public NodeDetail getControlNodeDetail() {
+    	return controlNodeDetail;
+    }
+
+    /**
+     * @return the NodeDetail from the piece of XML used as the test
+     * at the Node where this difference was encountered
+     */
+    public NodeDetail getTestNodeDetail() {
+    	return testNodeDetail;
+    }
+    
+    /**
      * Now that Differences can be constructed from prototypes
      * we need to be able to compare them to those in DifferenceConstants
      */
@@ -125,11 +147,32 @@ public class Difference {
 
     /**
      * @return a basic representation of the object state and identity
+     * and if <code>NodeDetail</code> instances are populated append 
+     * their details also
      */
     public String toString() {
-        return new StringBuffer(super.toString())
-            .append(" (#").append(id)
-            .append(") ").append(description)
-            .toString();
+    	StringBuffer buf = new StringBuffer();
+    	if (controlNodeDetail == null || testNodeDetail == null) {
+    		appendBasicRepresentation(buf);
+    	} else {
+    		appendDetailedRepresentation(buf);
+    	}
+        return buf.toString();
     }
+    
+    private void appendBasicRepresentation(StringBuffer buf) {
+        buf.append("Difference (#").append(id).
+        	append(") ").append(description);
+    }
+    
+    private void appendDetailedRepresentation(StringBuffer buf) {
+    	buf.append("Expected ").append(getDescription())
+            .append(" '").append(controlNodeDetail.getValue())
+            .append("' but was '").append(testNodeDetail.getValue())
+            .append("' - comparing ");
+        NodeDescriptor.appendNodeDetail(buf, controlNodeDetail);
+        buf.append(" to ");
+        NodeDescriptor.appendNodeDetail(buf, testNodeDetail);
+    }
+
 }

@@ -50,6 +50,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -74,7 +75,8 @@ import org.xml.sax.SAXException;
  *  (@link DetailedDiff the DetailedDiff class} can be used instead.
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
-public class Diff implements DifferenceListener, DifferenceConstants {
+public class Diff 
+implements DifferenceListener, ComparisonController, DifferenceConstants {
     private final Document controlDoc;
     private final Document testDoc;
     private boolean similar = true;
@@ -103,10 +105,19 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     }
 
     /**
+     * Construct a Diff that compares the XML read from two Readers
+     */
+    public Diff(InputSource control, InputSource test) throws SAXException, IOException,
+    ParserConfigurationException {
+        this(XMLUnit.buildDocument(XMLUnit.getControlParser(), control),
+            XMLUnit.buildDocument(XMLUnit.getTestParser(), test));
+    }
+
+    /**
      * Construct a Diff that compares the XML in two Documents
      */
     public Diff(Document controlDoc, Document testDoc) {
-        this(controlDoc, testDoc, new DifferenceEngine());
+        this(controlDoc, testDoc, null);
     }
 
     /**
@@ -127,7 +138,11 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     DifferenceEngine comparator) {
         this.controlDoc = getWhitespaceManipulatedDocument(controlDoc);
         this.testDoc = getWhitespaceManipulatedDocument(testDoc);
-        this.differenceEngine = comparator;
+        if (comparator == null) {
+	        this.differenceEngine = new DifferenceEngine(this);
+        } else {
+	        this.differenceEngine = comparator;
+        }
         this.messages = new StringBuffer();
     }
 
@@ -197,104 +212,6 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     }
 
     /**
-     * Append Node comparison details to message buffer
-     * @param buf
-     * @param control
-     * @param test
-     */
-    private void appendComparingWhat(StringBuffer buf, Node control, Node test) {
-        buf.append(" - comparing ");
-        appendNodeDetail(buf, control, true);
-        buf.append(" to ");
-        appendNodeDetail(buf, test, true);
-    }
-
-    /**
-     * Convert a Node into a simple String representation and append to message
-     *  buffer
-     * @param buf
-     * @param aNode
-     * @param notRecursing
-     */
-    private void appendNodeDetail(StringBuffer buf, Node aNode,
-    boolean notRecursing) {
-        if (aNode==null) {
-            return;
-        }
-        if (notRecursing) {
-            buf.append(XMLConstants.OPEN_START_NODE);
-        }
-        switch (aNode.getNodeType()) {
-            case Node.ATTRIBUTE_NODE:
-                appendNodeDetail(buf,
-                    ((Attr)aNode).getOwnerElement(), false);
-                buf.append(' ')
-                    .append(aNode.getNodeName()).append("=\"")
-                    .append(aNode.getNodeValue()).append("\"...");
-                break;
-            case Node.ELEMENT_NODE:
-                    buf.append(aNode.getNodeName());
-                    if (notRecursing) {
-                        buf.append("...");
-                    }
-                break;
-            case Node.TEXT_NODE:
-                appendNodeDetail(buf, aNode.getParentNode(), false);
-                buf.append(" ...").append(XMLConstants.CLOSE_NODE)
-                    .append(aNode.getNodeValue())
-                    .append(XMLConstants.OPEN_END_NODE);
-                appendNodeDetail(buf, aNode.getParentNode(), false);
-                break;
-            case Node.CDATA_SECTION_NODE:
-                buf.append(XMLConstants.START_CDATA)
-                    .append(aNode.getNodeValue())
-                    .append(XMLConstants.END_CDATA);
-                break;
-            case Node.COMMENT_NODE:
-                buf.append(XMLConstants.START_COMMENT)
-                    .append(aNode.getNodeValue())
-                    .append(XMLConstants.END_COMMENT);
-                break;
-            case Node.PROCESSING_INSTRUCTION_NODE:
-                ProcessingInstruction instr = (ProcessingInstruction) aNode;
-                buf.append(XMLConstants.START_PROCESSING_INSTRUCTION)
-                    .append(instr.getTarget())
-                    .append(' ').append(instr.getData())
-                    .append(XMLConstants.END_CDATA);
-                break;
-            case Node.DOCUMENT_TYPE_NODE:
-                DocumentType type = (DocumentType) aNode;
-                buf.append(XMLConstants.START_DOCTYPE).append(type.getName());
-                if (type.getPublicId()!=null
-                && type.getPublicId().length() > 0) {
-                    buf.append(" PUBLIC \"").append(type.getPublicId())
-                        .append('"');
-                }
-                if (type.getSystemId()!=null
-                && type.getSystemId().length() > 0) {
-                    buf.append(" SYSTEM \"").append(type.getSystemId())
-                        .append('"');
-                }
-                break;
-            case Node.DOCUMENT_NODE:
-                buf.append("Document Node ")
-                .append(XMLConstants.OPEN_START_NODE)
-                .append("...")
-                .append(XMLConstants.CLOSE_NODE);
-                break;
-            default:
-                buf.append("!--NodeType ").append(aNode.getNodeType())
-                    .append(' ').append(aNode.getNodeName())
-                    .append('/').append(aNode.getNodeValue())
-                    .append("--");
-
-        }
-        if (notRecursing) {
-            buf.append(XMLConstants.CLOSE_NODE);
-        }
-    }
-
-    /**
      * Append a meaningful message to the buffer of messages
      * @param appendTo the messages buffer
      * @param expected
@@ -303,15 +220,8 @@ public class Diff implements DifferenceListener, DifferenceConstants {
      * @param test
      * @param difference
      */
-    private void appendDifference(StringBuffer appendTo, 
-    String expected, String actual, Node control,
-    Node test, Difference difference) {
-        appendTo.append(" Expected ")
-            .append(difference.getDescription())
-            .append(" '").append(expected)
-            .append("' but was '").append(actual).append("'");
-        appendComparingWhat(appendTo, control, test);
-        appendTo.append('\n');
+    private void appendDifference(StringBuffer appendTo, Difference difference) {
+        appendTo.append(" ").append(difference).append('\n');
     }
 
     /**
@@ -319,21 +229,15 @@ public class Diff implements DifferenceListener, DifferenceConstants {
      * If the {@link Diff#overrideDifferenceListener overrideDifferenceListener} 
      * method has been called then the interpretation of the difference
      * will be delegated.
-     * @param expected
-     * @param actual
-     * @param control
-     * @param test
-     * @param comparingWhat
+     * @param difference
      * @return a DifferenceListener.RETURN_... constant indicating how the
      *    difference was interpreted. 
      * Always RETURN_ACCEPT_DIFFERENCE if the call is not delegated.
      */
-    public int differenceFound(String expected, String actual,
-    Node control, Node test, Difference difference) {
+    public int differenceFound(Difference difference) {
         int returnValue = RETURN_ACCEPT_DIFFERENCE;    
         if (differenceListenerDelegate != null) {
-            returnValue = differenceListenerDelegate.differenceFound(
-                expected, actual, control, test, difference);
+            returnValue = differenceListenerDelegate.differenceFound(difference);
         } 
 
         switch (returnValue) {
@@ -361,8 +265,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
         } else {
             messages.append("\n[not identical]");
         }
-        appendDifference(messages, expected, actual, 
-            control, test, difference);
+        appendDifference(messages, difference);
         return returnValue;
     }
 
@@ -385,20 +288,14 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     }
 
     /**
-     * DifferenceListener implementation.
-     * If the {@link Diff#overrideDifferenceListener  overrideDifferenceListener} 
-     * method has been called then the call will be delegated 
-     * otherwise the return value is true if the difference is 
-     * not recoverable, or false if the difference is recoverable.
+     * ComparisonController implementation.
      * @param afterDifference
-     * @return true if the comparison should be halted
+     * @return true if the difference is not recoverable and 
+     * the comparison should be halted, or false if the difference 
+     * is recoverable and the comparison can continue
      */
     public boolean haltComparison(Difference afterDifference) {
-        if (differenceListenerDelegate != null) {
-            return differenceListenerDelegate.haltComparison(afterDifference);
-        } else {
-            return haltComparison;
-        }
+        return haltComparison;
     }
 
     /**
@@ -424,6 +321,7 @@ public class Diff implements DifferenceListener, DifferenceConstants {
         appendMessage(buf);
         return buf.toString();
     }
+
     /**
      * Override the <code>DifferenceListener</code> used to determine how 
      * to handle differences that are found.
@@ -432,5 +330,4 @@ public class Diff implements DifferenceListener, DifferenceConstants {
     public void overrideDifferenceListener(DifferenceListener delegate) {
         this.differenceListenerDelegate = delegate;
     }
-
 }

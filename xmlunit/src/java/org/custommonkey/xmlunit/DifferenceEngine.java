@@ -62,6 +62,14 @@ import org.w3c.dom.Text;
 public class DifferenceEngine implements DifferenceConstants {
     private static final String NULL_NODE = "null";
     private static final String NOT_NULL_NODE = "not null";
+    private final ComparisonController controller;
+    private final XpathNodeTracker controlTracker = new XpathNodeTracker();
+    private final XpathNodeTracker testTracker = new XpathNodeTracker();
+    
+    public DifferenceEngine(ComparisonController controller) {
+    	this.controller = controller;
+    }
+    
     /**
      * Entry point for Node comparison testing
      * @param control
@@ -69,6 +77,8 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param listener
      */
     public void compare(Node control, Node test, DifferenceListener listener) {
+    	controlTracker.reset();
+    	testTracker.reset();
         try {
             compare(getNullOrNotNull(control), getNullOrNotNull(test),
                 control, test, listener, NODE_TYPE);
@@ -80,7 +90,7 @@ public class DifferenceEngine implements DifferenceConstants {
             // comparison and unwind the call stack back to here
         }
     }
-
+	
     private String getNullOrNotNull(Node aNode) {
         return aNode==null ? NULL_NODE : NOT_NULL_NODE;
     }
@@ -99,35 +109,35 @@ public class DifferenceEngine implements DifferenceConstants {
         boolean isDocumentNode = false;
 
 		if (comparable) {
-        switch (control.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                compareElement((Element)control, (Element)test, listener);
-                break;
-            case Node.CDATA_SECTION_NODE:
-                compareCDataSection((CDATASection)control,
-                    (CDATASection)test, listener);
-                break;
-            case Node.COMMENT_NODE:
-                compareComment((Comment)control, (Comment)test, listener);
-                break;
-            case Node.DOCUMENT_TYPE_NODE:
-                compareDocumentType((DocumentType)control,
-                    (DocumentType)test, listener);
-                break;
-            case Node.PROCESSING_INSTRUCTION_NODE:
-                compareProcessingInstruction((ProcessingInstruction)control,
-                    (ProcessingInstruction)test, listener);
-                break;
-            case Node.TEXT_NODE:
-                compareText((Text)control, (Text)test, listener);
-                break;
-            case Node.DOCUMENT_NODE:
-                isDocumentNode = true;
-                compareDocument((Document)control, (Document) test, listener);
-                break;
-            default:
-                listener.skippedComparison(control, test);
-        }
+	        switch (control.getNodeType()) {
+	            case Node.ELEMENT_NODE:
+	                compareElement((Element)control, (Element)test, listener);
+	                break;
+	            case Node.CDATA_SECTION_NODE:
+	                compareCDataSection((CDATASection)control,
+	                    (CDATASection)test, listener);
+	                break;
+	            case Node.COMMENT_NODE:
+	                compareComment((Comment)control, (Comment)test, listener);
+	                break;
+	            case Node.DOCUMENT_TYPE_NODE:
+	                compareDocumentType((DocumentType)control,
+	                    (DocumentType)test, listener);
+	                break;
+	            case Node.PROCESSING_INSTRUCTION_NODE:
+	                compareProcessingInstruction((ProcessingInstruction)control,
+	                    (ProcessingInstruction)test, listener);
+	                break;
+	            case Node.TEXT_NODE:
+	                compareText((Text)control, (Text)test, listener);
+	                break;
+	            case Node.DOCUMENT_NODE:
+	                isDocumentNode = true;
+	                compareDocument((Document)control, (Document) test, listener);
+	                break;
+	            default:
+	                listener.skippedComparison(control, test);
+	        }
 		} 
 
         compareHasChildNodes(control, test, listener);
@@ -138,7 +148,11 @@ public class DifferenceEngine implements DifferenceConstants {
                 compareNode(controlElement, testElement, listener);
             }
         } else {
+        	controlTracker.indent();
+        	testTracker.indent();
             compareNodeChildren(control, test, listener);
+            controlTracker.outdent();
+            testTracker.outdent();
         }
     }
     
@@ -173,6 +187,9 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected boolean compareNodeBasics(Node control, Node test,
     DifferenceListener listener) throws DifferenceFoundException {
+		controlTracker.visited(control);
+		testTracker.visited(test);
+
         Short controlType = new Short(control.getNodeType());
         Short testType = new Short(test.getNodeType());
 
@@ -249,6 +266,7 @@ public class DifferenceEngine implements DifferenceConstants {
         boolean matchName, noMatch;
         String tagName = null;
         short matchNodeType;
+        testTracker.preloadNodeList(test);
 
         for (int i=0; i < numNodes; ++i) {
             nextControl = control.item(i);
@@ -372,6 +390,8 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareAttribute(Attr control, Attr test,
     DifferenceListener listener) throws DifferenceFoundException {
+    	controlTracker.visited(control);
+    	testTracker.visited(test);
         compare(control.getValue(), test.getValue(), control, test,
             listener,ATTR_VALUE);
 
@@ -481,10 +501,14 @@ public class DifferenceEngine implements DifferenceConstants {
     Node control, Node test, DifferenceListener listener, Difference difference)
     throws DifferenceFoundException {
         if (unequal(expected, actual)) {
-            listener.differenceFound(
-                String.valueOf(expected), String.valueOf(actual),
-                control, test, difference);
-            if (listener.haltComparison(difference)) {
+        	NodeDetail controlDetail = new NodeDetail(String.valueOf(expected),
+        		control, controlTracker.toXpathString());
+        	NodeDetail testDetail = new NodeDetail(String.valueOf(actual),
+        		test, testTracker.toXpathString());
+        	Difference differenceInstance = new Difference(difference, 
+        		controlDetail, testDetail);
+            listener.differenceFound(differenceInstance);
+            if (controller.haltComparison(differenceInstance)) {
                 throw flowControlException;
             }
         }
@@ -519,7 +543,7 @@ public class DifferenceEngine implements DifferenceConstants {
      * Marker exception thrown by the protected compare() method and passed
      * upwards through the call stack to the public compare() method.
      */
-    protected final class DifferenceFoundException extends Exception {
+    protected static final class DifferenceFoundException extends Exception {
         private DifferenceFoundException() {
             super("This exception is used to control flow");
         }
@@ -529,6 +553,6 @@ public class DifferenceEngine implements DifferenceConstants {
      * Exception instance used internally to control flow
      * when a difference is found
      */
-    private DifferenceFoundException flowControlException =
+    private static final DifferenceFoundException flowControlException =
         new DifferenceFoundException();
 }

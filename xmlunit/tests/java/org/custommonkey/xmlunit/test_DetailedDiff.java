@@ -37,11 +37,11 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import junit.framework.*;
-import junit.textui.TestRunner;
 
 import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.FileReader;
@@ -103,18 +103,70 @@ public class test_DetailedDiff extends test_Diff {
         assertExpectedDifferencesFirstForecastControl(differences, detailedDiff);
     }
 
-    public void testLargeFiles() throws Exception {
-        File test, control;
-        control = new File(test_Constants.BASEDIR  
-            + "/tests/etc/controlDetail.xml");
-        test = new File(test_Constants.BASEDIR 
-            + "/tests/etc/testDetail.xml");
-        Diff prototype = new Diff(new FileReader(control), 
-            new FileReader(test));
-        DetailedDiff detailedDiff = new DetailedDiff(prototype);
-        List differences = detailedDiff.getAllDifferences();
-        assertEquals(1402, differences.size());
-    }
+	public void testLargeFiles() throws Exception {
+		int i = 0;
+		String expr = null;
+		File test, control;
+		control = new File(test_Constants.BASEDIR + "/tests/etc/controlDetail.xml");
+		test = new File(test_Constants.BASEDIR + "/tests/etc/testDetail.xml");
+		DetailedDiff differencesWithWhitespace = new DetailedDiff(
+			new Diff(new InputSource(new FileReader(control)), 
+			new InputSource(new FileReader(test))) );
+		assertEquals(1402, differencesWithWhitespace.getAllDifferences().size()); 
+
+		try {
+			XMLUnit.setIgnoreWhitespace(true);
+			Diff prototype =
+				new Diff(new FileReader(control), new FileReader(test));
+			DetailedDiff detailedDiff = new DetailedDiff(prototype);
+			List differences = detailedDiff.getAllDifferences();
+			assertEquals(40, differences.size()); 
+
+			SimpleXpathEngine xpathEngine = new SimpleXpathEngine();
+			Document controlDoc =
+				XMLUnit.buildControlDocument(
+					new InputSource(new FileReader(control)));
+			Document testDoc =
+				XMLUnit.buildTestDocument(
+					new InputSource(new FileReader(test)));
+
+			Difference aDifference;
+			String value;
+			for (Iterator iter = differences.iterator(); iter.hasNext();) {
+				aDifference = (Difference) iter.next();
+				if (aDifference.equals(DifferenceConstants.ATTR_VALUE)
+				|| aDifference.equals(DifferenceConstants.CDATA_VALUE)
+				|| aDifference.equals(DifferenceConstants.COMMENT_VALUE)
+				|| aDifference.equals(DifferenceConstants.ELEMENT_TAG_NAME)
+				|| aDifference.equals(DifferenceConstants.TEXT_VALUE)) {
+					expr = aDifference.getControlNodeDetail().getXpathLocation();
+					if (expr==null || expr.length()==0) {
+						System.out.println(aDifference);
+					} else {
+						value = xpathEngine.evaluate(expr, controlDoc);
+						assertEquals(i + " control " + aDifference.toString(),
+							value, aDifference.getControlNodeDetail().getValue());
+					}
+	
+					expr = aDifference.getTestNodeDetail().getXpathLocation();
+					if (expr == null || expr.length()==0) {
+						System.out.println(aDifference);
+					} else {
+						value = xpathEngine.evaluate(expr, testDoc);
+						assertEquals(i + " test " + aDifference.toString(),
+							value, aDifference.getTestNodeDetail().getValue());
+					}
+				}
+				++i;
+			}
+		} catch (Exception e) {
+			System.out.println("eek@" + i + ":" + expr);
+			throw e;
+		} finally {
+			XMLUnit.setIgnoreWhitespace(false);
+		}
+
+	}
         
     protected Diff buildDiff(Document control, Document test) {
         return new DetailedDiff(super.buildDiff(control, test));
@@ -135,17 +187,4 @@ public class test_DetailedDiff extends test_Diff {
         secondForecast = "<weather><today temp=\"20\"/></weather>";
     }
 
-    /**
-     * Handy dandy main method to run this suite with text-based TestRunner
-     */
-    public static void main(String[] args) {
-        new TestRunner().run(suite());
-    }
-
-    /**
-     * Return the test suite containing this test
-     */
-    public static TestSuite suite(){
-        return new TestSuite(test_DetailedDiff.class);
-    }
 }

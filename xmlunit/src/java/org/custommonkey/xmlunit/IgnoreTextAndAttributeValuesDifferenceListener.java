@@ -31,10 +31,9 @@ implements DifferenceListener {
      *  differences in values of TEXT or ATTRIBUTE nodes,
      *  and RETURN_ACCEPT_DIFFERENCE to accept all other 
      *  differences.
-     * @see DifferenceListener#differenceFound(String, String, Node, Node, Difference)
+     * @see DifferenceListener#differenceFound(Difference)
      */
-    public int differenceFound(String expected, String actual,
-    Node control, Node test, Difference difference) {
+    public int differenceFound(Difference difference) {
         if (isIgnoredDifference(difference)) {
             return RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
         } else {
@@ -47,19 +46,6 @@ implements DifferenceListener {
      * @see DifferenceListener#skippedComparison(Node, Node)
      */
     public void skippedComparison(Node control, Node test) {
-    }
-
-    /**
-     * @return false if the difference is ignored or recoverable, 
-     *  true otherwise
-     * @see DifferenceListener#haltComparison(Difference)
-     */
-    public boolean haltComparison(Difference afterDifference) {
-        if (isIgnoredDifference(afterDifference)
-        || afterDifference.isRecoverable()) {
-            return false;
-        }
-        return true;
     }
 
 }

@@ -1,5 +1,8 @@
 package org.custommonkey.xmlunit;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import junit.framework.TestCase;
 
 /**
@@ -9,8 +12,8 @@ public class test_Difference extends TestCase {
     private final Difference ORIGINAL = 
         DifferenceConstants.ATTR_NAME_NOT_FOUND;
 
-    public void testPrototypeConstructor() {
-        Difference copy = new Difference(ORIGINAL);
+    public void testCopyConstructor() {
+        Difference copy = new Difference(ORIGINAL, null, null);
         assertEquals("id", ORIGINAL.getId(), copy.getId());
         assertEquals("description", 
             ORIGINAL.getDescription(), copy.getDescription());
@@ -18,10 +21,7 @@ public class test_Difference extends TestCase {
             ORIGINAL.isRecoverable(), copy.isRecoverable());
         
         assertEquals("precondition", false, ORIGINAL.isRecoverable());
-        copy = new Difference(ORIGINAL, true);
-        assertEquals("id again", ORIGINAL.getId(), copy.getId());
-        assertEquals("description again", 
-            ORIGINAL.getDescription(), copy.getDescription());
+        copy.setRecoverable(true);
         assertEquals("recoverable again", 
             !ORIGINAL.isRecoverable(), copy.isRecoverable());
     }
@@ -31,11 +31,34 @@ public class test_Difference extends TestCase {
         assertTrue("not equal to other class", !ORIGINAL.equals("aString"));
         assertEquals("equal to self", ORIGINAL, ORIGINAL);
         
-        Difference copy = new Difference(ORIGINAL);
-        assertEquals("equal to copy", ORIGINAL, copy);
-        
-        copy = new Difference(ORIGINAL, true);
-        assertEquals("equal to copy again", ORIGINAL, copy);
+        Difference copy = new Difference(ORIGINAL, null, null);
+        assertEquals("equal to copy", ORIGINAL, copy);        
+    }
+    
+    public void testToString() throws Exception {
+    	String originalAsString = "Difference (#" + ORIGINAL.getId()
+    		+ ") " + ORIGINAL.getDescription();
+    	assertEquals("Original", originalAsString, ORIGINAL.toString());
+    	
+    	Document document = XMLUnit.getControlParser().newDocument();
+    	
+    	Node controlNode = document.createComment("control");
+    	NodeDetail controlNodeDetail = new NodeDetail(controlNode.getNodeValue(),
+    		controlNode, "/testToString/comment()");
+    		
+    	Node testNode = document.createComment("test");
+    	NodeDetail testNodeDetail = new NodeDetail(testNode.getNodeValue(),
+    		testNode, "/testToString/comment()");
+    		
+    	Difference difference = new Difference(DifferenceConstants.COMMENT_VALUE, 
+    		controlNodeDetail, testNodeDetail);
+    	StringBuffer buf = new StringBuffer("Expected ")
+			.append(DifferenceConstants.COMMENT_VALUE.getDescription())
+    		.append(" 'control' but was 'test' - comparing ");
+    	NodeDescriptor.appendNodeDetail(buf, controlNodeDetail);
+    	buf.append(" to ");
+    	NodeDescriptor.appendNodeDetail(buf, testNodeDetail);
+    	assertEquals("detail", buf.toString(), difference.toString());
     }
     
     /**

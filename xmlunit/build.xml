@@ -1,6 +1,6 @@
 <project name="xmlunit" default="compile" basedir=".">
   <target name="init">
-    <property name="version" value="0.8"/>
+    <property name="version" value="1.0"/>
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="tests"/>
     <property name="lib.dir" value="lib"/>
@@ -28,7 +28,7 @@
 
   <target name="compile" depends="init">
     <mkdir dir="${out.dir}"/>
-    <javac srcdir="${src.dir}/java:${test.dir}/java" destdir="${out.dir}">
+    <javac srcdir="${src.dir}/java:${test.dir}/java" destdir="${out.dir}" debug="on">
       <classpath>
         <fileset dir="${xmlxsl.libdir}">
             <include name="*.jar"/>
@@ -108,12 +108,14 @@
     </javadoc>
   </target>
 
-  <target name="dist" depends="clean,setDistVersion,docs,compile">
+  <target name="jar" depends="clean,setDistVersion,compile">
     <jar jarfile="${lib.dir}/xmlunit${version}.jar"
        basedir="${out.dir}"
        excludes="**/test_*.class"
     />
+  </target>
 
+  <target name="dist" depends="jar,docs">
     <zip zipfile="${dist.dir}/xmlunit${version}.zip">
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/xmlunit${version}.jar"/>
