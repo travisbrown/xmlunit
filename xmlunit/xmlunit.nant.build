@@ -9,7 +9,7 @@
   
   <!-- *** You may need to edit these properties for your filesystem *** -->
   <property name="nunit.v2.assembly" value="nunit.framework.dll"/>
-  <property name="nunit.v2.bin.dir" value="D:/apps/NUnit/V2.0/bin"/>
+  <property name="nunit.v2.bin.dir" value="D:/apps/NUnit/V2.1/bin"/>
   
   <target name="init" description="prepare for other targets">
     <mkdir dir="${bin.dir}"/>
@@ -47,7 +47,7 @@
   </target>
   
   <target name="test" description="run all tests" depends="compile">
-  	<exec basedir="${bin.dir}" workingdir="${bin.dir}" program="${nunit.v2.bin.dir}/nunit-console.exe" commandline="/assembly:${nant.project.name}.tests.dll"/>
+  	<exec basedir="${bin.dir}" workingdir="${bin.dir}" program="${nunit.v2.bin.dir}/nunit-console.exe" commandline="${nant.project.name}.tests.dll"/>
   </target>
   
   <target name="deploy" description="zip all code for deployment" depends="test">

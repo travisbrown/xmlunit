@@ -1,5 +1,6 @@
 namespace XmlUnit.Tests.All {
     using System;
+    using System.IO;
     using NUnit.Core;
 
     // This is stolen shamelessly from the source of NUnit.Console
@@ -12,7 +13,7 @@ namespace XmlUnit.Tests.All {
             if (args.Length > 0) {
                 assemblyName = args[0];
             } else {
-                assemblyName = "xmlunit.tests.dll";
+                assemblyName = ".\\xmlunit.tests.dll";
             }
             new AllTests(assemblyName).Run();
         }
@@ -24,8 +25,8 @@ namespace XmlUnit.Tests.All {
         }
         
         public void Run() {
-            NUnit.Framework.TestDomain domain = new NUnit.Framework.TestDomain(Console.Out, Console.Error);
-            Test test = domain.Load(_assemblyName);
+            TestDomain domain = new TestDomain();
+            Test test = domain.LoadAssembly(Path.GetFullPath(_assemblyName), null );
             test.Run(this);
         }
         
