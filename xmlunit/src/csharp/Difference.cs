@@ -7,13 +7,13 @@ namespace XmlUnit {
         private XmlNodeType _controlNodeType;
         private XmlNodeType _testNodeType;
         
-        internal Difference(DifferenceType id, bool isMajorDifference) {
+        public Difference(DifferenceType id) {
             _id = id;
-            _majorDifference = isMajorDifference;
+            _majorDifference = Differences.isMajorDifference(id);
         }
         
-        public Difference(Difference prototype, XmlNodeType controlNodeType, XmlNodeType testNodeType) 
-        : this(prototype.Id, prototype.MajorDifference) {
+        public Difference(DifferenceType id, XmlNodeType controlNodeType, XmlNodeType testNodeType) 
+        : this(id) {
             _controlNodeType = controlNodeType;
             _testNodeType = testNodeType;
         }

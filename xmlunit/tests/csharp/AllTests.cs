@@ -1,39 +1,50 @@
-﻿namespace XmlUnit.Tests.All {
-    using NUnit.Framework;
-    using XmlUnit.Tests;
+namespace XmlUnit.Tests.All {
+    using System;
+    using NUnit.Core;
 
+    // This is stolen shamelessly from the source of NUnit.Console
+    // Use it if you can't run the entire assembly of tests any other way Jeff
 
-    [TestFixture]
-    public class AllTests : Assertion {
-        static DiffResultTests diffTest(){
-            DiffResultTests test = new DiffResultTests();
-            test.CreateDiffResult();
-            return test;
-        }
+    [Serializable]
+    public class AllTests : EventListener {
         public static void Main (string[]args) {
-//            diffTest().NewDiffResultIsEqualAndIdentical();
-//            diffTest().NotEqualOrIdenticalAfterMajorDifferenceFound();
-//            diffTest().NotIdenticalButEqualAfterMinorDifferenceFound();
-//
-//            new XmlDiffTests().EqualResultForSameReader();
-//            new XmlDiffTests().SameResultForTwoInvocations();
-//            new XmlDiffTests().EqualResultForSameEmptyElements();
-//            new XmlDiffTests().NotEqualResultForEmptyVsNotEmptyElements();
-//            new XmlDiffTests().NotEqualResultForDifferentElements();
-//            new XmlDiffTests().NotEqualResultForDifferentNumberOfAttributes();
-//            new XmlDiffTests().NotEqualResultForDifferentAttributeValues();
-//            new XmlDiffTests().NotEqualResultForDifferentAttributeNames();
-//            new XmlDiffTests().EqualResultForDifferentAttributeSequences();
-//            new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();            
-//            new XmlDiffTests().NotEqualResultForDifferentTextElements();
-//            new XmlDiffTests().CanDistinguishElementClosureAndEmptyElement();
-//            new XmlDiffTests().NotEqualResultForDifferentLengthElements();
-//
-//            new DifferenceTests().ToStringContainsId();
-//            
-//            new DiffConfigurationTests() ..DefaultConfiguredWhitespaceHandlingAll();
-//            new DiffConfigurationTests().CanConfigureWhitespaceHandlingSignificant();
-//            new DiffConfigurationTests().CanConfigureWhitespaceHandlingNone();
+            string assemblyName;
+            if (args.Length > 0) {
+                assemblyName = args[0];
+            } else {
+                assemblyName = "xmlunit.tests.dll";
+            }
+            new AllTests(assemblyName).Run();
         }
+        
+        private string _assemblyName;
+        
+        public AllTests(string assemblyName) {
+            _assemblyName = assemblyName;
+        }
+        
+        public void Run() {
+            NUnit.Framework.TestDomain domain = new NUnit.Framework.TestDomain(Console.Out, Console.Error);
+            Test test = domain.Load(_assemblyName);
+            test.Run(this);
+        }
+        
+        public void TestStarted(TestCase testCase) {}
+			
+		public void TestFinished(TestCaseResult result) {
+		    if (result.IsFailure) {
+		        Console.Out.WriteLine("F");
+		        Console.Error.WriteLine(result.Message);
+		    } else {
+		        Console.Out.Write(".");
+		    }
+		}
+
+		public void SuiteStarted(TestSuite suite) {}
+
+		public void SuiteFinished(TestSuiteResult result) {
+		    Console.Out.WriteLine();
+		}
+        
     }
 }

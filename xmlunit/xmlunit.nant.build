@@ -6,9 +6,9 @@
   <property name="bin.dir" value="${base.dir}/bin"/>
   <property name="csc.verbose" value="false"/>
   <property name="deploy.file" value="${nant.project.name}${project.version}.zip"/>
-  <property name="nunit.v2.assembly" value="nunit.framework.dll"/>
   
-  <!-- *** You may need to edit this property for your filesystem *** -->
+  <!-- *** You may need to edit these properties for your filesystem *** -->
+  <property name="nunit.v2.assembly" value="nunit.framework.dll"/>
   <property name="nunit.v2.bin.dir" value="D:/apps/NUnit/V2.0/bin"/>
   
   <target name="init" description="prepare for other targets">
@@ -34,14 +34,15 @@
       </sources>
     </csc>
     
-		<csc target="library" output="${bin.dir}/${nant.project.name}.tests.dll" debug="true" verbose="${csc.verbose}">
-			<references basedir="${bin.dir}">
-				<includes name="${nant.project.name}.dll"/>
-				<includes name="${nunit.v2.assembly}"/>
-			</references>
-			<sources basedir="${tests.src.dir}">
-				<includes name="*.cs"/>
-			</sources>
+	<csc target="library" output="${bin.dir}/${nant.project.name}.tests.dll" debug="true" verbose="${csc.verbose}">
+		<references basedir="${bin.dir}">
+			<includes name="${nant.project.name}.dll"/>
+			<includes name="${nunit.v2.assembly}"/>
+		</references>
+		<sources basedir="${tests.src.dir}">
+			<includes name="*.cs"/>
+			<excludes name="AllTests.cs"/>
+		</sources>
     </csc>
   </target>
   
@@ -65,4 +66,3 @@
   <target name="all" description="execute all tasks in the project" depends="clean,compile,test,deploy"/>
   
 </project>
-

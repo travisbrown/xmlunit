@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     using System;
     using System.IO;
     using System.Xml;
@@ -71,7 +71,7 @@
                             CompareNodes(result);
                             CheckEmptyOrAtEndElement(result, ref controlRead, ref testRead);
                         } else {
-                            DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
+                            DifferenceFound(DifferenceType.CHILD_NODELIST_LENGTH_ID, result);
                         } 
                     }
                 } while (controlRead && testRead) ;
@@ -84,7 +84,7 @@
             XmlNodeType controlNodeType = _controlReader.NodeType;
             XmlNodeType testNodeType = _testReader.NodeType;
             if (!controlNodeType.Equals(testNodeType)) {
-                DifferenceFound(Differences.NODE_TYPE, controlNodeType, 
+                DifferenceFound(DifferenceType.NODE_TYPE_ID, controlNodeType, 
                                 testNodeType, result);
             } else if (controlNodeType == XmlNodeType.Element) {
                 CompareElements(result);
@@ -97,12 +97,12 @@
             string controlTagName = _controlReader.Name;
             string testTagName = _testReader.Name;
             if (!String.Equals(controlTagName, testTagName)) {
-                DifferenceFound(Differences.ELEMENT_TAG_NAME, result);
+                DifferenceFound(DifferenceType.ELEMENT_TAG_NAME_ID, result);
             } else {
                 int controlAttributeCount = _controlReader.AttributeCount;
                 int testAttributeCount = _testReader.AttributeCount;
                 if (controlAttributeCount != testAttributeCount) {
-                    DifferenceFound(Differences.ELEMENT_NUM_ATTRIBUTES, result);
+                    DifferenceFound(DifferenceType.ELEMENT_NUM_ATTRIBUTES_ID, result);
                 } else {
                     CompareAttributes(result, controlAttributeCount);
                 }
@@ -124,16 +124,16 @@
                 testAttrValue = _testReader.Value;
                 
                 if (!String.Equals(controlAttrName, testAttrName)) {
-                    DifferenceFound(Differences.ATTR_SEQUENCE, result);
+                    DifferenceFound(DifferenceType.ATTR_SEQUENCE_ID, result);
                 
                     if (!_testReader.MoveToAttribute(controlAttrName)) {
-                        DifferenceFound(Differences.ATTR_NAME_NOT_FOUND, result);
+                        DifferenceFound(DifferenceType.ATTR_NAME_NOT_FOUND_ID, result);
                     }
                     testAttrValue = _testReader.Value;
                 }
                 
                 if (!String.Equals(controlAttrValue, testAttrValue)) {
-                    DifferenceFound(Differences.ATTR_VALUE, result);
+                    DifferenceFound(DifferenceType.ATTR_VALUE_ID, result);
                 }
                 
                 _controlReader.MoveToNextAttribute();
@@ -145,8 +145,12 @@
             string controlText = _controlReader.Value;
             string testText = _testReader.Value;
             if (!String.Equals(controlText, testText)) {
-                DifferenceFound(Differences.TEXT_VALUE, result);
+                DifferenceFound(DifferenceType.TEXT_VALUE_ID, result);
             }
+        }
+        
+        private void DifferenceFound(DifferenceType differenceType, DiffResult result) {
+            DifferenceFound(new Difference(differenceType), result);
         }
         
         private void DifferenceFound(Difference difference, DiffResult result) {
@@ -156,9 +160,11 @@
             }
         }
         
-        private void DifferenceFound(Difference difference, XmlNodeType controlNodeType, 
-                                     XmlNodeType testNodeType, DiffResult result) {
-            DifferenceFound(new Difference(difference, controlNodeType, testNodeType),
+        private void DifferenceFound(DifferenceType differenceType, 
+                                     XmlNodeType controlNodeType,
+                                     XmlNodeType testNodeType, 
+                                     DiffResult result) {
+            DifferenceFound(new Difference(differenceType, controlNodeType, testNodeType),
                             result);
         }
         
@@ -182,7 +188,7 @@
         private void CheckEndElement(XmlReader reader, ref bool readResult, DiffResult result) {            
             readResult = reader.Read();
             if (!readResult || reader.NodeType != XmlNodeType.EndElement) {
-                DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
+                DifferenceFound(DifferenceType.CHILD_NODELIST_LENGTH_ID, result);
             }        
         }
         

@@ -1,4 +1,4 @@
-﻿namespace XmlUnit.Tests {
+namespace XmlUnit.Tests {
     using NUnit.Framework;
     using System.Xml;
     using XmlUnit;
@@ -10,8 +10,8 @@
         
         [SetUp] public void CreateDiffResult() {
             _result = new DiffResult();
-            _majorDifference = new Difference(Differences.ELEMENT_TAG_NAME, XmlNodeType.Element, XmlNodeType.Element);
-            _minorDifference = new Difference(Differences.ATTR_SEQUENCE, XmlNodeType.Comment, XmlNodeType.Comment);
+            _majorDifference = new Difference(DifferenceType.ELEMENT_TAG_NAME_ID, XmlNodeType.Element, XmlNodeType.Element);
+            _minorDifference = new Difference(DifferenceType.ATTR_SEQUENCE_ID, XmlNodeType.Comment, XmlNodeType.Comment);
         }
         
         [Test] public void NewDiffResultIsEqualAndIdentical() {
