@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
         
     public class DiffResult {
         private bool _identical = true;

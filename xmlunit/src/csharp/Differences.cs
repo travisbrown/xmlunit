@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     public class Differences {
         private Differences() { }
         

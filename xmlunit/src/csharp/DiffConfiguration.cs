@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     using System.Xml;
     
     public class DiffConfiguration {

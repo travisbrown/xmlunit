@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     public enum DifferenceType : int {        
 	/** Comparing an implied attribute value against an explicit value */
 	ATTR_VALUE_EXPLICITLY_SPECIFIED_ID = 1,
