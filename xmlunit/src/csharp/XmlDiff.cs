@@ -2,19 +2,22 @@
     using System;
     using System.IO;
     using System.Xml;
+    using System.Xml.Schema;
     
     public class XmlDiff {
         private readonly XmlReader _controlReader; 
         private readonly XmlReader _testReader;
+        private readonly DiffConfiguration _diffConfiguration;
         private DiffResult _diffResult;
                 
         public XmlDiff(TextReader control, TextReader test, 
                        DiffConfiguration diffConfiguration) {
-            _controlReader = CreateXmlReader(control, diffConfiguration);
+            _diffConfiguration =  diffConfiguration;
+            _controlReader = CreateXmlReader(control);
             if (control.Equals(test)) {
                 _testReader = _controlReader;
             } else {
-                _testReader = CreateXmlReader(test, diffConfiguration);
+                _testReader = CreateXmlReader(test);
             }
         }
         public XmlDiff(TextReader control, TextReader test)
@@ -37,11 +40,14 @@
             : this(control, new StringReader(test)) {
         }
         
-        private XmlReader CreateXmlReader(TextReader forTextReader, 
-                                          DiffConfiguration diffConfiguration) {
-            XmlTextReader xmlReader = new XmlTextReader(forTextReader);
-            xmlReader.WhitespaceHandling = diffConfiguration.WhitespaceHandling;
-            return xmlReader;
+        private XmlReader CreateXmlReader(TextReader forTextReader) {
+            XmlTextReader xmlReader = new XmlTextReader(_diffConfiguration.BaseURI, forTextReader);
+            xmlReader.WhitespaceHandling = _diffConfiguration.WhitespaceHandling;           
+            if (!_diffConfiguration.UseValidatingParser) {
+                return xmlReader;
+            }
+            XmlValidatingReader validatingReader = new XmlValidatingReader(xmlReader);
+            return validatingReader;
         }
         
         public DiffResult Compare() {
@@ -63,7 +69,7 @@
                     if (controlRead) {
                         if(testRead) {
                             CompareNodes(result);
-                            CheckAndCloseNonEmptyElements(result, ref controlRead, ref testRead);
+                            CheckEmptyOrAtEndElement(result, ref controlRead, ref testRead);
                         } else {
                             DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
                         } 
@@ -78,26 +84,27 @@
             XmlNodeType controlNodeType = _controlReader.NodeType;
             XmlNodeType testNodeType = _testReader.NodeType;
             if (!controlNodeType.Equals(testNodeType)) {
-                DifferenceFound(Differences.NODE_TYPE, controlNodeType, testNodeType, result);
+                DifferenceFound(Differences.NODE_TYPE, controlNodeType, 
+                                testNodeType, result);
             } else if (controlNodeType == XmlNodeType.Element) {
-                string controlTagName = _controlReader.Name;
-                string testTagName = _testReader.Name;
-                if (!String.Equals(controlTagName, testTagName)) {
-                    DifferenceFound(Differences.ELEMENT_TAG_NAME, result);
-                } else {
-                    int controlAttributeCount = _controlReader.AttributeCount;
-                    int testAttributeCount = _testReader.AttributeCount;
-                    if (controlAttributeCount != testAttributeCount) {
-                        DifferenceFound(Differences.ELEMENT_NUM_ATTRIBUTES, result);
-                    } else {
-                        CompareAttributes(result, controlAttributeCount);
-                    }
-                }
+                CompareElements(result);
             } else if (controlNodeType == XmlNodeType.Text) {
-                string controlText = _controlReader.Value;
-                string testText = _testReader.Value;
-                if (!String.Equals(controlText, testText)) {
-                    DifferenceFound(Differences.TEXT_VALUE, result);
+                CompareText(result);
+            }
+        }
+        
+        private void CompareElements(DiffResult result) {
+            string controlTagName = _controlReader.Name;
+            string testTagName = _testReader.Name;
+            if (!String.Equals(controlTagName, testTagName)) {
+                DifferenceFound(Differences.ELEMENT_TAG_NAME, result);
+            } else {
+                int controlAttributeCount = _controlReader.AttributeCount;
+                int testAttributeCount = _testReader.AttributeCount;
+                if (controlAttributeCount != testAttributeCount) {
+                    DifferenceFound(Differences.ELEMENT_NUM_ATTRIBUTES, result);
+                } else {
+                    CompareAttributes(result, controlAttributeCount);
                 }
             }
         }
@@ -134,6 +141,14 @@
             }
         }
         
+        private void CompareText(DiffResult result) {
+            string controlText = _controlReader.Value;
+            string testText = _testReader.Value;
+            if (!String.Equals(controlText, testText)) {
+                DifferenceFound(Differences.TEXT_VALUE, result);
+            }
+        }
+        
         private void DifferenceFound(Difference difference, DiffResult result) {
             result.DifferenceFound(difference);
             if (!ContinueComparison(difference)) {
@@ -151,27 +166,34 @@
             return !afterDifference.MajorDifference;
         }
         
-        private void CheckAndCloseNonEmptyElements(DiffResult result, 
-                                                   ref bool controlRead, ref bool testRead) {
+        private void CheckEmptyOrAtEndElement(DiffResult result, 
+                                              ref bool controlRead, ref bool testRead) {
             if (_controlReader.IsEmptyElement) {
                 if (!_testReader.IsEmptyElement) {
-                    testRead = _testReader.Read();
-                    if (!testRead || _testReader.NodeType != XmlNodeType.EndElement) {
-                        DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
-                    }
+                    CheckEndElement(_testReader, ref testRead, result);
                 }
             } else {
                 if (_testReader.IsEmptyElement) {
-                    controlRead = _controlReader.Read();
-                    if (!controlRead || _controlReader.NodeType != XmlNodeType.EndElement) {
-                        DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
-                    }
+                    CheckEndElement(_controlReader, ref controlRead, result);
                 }
             }
         }
         
+        private void CheckEndElement(XmlReader reader, ref bool readResult, DiffResult result) {            
+            readResult = reader.Read();
+            if (!readResult || reader.NodeType != XmlNodeType.EndElement) {
+                DifferenceFound(Differences.CHILD_NODELIST_LENGTH, result);
+            }        
+        }
+        
         private class FlowControlException : ApplicationException {
             public FlowControlException(Difference cause) : base(cause.ToString()) {
+            }
+        }
+        
+        public string OptionalDescription {
+            get {
+                return _diffConfiguration.Description;
             }
         }
     }

@@ -11,29 +11,29 @@
             return test;
         }
         public static void Main (string[]args) {
-            diffTest().NewDiffResultIsEqualAndIdentical();
-            diffTest().NotEqualOrIdenticalAfterMajorDifferenceFound();
-            diffTest().NotIdenticalButEqualAfterMinorDifferenceFound();
-
-            new XmlDiffTests().EqualResultForSameReader();
-            new XmlDiffTests().SameResultForTwoInvocations();
-            new XmlDiffTests().EqualResultForSameEmptyElements();
-            new XmlDiffTests().NotEqualResultForEmptyVsNotEmptyElements();
-            new XmlDiffTests().NotEqualResultForDifferentElements();
-            new XmlDiffTests().NotEqualResultForDifferentNumberOfAttributes();
-            new XmlDiffTests().NotEqualResultForDifferentAttributeValues();
-            new XmlDiffTests().NotEqualResultForDifferentAttributeNames();
-            new XmlDiffTests().EqualResultForDifferentAttributeSequences();
-            new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();            
-            new XmlDiffTests().NotEqualResultForDifferentTextElements();
-            new XmlDiffTests().CanDistinguishElementClosureAndEmptyElement();
-            new XmlDiffTests().NotEqualResultForDifferentLengthElements();
-
-            new DifferenceTests().ToStringContainsId();
-            
-            new DiffConfigurationTests().DefaultConfiguredWhitespaceHandlingAll();
-            new DiffConfigurationTests().CanConfigureWhitespaceHandlingSignificant();
-            new DiffConfigurationTests().CanConfigureWhitespaceHandlingNone();
+//            diffTest().NewDiffResultIsEqualAndIdentical();
+//            diffTest().NotEqualOrIdenticalAfterMajorDifferenceFound();
+//            diffTest().NotIdenticalButEqualAfterMinorDifferenceFound();
+//
+//            new XmlDiffTests().EqualResultForSameReader();
+//            new XmlDiffTests().SameResultForTwoInvocations();
+//            new XmlDiffTests().EqualResultForSameEmptyElements();
+//            new XmlDiffTests().NotEqualResultForEmptyVsNotEmptyElements();
+//            new XmlDiffTests().NotEqualResultForDifferentElements();
+//            new XmlDiffTests().NotEqualResultForDifferentNumberOfAttributes();
+//            new XmlDiffTests().NotEqualResultForDifferentAttributeValues();
+//            new XmlDiffTests().NotEqualResultForDifferentAttributeNames();
+//            new XmlDiffTests().EqualResultForDifferentAttributeSequences();
+//            new XmlDiffTests().NotEqualResultForDifferentAttributeValuesAndSequences();            
+//            new XmlDiffTests().NotEqualResultForDifferentTextElements();
+//            new XmlDiffTests().CanDistinguishElementClosureAndEmptyElement();
+//            new XmlDiffTests().NotEqualResultForDifferentLengthElements();
+//
+//            new DifferenceTests().ToStringContainsId();
+//            
+//            new DiffConfigurationTests() ..DefaultConfiguredWhitespaceHandlingAll();
+//            new DiffConfigurationTests().CanConfigureWhitespaceHandlingSignificant();
+//            new DiffConfigurationTests().CanConfigureWhitespaceHandlingNone();
         }
     }
 }

@@ -20,13 +20,42 @@
         }        
         
         public static void AssertXmlEquals(XmlDiff xmlDiff) {
+            AssertXmlEquals(xmlDiff, true);
+        }
+        
+        public static void AssertXmlNotEquals(XmlDiff xmlDiff) {
+            AssertXmlEquals(xmlDiff, false);
+        }
+
+        public static void AssertXmlEquals(XmlDiff xmlDiff, bool equalOrNot) {
             DiffResult diffResult = xmlDiff.Compare();
-            AssertEquals(true, diffResult.Equal);
+            Assertion.AssertEquals(xmlDiff.OptionalDescription, equalOrNot, diffResult.Equal);
         }
         
         public static void AssertXmlIdentical(XmlDiff xmlDiff) {
+            AssertXmlIdentical(xmlDiff, true);
+        }
+        
+        public static void AssertXmlNotIdentical(XmlDiff xmlDiff) {
+            AssertXmlIdentical(xmlDiff, false);
+        }
+        
+        public static void AssertXmlIdentical(XmlDiff xmlDiff, bool identicalOrNot) {
             DiffResult diffResult = xmlDiff.Compare();
-            AssertEquals(true, diffResult.Identical);
+            AssertEquals(xmlDiff.OptionalDescription, identicalOrNot, diffResult.Identical);
+        }
+        
+        public static void AssertXmlValid(TextReader reader, string baseURI) {
+            AssertXmlValid(new Validator(reader, baseURI));
+        }
+        
+        public static void AssertXmlValid(Validator validator) {
+            AssertEquals(validator.ValidationMessage, true, validator.IsValid);
+        }
+        
+        public static void AssertXpathExists(string anXPath, string inXml) {
+            XPathEvaluator evaluator = new XPathEvaluator(anXPath);
+            AssertEquals(true, evaluator.XPathExists(inXml));
         }
     }
 }

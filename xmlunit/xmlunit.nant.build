@@ -1,11 +1,11 @@
-<project name="xmlunit" description="XmlUnit for .Net" default="compile">
-  <property name="project.version" value="0.1"/>
-  <property name="deploy.file" value="${nant.project.name}${project.version}.zip"/>
+﻿<project name="xmlunit" description="XmlUnit for .Net" default="all">
+  <property name="project.version" value="0.2"/>
   <property name="base.dir" value="${nant.project.basedir}"/>
   <property name="src.dir" value="${base.dir}/src/csharp"/>
   <property name="tests.src.dir" value="${base.dir}/tests/csharp"/>
   <property name="bin.dir" value="${base.dir}/bin"/>
   <property name="csc.verbose" value="false"/>
+  <property name="deploy.file" value="${nant.project.name}${project.version}.zip"/>
   <property name="nunit.v2.assembly" value="nunit.framework.dll"/>
   
   <!-- *** You may need to edit this property for your filesystem *** -->
@@ -50,7 +50,7 @@
   </target>
   
   <target name="deploy" description="zip all code for deployment" depends="test">
-    <delete file="${deploy.file}"/>
+    <delete file="${deploy.file}" failonerror="false"/>
     <zip zipfile="${deploy.file}">
       <fileset basedir="${base.dir}">
         <includes name="LICENSE.txt"/> 
