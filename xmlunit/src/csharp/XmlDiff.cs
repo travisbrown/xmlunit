@@ -10,7 +10,7 @@ namespace XmlUnit {
         private readonly DiffConfiguration _diffConfiguration;
         private DiffResult _diffResult;
                 
-        public XmlDiff(TextReader control, TextReader test, 
+        public XmlDiff(XmlInput control, XmlInput test, 
                        DiffConfiguration diffConfiguration) {
             _diffConfiguration =  diffConfiguration;
             _controlReader = CreateXmlReader(control);
@@ -20,29 +20,23 @@ namespace XmlUnit {
                 _testReader = CreateXmlReader(test);
             }
         }
-        public XmlDiff(TextReader control, TextReader test)
+        
+        public XmlDiff(XmlInput control, XmlInput test)
             : this(control, test, new DiffConfiguration()) {
         }
-                
+
+        public XmlDiff(TextReader control, TextReader test)
+            : this(new XmlInput(control), new XmlInput(test)) {
+        }
+        
         public XmlDiff(string control, string test) 
-            : this(new StringReader(control), new StringReader(test)) {
+            : this(new XmlInput(control), new XmlInput(test)) {
         }
         
-        public XmlDiff(string control, string test, DiffConfiguration diffConfiguration) 
-            : this(new StringReader(control), new StringReader(test), diffConfiguration) {
-        }
-        
-        public XmlDiff(string control, TextReader test) 
-            : this(new StringReader(control), test) {
-        }
-        
-        public XmlDiff(TextReader control, string test) 
-            : this(control, new StringReader(test)) {
-        }
-        
-        private XmlReader CreateXmlReader(TextReader forTextReader) {
-            XmlTextReader xmlReader = new XmlTextReader(_diffConfiguration.BaseURI, forTextReader);
-            xmlReader.WhitespaceHandling = _diffConfiguration.WhitespaceHandling;           
+        private XmlReader CreateXmlReader(XmlInput forInput) {
+            XmlReader xmlReader = forInput.CreateXmlReader(
+                _diffConfiguration.BaseURI, _diffConfiguration.WhitespaceHandling);
+            
             if (!_diffConfiguration.UseValidatingParser) {
                 return xmlReader;
             }

@@ -23,7 +23,7 @@ namespace XmlUnit.Tests {
         [Test] public void AssertXmlIdenticalUsesOptionalDescription() {
             string description = "An Optional Description";
             try {
-                XmlDiff diff = new XmlDiff("<a/>", "<b/>", 
+                XmlDiff diff = new XmlDiff(new XmlInput("<a/>"), new XmlInput("<b/>"), 
                                            new DiffConfiguration(description));
                 XmlAssertion.AssertXmlIdentical(diff);
             } catch (NUnit.Framework.AssertionException e) {
@@ -34,7 +34,7 @@ namespace XmlUnit.Tests {
         [Test] public void AssertXmlEqualsUsesOptionalDescription() {
             string description = "Another Optional Description";
             try {
-                XmlDiff diff = new XmlDiff("<a/>", "<b/>", 
+                XmlDiff diff = new XmlDiff(new XmlInput("<a/>"), new XmlInput("<b/>"), 
                                            new DiffConfiguration(description));
                 XmlAssertion.AssertXmlEquals(diff);
             } catch (NUnit.Framework.AssertionException e) {

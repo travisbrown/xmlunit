@@ -11,30 +11,31 @@ namespace XmlUnit {
         }
         
         public bool XPathExists(string forSomeXml) {
-            return XPathExists(new StringReader(forSomeXml));
+            return XPathExists(new XmlInput(forSomeXml));
         }
         
-        public bool XPathExists(TextReader forReader) {
-            XPathNodeIterator iterator = GetNodeIterator(forReader);
+        public bool XPathExists(XmlInput forInput) {
+            XPathNodeIterator iterator = GetNodeIterator(forInput);
             return (iterator.Count > 0);
         }
-        
-        private XPathNodeIterator GetNodeIterator(TextReader forReader) {
-            XPathNavigator xpathNavigator = GetNavigator(forReader);
+                
+        private XPathNodeIterator GetNodeIterator(XmlInput forXmlInput) {
+            XPathNavigator xpathNavigator = GetNavigator(forXmlInput);
             return xpathNavigator.Select(_xPathExpression);            
         }
                 
-        private XPathNavigator GetNavigator(TextReader forReader) {            
-            XPathDocument xpathDocument = new XPathDocument(forReader);
+        private XPathNavigator GetNavigator(XmlInput forXmlInput) {            
+            XPathDocument xpathDocument = 
+                new XPathDocument(forXmlInput.CreateDefaultXmlReader());
             return xpathDocument.CreateNavigator();
         }
                 
         public string EvaluateXPath(string forSomeXml) {
-            return EvaluateXPath(new StringReader(forSomeXml));
+            return EvaluateXPath(new XmlInput(forSomeXml));
         }
         
-        public string EvaluateXPath(TextReader forReader) {
-            XPathNavigator xpathNavigator = GetNavigator(forReader);
+        public string EvaluateXPath(XmlInput forXmlInput) {
+            XPathNavigator xpathNavigator = GetNavigator(forXmlInput);
             XPathExpression xPathExpression = xpathNavigator.Compile(_xPathExpression);
             if (xPathExpression.ReturnType == XPathResultType.NodeSet) {
                 return EvaluateXPath(xpathNavigator);

@@ -1,4 +1,4 @@
-﻿namespace XmlUnit.Tests {
+namespace XmlUnit.Tests {
     using XmlUnit;
     using NUnit.Framework;
     using System.IO;
@@ -52,8 +52,8 @@
             FileStream testFileStream = File.Open(ValidatorTests.INVALID_FILE, 
                                                   FileMode.Open, FileAccess.Read);
             try {         
-                XmlDiff diff = new XmlDiff(new StreamReader(controlFileStream), 
-                                           new StreamReader(testFileStream),
+                XmlDiff diff = new XmlDiff(new XmlInput(controlFileStream), 
+                                           new XmlInput(testFileStream),
                                            diffConfiguration);
                 diff.Compare();
             } catch (XmlSchemaException e) {
@@ -80,7 +80,8 @@
         }
         private void PerformAssertion(string control, string test, bool assertion, 
                                       DiffConfiguration xmlUnitConfiguration) {
-            XmlDiff diff = new XmlDiff(control, test, xmlUnitConfiguration);
+            XmlDiff diff = new XmlDiff(new XmlInput(control), new XmlInput(test), 
+                                       xmlUnitConfiguration);
             PerformAssertion(diff, assertion);
         }        
         private void PerformAssertion(XmlDiff diff, bool assertion) {

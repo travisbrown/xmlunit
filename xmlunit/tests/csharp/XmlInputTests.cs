@@ -17,7 +17,13 @@ namespace XmlUnit.Tests {
         
         [Test] public void StringInputTranslatesToXmlReader() {
             XmlInput input = new XmlInput(INPUT);
-            string actual = ReadOuterXml(input.CreateXmlReader());
+            string actual = ReadOuterXml(CreateXmlReader(input));
+            Assertion.AssertEquals(_expected, actual);
+        }
+        
+        [Test] public void TextReaderInputTranslatesToXmlReader() {
+            XmlInput input = new XmlInput(new StringReader(INPUT));
+            string actual = ReadOuterXml(CreateXmlReader(input));
             Assertion.AssertEquals(_expected, actual);
         }
         
@@ -28,7 +34,7 @@ namespace XmlUnit.Tests {
             writer.Flush();
             stream.Seek(0, SeekOrigin.Begin);
             XmlInput input = new XmlInput(stream);
-            string actual = ReadOuterXml(input.CreateXmlReader());
+            string actual = ReadOuterXml(CreateXmlReader(input));
             try {
                 Assertion.AssertEquals(_expected, actual);
             } finally {
@@ -44,5 +50,41 @@ namespace XmlUnit.Tests {
                 forReader.Close();
             }
         }
+        
+        private XmlReader CreateXmlReader(XmlInput forInput) {
+            XmlReader reader = forInput.CreateXmlReader(".", WhitespaceHandling.All);
+            return reader;
+        }
+        
+        [Test] public void NotEqualsNull() {
+            XmlInput input = new XmlInput(INPUT);
+            Assertion.AssertEquals(false, input.Equals(null));
+        }
+        
+        [Test] public void NotEqualsADifferentClass() {
+            XmlInput input = new XmlInput(INPUT);
+            Assertion.AssertEquals(false, input.Equals(INPUT));
+        }
+        
+        [Test] public void EqualsSelf() {
+            XmlInput input = new XmlInput(INPUT);
+            Assertion.AssertEquals(input, input);
+        }
+        
+        [Test] public void EqualsCopyOfSelf() {
+            XmlInput input = new XmlInput(INPUT);
+            Assertion.AssertEquals(new XmlInput(INPUT), input);
+        }
+        
+        [Test] public void HashCodeEqualsHashCodeOfInput() {
+            XmlInput input = new XmlInput(INPUT);
+            Assertion.AssertEquals(INPUT.GetHashCode(), input.GetHashCode());
+        }
+        
+        [Test] public void HashCodeEqualsHashCodeOfCopy() {
+            XmlInput input = new XmlInput(INPUT);
+            Assertion.AssertEquals(new XmlInput(INPUT).GetHashCode(), input.GetHashCode());
+        }
+        
     }
 }

@@ -9,8 +9,17 @@ namespace XmlUnit {
         private string validationMessage;
         private readonly XmlValidatingReader validatingReader;
         
-        public Validator(TextReader reader, string baseURI) {
-            XmlTextReader xmlReader = new XmlTextReader(baseURI, reader);
+        public Validator(TextReader reader, string baseURI) 
+            :this(new XmlInput(reader), baseURI) {
+        }
+            
+        public Validator(XmlInput input, string baseURI) 
+            : this(input, baseURI, WhitespaceHandling.All) {
+        }
+        
+        public Validator(XmlInput input, string baseURI, 
+                         WhitespaceHandling whitespaceHandling) {
+            XmlReader xmlReader = input.CreateXmlReader(baseURI, WhitespaceHandling.All);
             validatingReader = new XmlValidatingReader(xmlReader);          
             AddValidationEventHandler(new ValidationEventHandler(ValidationFailed));            
         }

@@ -6,14 +6,18 @@ namespace XmlUnit {
     using System.Xml.Xsl;
     
     public class Xslt {
-        private readonly string _xslt;
-        public Xslt(string xslt) {
-            _xslt = xslt;
+        private readonly XmlInput _xsltInput;
+        public Xslt(XmlInput xsltInput) {
+            _xsltInput = xsltInput;
+        }
+        
+        public Xslt(string xslt) 
+            : this(new XmlInput(xslt)) {
         }
         
         public string Transform(string someXml) {
             XslTransform transform = new XslTransform();
-            XmlReader xsltReader = new XmlTextReader(new StringReader(_xslt));
+            XmlReader xsltReader = _xsltInput.CreateDefaultXmlReader();
             XmlResolver xsltResolver = null;
             Evidence evidence = null;
             transform.Load(xsltReader, xsltResolver, evidence);
