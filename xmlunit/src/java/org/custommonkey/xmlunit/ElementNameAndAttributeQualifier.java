@@ -36,7 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * More complex interface implementation that tests two elements for tag name
@@ -47,17 +49,17 @@ import org.w3c.dom.Element;
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
-	public static final String ALL_ATTRIBUTES = "*";
+	public static final String[] ALL_ATTRIBUTES = {"*"};
 	
 	private final String[] qualifyingAttrNames;
 	
 	/**
 	 * No-args constructor: use all attributes from all elements to determine
 	 * whether elements qualify for comparability
+	 */
 	public ElementNameAndAttributeQualifier() {
 		this(ALL_ATTRIBUTES);
 	}
-	 */
 	
 	/**
 	 * Simple constructor for a single qualifying attribute name
@@ -105,9 +107,20 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 	 */
 	protected boolean areAttributesComparable(Element control, Element test) {
 		String controlValue, testValue;
-		for (int i=0; i < qualifyingAttrNames.length; ++i) {
-			controlValue = control.getAttribute(qualifyingAttrNames[i]);
-			testValue = test.getAttribute(qualifyingAttrNames[i]);
+		String[] qualifyingAttributes;
+		if (qualifyingAttrNames == ALL_ATTRIBUTES) {
+			NamedNodeMap namedNodeMap = control.getAttributes();  
+			qualifyingAttributes = new String[namedNodeMap.getLength()];
+			for (int n=0; n < qualifyingAttributes.length; ++n) {
+				qualifyingAttributes[n] = ((Attr) namedNodeMap.item(n)).getName();
+			}
+		} else {
+			qualifyingAttributes = qualifyingAttrNames;
+		}
+			
+		for (int i=0; i < qualifyingAttributes.length; ++i) {
+			controlValue = control.getAttribute(qualifyingAttributes[i]);
+			testValue = test.getAttribute(qualifyingAttributes[i]);
 			if (controlValue == null) {
 				if (testValue != null) {
 					return false;

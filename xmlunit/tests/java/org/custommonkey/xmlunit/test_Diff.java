@@ -197,14 +197,38 @@ public class test_Diff extends TestCase{
             true, diff.similar());
     }
     
-    public void testRepeatedElementNamesWithAttributeQualification() throws Exception {
+    public void testRepeatedElementNamesWithAttributeQualification1() throws Exception {
     	Diff diff = buildDiff("<root><node id=\"1\"/><node id=\"2\"/></root>", 
     		"<root><node id=\"2\"/><node id=\"1\"/></root>");
     	diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
     	assertFalse("should not be identical: " + diff.toString(), diff.identical());
     	assertTrue("should be similar: " + diff.toString(), diff.similar());
     }
+
+	public void testRepeatedElementNamesWithAttributeQualification2() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
+			"<root><node id=\"2\" val=\"4\"/><node id=\"1\" val=\"3\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertFalse("should not be similar: " + diff.toString(), diff.similar());
+	}
+
+	public void testRepeatedElementNamesWithAttributeQualification3() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
+			"<root><node id=\"2\" val=\"3\"/><node id=\"1\" val=\"4\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
     
+	public void testRepeatedElementNamesWithAttributeQualification4() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
+			"<root><node id=\"2\" val=\"4\"/><node id=\"1\" val=\"3\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertFalse("should not be similar: " + diff.toString(), diff.similar());
+	}
+
 	public void testRepeatedElementNamesWithTextQualification() throws Exception {
 			Diff diff = buildDiff("<root><node>1</node><node>2</node></root>",
 				"<root><node>2</node><node>1</node></root>");
