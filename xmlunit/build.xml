@@ -1,7 +1,7 @@
 <project name="XMLUnit" default="compile" basedir=".">
   <property name="src.dir" value="src" />
   <property name="format" value="plain" />
-  <property name="version" value="0.1"/>
+  <property name="version" value="0.2"/>
 
   <path id="classpath">
     <fileset dir="lib">
@@ -44,7 +44,10 @@
     </jar>
   </target>
 
-  <target name="dist" depends="jar,docs">
+  <target name="dist" depends="clean,jar,docs">
+    <zip zipfile="src.zip">
+      <fileset dir="src"/>
+    </zip>
     <zip zipfile="xmlunit-${version}.zip">
       <fileset dir="build"/>
       <fileset dir="lib">
