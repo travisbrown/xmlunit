@@ -1,31 +1,52 @@
-﻿namespace XmlUnit.Tests {
+namespace XmlUnit.Tests {
     using NUnit.Framework;
     using XmlUnit;
     
     [TestFixture]
     public class XpathTests {
-        public static readonly string SOLAR_SYSTEM = "<solar-system><planet name='Earth' position='3' supportsLife='yes'/><planet name='Venus' position='4'/></solar-system>";
         private static readonly string SIMPLE_XML = "<a><b><c>one two</c></b></a>";
+        private static readonly string EXISTENT_XPATH = "/a/b/c";
+        private static readonly string NONEXISTENT_XPATH = "/a/b/c/d";
+        
+        private static readonly string MORE_COMPLEX_XML = "<a><b>one</b><b>two</b></a>";
+        private static readonly string MULTI_NODE_XPATH = "//b";
+        private static readonly string COUNT_XPATH = "count(//b)";
         [Test] public void XpathExistsTrueForXpathThatExists() {
-            string anXPath = "/a/b/c";
-            XPathEvaluator evaluator = new XPathEvaluator(anXPath);
+            XPath xpath = new XPath(EXISTENT_XPATH);
             Assertion.AssertEquals(true, 
-                                   evaluator.XPathExists(SIMPLE_XML));
+                                   xpath.XPathExists(SIMPLE_XML));
         }
         
-        [Test] public void XpathExistsFalseForXpathThatDoesntExist() {
-            string anXPath = "/a/b/c/d";
-            XPathEvaluator evaluator = new XPathEvaluator(anXPath);
+        [Test] public void XpathExistsFalseForUnmatchedExpression() {
+            XPath xpath = new XPath(NONEXISTENT_XPATH);
             Assertion.AssertEquals(false, 
-                                   evaluator.XPathExists(SIMPLE_XML));
+                                   xpath.XPathExists(SIMPLE_XML));
         }
         
-        [Test] public void XpathEvaluatesToTrueForSimpleString() {
-            string anXPath = "/a/b/c";
+        [Test] public void XpathEvaluatesToTextValueForSimpleString() {
             string expectedValue = "one two";
-            XPathEvaluator evaluator = new XPathEvaluator(anXPath);
+            XPath xpath = new XPath(EXISTENT_XPATH);
             Assertion.AssertEquals(expectedValue, 
-                                   evaluator.EvaluateXPath(SIMPLE_XML));
+                                   xpath.EvaluateXPath(SIMPLE_XML));
+        }
+        
+        [Test] public void XpathEvaluatesToEmptyStringForUnmatchedExpression() {
+            string expectedValue = "";
+            XPath xpath = new XPath(NONEXISTENT_XPATH);
+            Assertion.AssertEquals(expectedValue, 
+                                   xpath.EvaluateXPath(SIMPLE_XML));
+        }
+        [Test] public void XpathEvaluatesCountExpression() {
+            string expectedValue = "2";
+            XPath xpath = new XPath(COUNT_XPATH);
+            Assertion.AssertEquals(expectedValue, 
+                                   xpath.EvaluateXPath(MORE_COMPLEX_XML));
+        }
+        [Test] public void XpathEvaluatesMultiNodeExpression() {
+            string expectedValue = "onetwo";
+            XPath xpath = new XPath(MULTI_NODE_XPATH);
+            Assertion.AssertEquals(expectedValue, 
+                                   xpath.EvaluateXPath(MORE_COMPLEX_XML));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace XmlUnit {
+namespace XmlUnit {
     using NUnit.Framework;
     using System.IO;
     
@@ -53,9 +53,15 @@
             AssertEquals(validator.ValidationMessage, true, validator.IsValid);
         }
         
-        public static void AssertXpathExists(string anXPath, string inXml) {
-            XPathEvaluator evaluator = new XPathEvaluator(anXPath);
-            AssertEquals(true, evaluator.XPathExists(inXml));
+        public static void AssertXpathExists(string anXPathExpression, string inXml) {
+            XPath xpath = new XPath(anXPathExpression);
+            AssertEquals(true, xpath.XPathExists(inXml));
+        }
+        
+        public static void AssertXPathEvaluatesTo(string anXPathExpression, string inXml, 
+                                                  string expectedValue) {
+            XPath xpath = new XPath(anXPathExpression);
+            AssertEquals(expectedValue, xpath.EvaluateXPath(inXml));
         }
     }
 }

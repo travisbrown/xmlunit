@@ -1,4 +1,4 @@
-﻿<project name="xmlunit" description="XmlUnit for .Net" default="all">
+<project name="xmlunit" description="XmlUnit for .Net" default="compile">
   <property name="project.version" value="0.2"/>
   <property name="base.dir" value="${nant.project.basedir}"/>
   <property name="src.dir" value="${base.dir}/src/csharp"/>

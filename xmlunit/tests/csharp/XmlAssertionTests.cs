@@ -1,4 +1,4 @@
-﻿namespace XmlUnit.Tests {
+namespace XmlUnit.Tests {
     using XmlUnit;
     using NUnit.Framework;
     using System.IO;
@@ -85,6 +85,27 @@
             }
         }
         
+        [Test] public void AssertXPathEvaluatesToWorksForMatchingExpression() {
+            XmlAssertion.AssertXPathEvaluatesTo("//planet[@position='3']/@supportsLife", 
+                                                MY_SOLAR_SYSTEM,
+                                                "yes");
+        }
+        
+        [Test] public void AssertXPathEvaluatesToWorksForNonMatchingExpression() {
+            XmlAssertion.AssertXPathEvaluatesTo("//planet[@position='4']/@supportsLife", 
+                                                MY_SOLAR_SYSTEM,
+                                                "");
+        }
+        
+        [Test] public void AssertXPathEvaluatesToWorksConstantExpression() {
+            XmlAssertion.AssertXPathEvaluatesTo("true()", 
+                                                MY_SOLAR_SYSTEM,
+                                                "True");
+            XmlAssertion.AssertXPathEvaluatesTo("false()", 
+                                                MY_SOLAR_SYSTEM,
+                                                "False");
+        }
+
         private void AvoidUnusedVariableCompilerWarning(AssertionException e) {
             string msg = e.Message;
         }
