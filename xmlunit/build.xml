@@ -1,0 +1,58 @@
+<project name="XMLUnit" default="compile" basedir=".">
+  <property name="src.dir" value="src" />
+  <property name="format" value="plain" />
+
+  <path id="classpath">
+    <fileset dir="lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="compile" depends="prepare" description="Compile Java Source">
+    <javac srcdir="${src.dir}/java" destdir="classes" classpathref="classpath"/>
+  </target>
+
+  <target name="docs" depends="prepare">
+    <javadoc
+      classpathref="classpath"
+      packagenames="org.custommonkey.*"
+      destdir="build/docs/api"
+      sourcepath="${src.dir}/java"/>
+  </target>
+
+  <target name="prepare" description="Prepare for compile">
+    <mkdir dir="build/docs/api"/>
+    <mkdir dir="classes"/>
+    <mkdir dir="tests"/>
+  </target>
+
+  <target name="clean" description="Remove class files">
+    <delete dir="classes"/>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar jarfile="build/xmlunit.jar">
+      <fileset dir="classes">
+        <exclude name="**/test_*.class"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="test">
+    <junit fork="no">
+      <classpath>
+        <pathelement location="classes"/>
+        <fileset dir="lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+      <formatter type="${format}"/>
+      <batchtest>
+        <fileset dir="${src.dir}/java">
+          <include name="**/test_*.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+</project>
