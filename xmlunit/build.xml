@@ -1,4 +1,5 @@
 <project name="xmlunit" default="compile" basedir=".">
+  <!-- The properties junit.lib, xmlxsl.lib, and test.report.dir should be defined in your build.properties file -->
   <target name="init">
     <property name="xmlunit.version" value="1.0"/>
     <property name="src.dir" value="src"/>
@@ -17,14 +18,14 @@
   <target name="clean" depends="init">
     <delete includeEmptyDirs="true" >
       <fileset dir="${out.dir}" includes="**/*.class"/>
-      <fileset dir="${test.report.dir}" includes="**/TEST*.txt"/>
+      <fileset dir="${test.report.dir}" includes="**/TEST*.*"/>
       <fileset dir="${dist.dir}"/>
     </delete> 
   </target>
 
   <target name="compile" depends="init">
     <mkdir dir="${out.dir}"/>
-    <javac srcdir="${src.dir}/java:${test.dir}/java" destdir="${out.dir}" debug="on">
+    <javac srcdir="${src.dir}/java:${test.dir}/java" destdir="${out.dir}" debug="on" target="1.2">
       <classpath>
         <pathelement location="${xmlxsl.lib}"/>
         <pathelement location="${junit.lib}"/>
@@ -37,6 +38,7 @@
     <mkdir dir="${test.report.dir}"/>
     <junit printsummary="yes" haltonfailure="no" fork="yes">
       <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="user.dir" value="${basedir}"/>
       <!--
           <sysproperty key="javax.xml.parsers.DocumentBuilderFactory"
             value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
@@ -75,13 +77,15 @@
   <target name="docs" depends="init">
     <mkdir dir="${docs.dir}"/>
     <delete includeEmptyDirs="true" dir="${docs.dir}/org"/>
-    <javadoc sourcepath="${src.dir}/java" destdir="${docs.dir}"
-      packagenames="org.custommonkey.xmlunit.*"
+    <javadoc destdir="${docs.dir}"
       overview="${src.dir}/java/overview.html"
       windowtitle="XMLUnit Documentation"
       footer="&lt;p&gt;&lt;a href=&quot;http://xmlunit.sourceforge.net/&quot;&gt;XMLUnit&lt;/a&gt; is hosted by sourceforge.net&lt;/p&gt;">
       <group title="XMLUnit v${xmlunit.version}"
-        packages="org.custommonkey.xmlunit*"/>
+        packages="org.custommonkey.xmlunit.*"/>
+      <fileset dir="${src.dir}/java">
+        <include name="org/custommonkey/**/*.java"/>
+      </fileset>
       <classpath>
         <fileset dir="${lib.dir}">
             <include name="*.jar"/>
@@ -92,7 +96,7 @@
   </target>
 
   <target name="jar" depends="clean,setDistVersion,compile">
-    <jar jarfile="${lib.dir}/xmlunit-${xmlunit.version}.jar"
+    <jar jarfile="${lib.dir}/xmlunit${xmlunit.version}.jar"
        basedir="${out.dir}"
        excludes="**/test_*.class"
     />
@@ -104,10 +108,10 @@
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/xmlunit${xmlunit.version}.jar"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd"
-            excludes="${out.dir}/*,bugs/*,${test.report.dir}/*"/>
+            includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd,**/*.xsd"
+            excludes="${out.dir}/*,**/TEST*.xml,bugs/*"/>
         <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="${docs.dir}/**/*.html,${test.dir}/etc/*.html"/>
+            includes="${docs.dir}/**/*.css,${docs.dir}/**/*.html,${test.dir}/etc/*.html"/>
         <zipfileset prefix="xmlunit" dir="${src.dir}/site"
             includes="*.pdf,example.html"/>
     </zip>
