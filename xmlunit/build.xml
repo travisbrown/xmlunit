@@ -10,8 +10,8 @@
     <property file="build.properties"/>
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${out.dir}"/>
-    <mkdir dir="${dist.dir}"/>
     <mkdir dir="${test.report.dir}"/>
+    <mkdir dir="${dist.dir}"/>
   </target>
 
   <target name="clean" depends="init">
@@ -99,6 +99,7 @@
   </target>
 
   <target name="dist" depends="jar,test,docs">
+    <mkdir dir="${dist.dir}"/>
     <zip zipfile="${dist.dir}/xmlunit${xmlunit.version}.zip">
         <zipfileset prefix="xmlunit" dir="${basedir}"
             includes="**/xmlunit${xmlunit.version}.jar"/>
