@@ -320,9 +320,9 @@ public class DifferenceEngine implements DifferenceConstants {
                 }
             }
             nextTest = test.item(j);
+        	compareNode(nextControl, nextTest, listener, elementQualifier);
             compare(new Integer(i), new Integer(j),
                 nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
-            compareNode(nextControl, nextTest, listener, elementQualifier);
         }
     }
 

@@ -199,57 +199,6 @@ public class test_Diff extends TestCase{
             true, diff.similar());
     }
     
-    public void testRepeatedElementNamesWithAttributeQualification1() throws Exception {
-    	Diff diff = buildDiff("<root><node id=\"1\"/><node id=\"2\"/></root>", 
-    		"<root><node id=\"2\"/><node id=\"1\"/></root>");
-    	diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
-    	assertFalse("should not be identical: " + diff.toString(), diff.identical());
-    	assertTrue("should be similar: " + diff.toString(), diff.similar());
-    }
-
-	public void testRepeatedElementNamesWithAttributeQualification2() throws Exception {
-		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
-			"<root><node id=\"2\" val=\"4\"/><node id=\"1\" val=\"3\"/></root>");
-		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
-		assertFalse("should not be identical: " + diff.toString(), diff.identical());
-		assertFalse("should not be similar: " + diff.toString(), diff.similar());
-	}
-
-	public void testRepeatedElementNamesWithAttributeQualification3() throws Exception {
-		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
-			"<root><node id=\"2\" val=\"3\"/><node id=\"1\" val=\"4\"/></root>");
-		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-		assertFalse("should not be identical: " + diff.toString(), diff.identical());
-		assertTrue("should be similar: " + diff.toString(), diff.similar());
-	}
-    
-	public void testRepeatedElementNamesWithAttributeQualification4() throws Exception {
-		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
-			"<root><node id=\"2\" val=\"4\"/><node id=\"1\" val=\"3\"/></root>");
-		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-		assertFalse("should not be identical: " + diff.toString(), diff.identical());
-		assertFalse("should not be similar: " + diff.toString(), diff.similar());
-	}
-	
-	public void testRepeatedElementNamesWithNamespacedAttributeQualification() throws Exception {
-		Diff diff = buildDiff("<root xmlns:a=\"http://a.com\" xmlns:b=\"http://b.com\">"
-				+ "<node id=\"1\" a:val=\"a\" b:val=\"b\"/><node id=\"2\" a:val=\"a2\" b:val=\"b2\"/></root>",
-			"<root xmlns:c=\"http://a.com\" xmlns:d=\"http://b.com\">"
-				+ "<node id=\"2\" c:val=\"a2\" d:val=\"b2\"/><node id=\"1\" c:val=\"a\" d:val=\"b\"/></root>");
-		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-		diff.overrideDifferenceListener(new ExpectedDifferenceListener(
-			new int[] {DifferenceConstants.NAMESPACE_PREFIX_ID, DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID}));
-		assertFalse("should not be identical: " + diff.toString(), diff.identical());
-		assertTrue("should be similar: " + diff.toString(), diff.similar());
-	}
-
-	public void testRepeatedElementNamesWithTextQualification() throws Exception {
-			Diff diff = buildDiff("<root><node>1</node><node>2</node></root>",
-				"<root><node>2</node><node>1</node></root>");
-			diff.overrideElementQualifier(new ElementNameAndTextQualifier());
-			assertFalse("should not be identical: " + diff.toString(), diff.identical());
-			assertTrue("should be similar: " + diff.toString(), diff.similar());
-	}
     public void testDiffStringWithAttributes() throws Exception {
         final String fruitBat = "<bat type=\"fruit\"/>",
             longEaredBat = "<bat type=\"longeared\"/>";
@@ -381,18 +330,6 @@ public class test_Diff extends TestCase{
         assertTrue("d-"+reverseDiff.toString(), !reverseDiff.identical());
     }
     
-    public void testNamespacedAttributes() throws Exception {
-    	FileReader control = new FileReader(test_Constants.BASEDIR
-    		+ "/tests/etc/controlNamespaces.xml");
-    	FileReader test = new FileReader(test_Constants.BASEDIR
-    		+ "/tests/etc/testNamespaces.xml");
-    	Diff diff = buildDiff(control, test);
-    	diff.overrideDifferenceListener(
-    		new ExpectedDifferenceListener(DifferenceConstants.NAMESPACE_PREFIX_ID));
-    	assertEquals(diff.toString(), false, diff.identical());
-    	assertEquals(diff.toString(), true, diff.similar());
-    }
-    
     public void testOverrideDifferenceListener() throws Exception {
         String control = "<vehicles><car colour=\"white\">ford fiesta</car>"
             +"<car colour=\"red\">citroen xsara</car></vehicles>";
@@ -430,12 +367,85 @@ public class test_Diff extends TestCase{
             !diffWithOverride.similar());
     }
     
+	public void testNamespacedAttributes() throws Exception {
+		FileReader control = new FileReader(test_Constants.BASEDIR
+			+ "/tests/etc/controlNamespaces.xml");
+		FileReader test = new FileReader(test_Constants.BASEDIR
+			+ "/tests/etc/testNamespaces.xml");
+		Diff diff = buildDiff(control, test);
+		diff.overrideDifferenceListener(
+			new ExpectedDifferenceListener(DifferenceConstants.NAMESPACE_PREFIX_ID));
+		assertEquals(diff.toString(), false, diff.identical());
+		assertEquals(diff.toString(), true, diff.similar());
+	}
+
     public void testDifferentStructure() throws Exception {
     	String control = "<root><node>text</node></root>";
     	String test = "<root><node><inner-node>text</inner-node></node></root>";
     	Diff myDiff = buildDiff(control, test);
     	assertEquals(myDiff.toString(), false, myDiff.similar());
     }
+
+	public void testRepeatedElementNamesWithAttributeQualification1() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\"/><node id=\"2\"/></root>",
+			"<root><node id=\"2\"/><node id=\"1\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
+
+	public void testRepeatedElementNamesWithAttributeQualification2() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
+			"<root><node id=\"2\" val=\"4\"/><node id=\"1\" val=\"3\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier("id"));
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertFalse("should not be similar: " + diff.toString(), diff.similar());
+	}
+
+	public void testRepeatedElementNamesWithAttributeQualification3() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
+			"<root><node id=\"2\" val=\"3\"/><node id=\"1\" val=\"4\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
+
+	public void testRepeatedElementNamesWithAttributeQualification4() throws Exception {
+		Diff diff = buildDiff("<root><node id=\"1\" val=\"4\"/><node id=\"2\" val=\"3\"/></root>",
+			"<root><node id=\"2\" val=\"4\"/><node id=\"1\" val=\"3\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertFalse("should not be similar: " + diff.toString(), diff.similar());
+	}
+
+	public void testRepeatedElementNamesWithNamespacedAttributeQualification() throws Exception {
+		Diff diff = buildDiff("<root xmlns:a=\"http://a.com\" xmlns:b=\"http://b.com\">"
+				+ "<node id=\"1\" a:val=\"a\" b:val=\"b\"/><node id=\"2\" a:val=\"a2\" b:val=\"b2\"/></root>",
+			"<root xmlns:c=\"http://a.com\" xmlns:d=\"http://b.com\">"
+				+ "<node id=\"2\" c:val=\"a2\" d:val=\"b2\"/><node id=\"1\" c:val=\"a\" d:val=\"b\"/></root>");
+		diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+		diff.overrideDifferenceListener(new ExpectedDifferenceListener(
+			new int[] {DifferenceConstants.NAMESPACE_PREFIX_ID, DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID}));
+		assertFalse("should not be identical: " + diff.toString(), diff.identical());
+		assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
+
+	public void testRepeatedElementNamesWithTextQualification() throws Exception {
+			Diff diff = buildDiff("<root><node>1</node><node>2</node></root>",
+				"<root><node>2</node><node>1</node></root>");
+			diff.overrideElementQualifier(new ElementNameAndTextQualifier());
+			diff.overrideDifferenceListener(
+				new ExaminingExpectedDifferenceListener(DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID) {
+					private int i=0;
+					protected void examineDifferenceContents(Difference difference) {
+						++i;
+						assertEquals("/root[1]/node[" + i +"]", 
+							difference.getControlNodeDetail().getXpathLocation());
+					}
+				});
+			assertFalse("should not be identical: " + diff.toString(), diff.identical());
+			assertTrue("should be similar: " + diff.toString(), diff.similar());
+	}
     	
     protected Diff buildDiff(Document control, Document test) {
         return new Diff(control, test);
@@ -482,9 +492,20 @@ public class test_Diff extends TestCase{
 	}
 	public int differenceFound(Difference difference) {
 		assertTrue(difference.toString(), expectedIds.contains(new Integer(difference.getId())));
+		examineDifferenceContents(difference);
 		return RETURN_ACCEPT_DIFFERENCE;
 	}
 	public void skippedComparison(Node control, Node test) {
 	}
-}
+	protected void examineDifferenceContents(Difference difference) {
+    }
+	}
+	
+	private abstract class ExaminingExpectedDifferenceListener extends ExpectedDifferenceListener {
+		private ExaminingExpectedDifferenceListener(int expectedIdValue) {
+			super(expectedIdValue);
+		}
+		protected abstract void examineDifferenceContents(Difference difference) ;
+	} 
+			
 }

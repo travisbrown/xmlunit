@@ -53,21 +53,21 @@ import org.xml.sax.SAXException;
  * Two documents are either:
  * <br /><ul>
  * <li><i>identical</i>: the content and sequence of the nodes in the documents
- *  are exactly the same.</li>
+ * are exactly the same</li>
  * <li><i>similar</i>: the content of the nodes in the documents are the same,
- *  but the sequencing of sibling elements, values of namespace prefixes,
- *  use of implied attributes or other minor differences may exist.</li>
+ * but minor differences exist e.g. sequencing of sibling elements, values of
+ * namespace prefixes, use of implied attribute values</li>
  * <li><i>different</i>: the contents of the documents are fundamentally
- *  different</li>
+ * different</li>
  * </ul>
  * <br />
- *  The difference between compared documents is contained in a
- *  message buffer held in this class, accessible either through the
- *  <code>appendMessage</code> or <code>toString</code> methods.
- *  NB: When comparing documents, the comparison is halted as soon as the
- *  status (identical / similar / different) is known with certainty. For a
- *  list of all differences between the documents an instance of
- *  {@link DetailedDiff the DetailedDiff class} can be used instead.
+ * The difference between compared documents is contained in a  message buffer
+ * held in this class, accessible either through the  <code>appendMessage</code>
+ * or <code>toString</code> methods.  NB: When comparing documents, the
+ * comparison is halted as soon as the  status (identical / similar / different)
+ * is known with certainty. For a  list of all differences between the documents
+ * an instance of  {@link DetailedDiff the DetailedDiff class} can be used
+ * instead.
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Diff 

@@ -606,9 +606,9 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     	String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
     	String test = "<stuff><item id=\"1\"/></stuff>";
     	listenToDifferences(control, test);
-    	assertEquals("12th control xpath", "/stuff[1]/item[2]/@id", 
+    	assertEquals("12th control xpath", "/stuff[1]/item[2]", 
     		listener.controlXpath);
-    	assertEquals("12th test xpath", "/stuff[1]/item[1]/@id", 
+    	assertEquals("12th test xpath", "/stuff[1]/item[1]", 
     		listener.testXpath);    	
     }
 
@@ -683,7 +683,11 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         public boolean nodesSkipped = false;
         public String controlXpath;
         public String testXpath;
+        private boolean tracing = false;
         public int differenceFound(Difference difference) {
+        	if (tracing) {
+        		System.out.println(difference.toString());
+        	}
         	assertNotNull("difference not null", difference);
         	assertNotNull("control node detail not null", difference.getControlNodeDetail());
         	assertNotNull("test node detail not null", difference.getTestNodeDetail());
@@ -699,6 +703,9 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         }
         public void skippedComparison(Node control, Node test) {
             nodesSkipped = true;
+        }
+        public void setTrace(boolean active) {
+        	tracing = active;
         }
     }
 }
