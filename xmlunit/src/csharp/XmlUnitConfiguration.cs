@@ -2,15 +2,17 @@
     using System.Xml;
     
     public class XmlUnitConfiguration {
-        private XmlUnitConfiguration() {}
-        private static WhitespaceHandling _whitespaceHandling = WhitespaceHandling.All;
+        private readonly WhitespaceHandling _whitespaceHandling;
         
-        public static WhitespaceHandling WhitespaceHandling {
+        public XmlUnitConfiguration(WhitespaceHandling whitespaceHandling) {
+            _whitespaceHandling = whitespaceHandling;
+        }
+        
+        public XmlUnitConfiguration() : this(WhitespaceHandling.All) {}
+        
+        public WhitespaceHandling WhitespaceHandling {
             get {
                 return _whitespaceHandling;
-            }
-            set {
-                _whitespaceHandling = value;
             }
         }
     }

@@ -4,21 +4,29 @@
     using System.Xml;
     
     public class XmlDiff {
-        private XmlReader _controlReader; 
-        private XmlReader _testReader;
+        private readonly XmlReader _controlReader; 
+        private readonly XmlReader _testReader;
         private DiffResult _diffResult;
                 
-        public XmlDiff(TextReader control, TextReader test) {
-            _controlReader = CreateXmlReader(control);
+        public XmlDiff(TextReader control, TextReader test, 
+                       XmlUnitConfiguration xmlUnitConfiguration) {
+            _controlReader = CreateXmlReader(control, xmlUnitConfiguration);
             if (control.Equals(test)) {
                 _testReader = _controlReader;
             } else {
-                _testReader = CreateXmlReader(test);
+                _testReader = CreateXmlReader(test, xmlUnitConfiguration);
             }
         }
-        
+        public XmlDiff(TextReader control, TextReader test)
+            : this(control, test, new XmlUnitConfiguration()) {
+        }
+                
         public XmlDiff(string control, string test) 
             : this(new StringReader(control), new StringReader(test)) {
+        }
+        
+        public XmlDiff(string control, string test, XmlUnitConfiguration xmlUnitConfiguration) 
+            : this(new StringReader(control), new StringReader(test), xmlUnitConfiguration) {
         }
         
         public XmlDiff(string control, TextReader test) 
@@ -29,9 +37,10 @@
             : this(control, new StringReader(test)) {
         }
         
-        private XmlReader CreateXmlReader(TextReader forTextReader) {
+        private XmlReader CreateXmlReader(TextReader forTextReader, 
+                                          XmlUnitConfiguration xmlUnitConfiguration) {
             XmlTextReader xmlReader = new XmlTextReader(forTextReader);
-            xmlReader.WhitespaceHandling = XmlUnitConfiguration.WhitespaceHandling;
+            xmlReader.WhitespaceHandling = xmlUnitConfiguration.WhitespaceHandling;
             return xmlReader;
         }
         

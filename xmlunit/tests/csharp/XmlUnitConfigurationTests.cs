@@ -11,22 +11,6 @@
         private static string xmlWithWhitespaceElement = "<elemA>as if<elemB> </elemB></elemA>";
         private static string xmlWithoutWhitespace = "<elemA>as if<elemB/></elemA>";
         
-        private WhitespaceHandling _whitespaceHandling;
-        
-        [SetUp] public void CacheWhitespaceHandling() {
-            _whitespaceHandling = XmlUnitConfiguration.WhitespaceHandling;
-        }
-        
-        [TearDown] public void RestoreWhitespaceHandling() {
-            XmlUnitConfiguration.WhitespaceHandling = _whitespaceHandling;
-        }
-        
-        private void PerformAssertion(string control, string test, bool assertion) {
-            XmlDiff diff = new XmlDiff(control, test);
-            Assertion.AssertEquals(assertion, diff.Compare().Equal);            
-            Assertion.AssertEquals(assertion, diff.Compare().Identical);            
-        }
-        
         [Test] public void DefaultConfiguredWhitespaceHandlingAll() {
             PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, false);
             PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, false);
@@ -34,20 +18,45 @@
             PerformAssertion(xmlWithoutWhitespaceElement, xmlWithWhitespaceElement, false);
         }
         
+        private void PerformAssertion(string control, string test, bool assertion) {
+            XmlDiff diff = new XmlDiff(control, test);
+            PerformAssertion(diff, assertion);
+        }
+        private void PerformAssertion(XmlDiff diff, bool assertion) {
+            Assertion.AssertEquals(assertion, diff.Compare().Equal);            
+            Assertion.AssertEquals(assertion, diff.Compare().Identical);            
+        }
+
         [Test] public void CanConfigureWhitespaceHandlingSignificant() {
-            XmlUnitConfiguration.WhitespaceHandling = WhitespaceHandling.Significant;
-            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, true);
-            PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, true);
-            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespace, true);
-            PerformAssertion(xmlWithoutWhitespaceElement, xmlWithWhitespaceElement, true);
+            XmlUnitConfiguration xmlUnitConfiguration = 
+                new XmlUnitConfiguration (WhitespaceHandling.Significant);
+            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, 
+                             true, xmlUnitConfiguration);
+            PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, 
+                             true, xmlUnitConfiguration);
+            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespace, 
+                             true, xmlUnitConfiguration);
+            PerformAssertion(xmlWithoutWhitespaceElement, xmlWithWhitespaceElement, 
+                             true, xmlUnitConfiguration);
         }
         
         [Test] public void CanConfigureWhitespaceHandlingNone() {
-            XmlUnitConfiguration.WhitespaceHandling = WhitespaceHandling.None;
-            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, true);
-            PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, true);
-            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespace, true);
-            PerformAssertion(xmlWithoutWhitespaceElement, xmlWithWhitespaceElement, true);
+            XmlUnitConfiguration xmlUnitConfiguration = 
+                new XmlUnitConfiguration(WhitespaceHandling.None);
+            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, 
+                             true, xmlUnitConfiguration);
+            PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, 
+                             true, xmlUnitConfiguration);
+            PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespace, 
+                             true, xmlUnitConfiguration);
+            PerformAssertion(xmlWithoutWhitespaceElement, xmlWithWhitespaceElement, 
+                             true, xmlUnitConfiguration);
         }
+        
+        private void PerformAssertion(string control, string test, bool assertion, 
+                                      XmlUnitConfiguration xmlUnitConfiguration) {
+            XmlDiff diff = new XmlDiff(control, test, xmlUnitConfiguration);
+            PerformAssertion(diff, assertion);
+        }        
     }
 }
