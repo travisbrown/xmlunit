@@ -38,7 +38,7 @@ coding is great. It gives you the confidence to change code safe in the
 knowledge that if something breaks you'll know about it. Except for those bits you don't know how to test. Until now XML has been one of them. Oh sure you can use
 <code><b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>.equals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>);</code> but is that really gonna work when some joker decides to output a <code>&lt;stuff/&gt;</code>, damned right it's not.</p>
 
-          <p>XML can be used for just about anything so deciding if two documents are equal to each other isn't as easy as a character for character match. Sometimes
+          <p>XML can be used for just about anything so deciding if two documents are equal to each other isn't as easy as a character for character match. Sometimes</p>
 <table bgcolor="black">
 <tr><td bgcolor="white"><pre>&lt;stuff-doc&gt;
   &lt;stuff&gt;
@@ -53,24 +53,33 @@ knowledge that if something breaks you'll know about it. Except for those bits y
     Some More Stuff&lt;/more-stuff&gt;
   &lt;stuff&gt;Stuff Stuff Stuff&lt;/stuff&gt;
 &lt;/stuff-doc&gt; </pre></td></tr></table>
-and sometime it doesn't.</p>
+<p>and sometimes it doesn't: with XMLUnit you get the control, and you get to decide.</p>
 
-          <p>XMLUnit allows you to <code>assertXMLEquals(<b>"&lt;stuff&gt;&lt;/stuff&gt;"</b>, <b>"&lt;stuff/&gt;"</b>);</code> or and you can do this <code>assertXMLEquals(xmlFile, anotherXmlFile);</code>
-          and this <code>assertXMLEquals(xmlStream, xmlFile);</code></p>
-          <p>Compare XML in files, or in Strings.<br />Extract specific content using XPath expressions or perform XSL transformations.<br />Even treat badly formed HTML as XML so it can be tested too.
-          </p>
-          <p>The list goes on and on. The choice is yours.
-          </p>
-          <p>The current release is here -&gt; <a href=
-          "http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=112108">XMLUnit 0.8</a>, 22nd September 2002 - 
-<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/README.txt?rev=1.4&content-type=text/vnd.viewcvs-markup">Release Notes</a></p>
-
-          <p><a href="XMLUnit.pdf">Read the overview documentation</a></p>
-          <p><a href="doc">Browse the Javadocs</a></p>
-          <p><a href="example.html">See an example</a></p>
-          <p><a href=
+          <p>XMLUnit provides a single JUnit extension class, <code>XMLTestCase</code>,
+          and a set of supporting classes
+          (e.g. <code>Diff</code>, <code>DetailedDiff</code>, <code>Transform</code>, <code>SimpleXpathEngine</code>, <code>Validator</code>, <code>NodeTest</code>)
+          that allow assertions to be made about:</p>
+          <ul>
+          <li>The differences between two pieces of XML</li>
+          <li>The outcome of transforming a piece of XML using XSLT</li>
+          <li>The evaluation of an XPath expression on a piece of XML</li>
+          <li>The validity of a piece of XML</li>
+          <li>Individual nodes in a piece of XML that are exposed by DOM Traversal</li>
+          </ul>
+          <p>XMLUnit can also treat  HTML content (even badly-formed HTML) as valid XML
+          to allow these assertions to be made about the content of web pages too.</p>
+          <p>The list goes on and on. The choice is yours!</p>
+          <p>The current release is <a href=
+          "http://sourceforge.net/project/showfiles.php?group_id=23187&amp;release_id=112108">XMLUnit 1.0</a>, January 2003 (release notes are
+<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/README.txt?rev=1.8&content-type=text/vnd.viewcvs-markup">here</a>)</p>
+          <table border="0" cellspacing="5" cellpadding="5"><tr>
+          <td><a href="XMLUnit.pdf">Read the overview document (PDF)</a></td>
+          <td><a href="example.html">See some example code</a></td>
+          <td><a href="doc">Browse the Javadocs</a></td>
+          <td><a href=
           "http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/xmlunit/xmlunit/">
-          Visit the CVS repository</a></p>
+          Visit the CVS repository</a></td>
+          </tr></table>
         </td>
         <td valign="top">
           <table bgcolor="black" cellspacing="2" width="200">
@@ -80,19 +89,27 @@ and sometime it doesn't.</p>
                   <tr><td align="right"><h2>News</h2></td></tr>
                   <tr>
                     <td style="font-size: smaller;">
-      
-			<DL COMPACT>
+					<DL COMPACT>
+
+					<A HREF="http://sourceforge.net/forum/forum.php?forum_id=212678"><B>XMLUnit version 0.8 available</B></A>
+					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-09-22 09:25</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR> Contains minor API enhancements and fix for ClassCastException encountered occasionally with DetailedDiff class... now available from CVS and as a file download.<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=212678">[Read More/Comment]</a></div>
+					<HR width="100%" size="1" noshade>
 					<A HREF="http://sourceforge.net/forum/forum.php?forum_id=205194"><B>XMLUnit version 0.7 available</B></A>
-					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-08-25 09:15</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>Minor upgrade available, with enhanced DifferenceListener interface for greater user control, and fix for defect in DetailedDiff class.<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=205194">[Read More/Comment]</a></div><HR width="100%" size="1" noshade>
+					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-08-25 09:15</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>Minor upgrade available, with enhanced DifferenceListener interface for greater user control, and fix for defect in DetailedDiff class.<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=205194">[Read More/Comment]</a></div>
+					<HR width="100%" size="1" noshade>
 					<A HREF="http://sourceforge.net/forum/forum.php?forum_id=185137"><B>XMLUnit version 0.6 released</B></A>
-					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-06-11 06:54</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>DetailedDiff class added to expose all XML differences... HtmlDocumentBuilder class added to allow XMLUnit to work with HTML that is not well-formed XML... plus some fixes (mainly for namespace handling). Enjoy!<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=185137">[Read More/Comment]</a></div><HR width="100%" size="1" noshade>
+					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-06-11 06:54</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>DetailedDiff class added to expose all XML differences... HtmlDocumentBuilder class added to allow XMLUnit to work with HTML that is not well-formed XML... plus some fixes (mainly for namespace handling). Enjoy!<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=185137">[Read More/Comment]</a></div>
+					<HR width="100%" size="1" noshade>
 					<A HREF="http://sourceforge.net/forum/forum.php?forum_id=168189"><B>0.5 release now available!</B></A>
-					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-04-09 17:40</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>As previously trailed we now have Xpath support... plus some refactorings to allow comparisons of many more node types while producing more detailed difference messages. All with expanded documentation :-))
-<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=168189">[Read More/Comment]</a></div><HR width="100%" size="1" noshade>
+					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-04-09 17:40</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>As previously trailed we now have Xpath support... plus some refactorings to allow comparisons of many more node types while producing more detailed difference messages. All with expanded documentation :-))<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=168189">[Read More/Comment]</a></div>
+                    <HR width="100%" size="1" noshade>
 					<A HREF="http://sourceforge.net/forum/forum.php?forum_id=162530"><B>New release!</B></A>
-					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-03-20 13:51</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>Version 0.4 now available... and 0.5 (with XPath support) is under development.<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=162530">[Read More/Comment]</a></div><HR width="100%" size="1" noshade>
+					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>timbacon - 2002-03-20 13:51</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>Version 0.4 now available... and 0.5 (with XPath support) is under development.<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=162530">[Read More/Comment]</a></div>
+					<HR width="100%" size="1" noshade>
 					<A HREF="http://sourceforge.net/forum/forum.php?forum_id=120954"><B>0.3 Release</B></A>
-					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>custommonkey - 2001-10-30 11:14</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>New release of XMLUnit sees the addition of XSLT support and the removal of dependencies on JDOM<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=120954">[Read More/Comment]</a></div><HR width="100%" size="1" noshade><div align="center"><a href="http://sourceforge.net/news/?group_id=23187">[News archive]</a></div>                    </td>
+					<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>custommonkey - 2001-10-30 11:14</I> &nbsp; - &nbsp; <A HREF="http://sourceforge.net/projects/xmlunit/">XML Unit</A><BR>New release of XMLUnit sees the addition of XSLT support and the removal of dependencies on JDOM<div align="center">(0 Comments) <A HREF="http://sourceforge.net/forum/forum.php?forum_id=120954">[Read More/Comment]</a></div><HR width="100%" size="1" noshade><div align="center"><a href="http://sourceforge.net/news/?group_id=23187">[News archive]</a></div>
+
+					</td>
                   </tr>
                 </table>
               </td>
