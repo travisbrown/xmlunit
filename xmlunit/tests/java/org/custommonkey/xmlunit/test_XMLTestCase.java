@@ -364,15 +364,15 @@ public class test_XMLTestCase extends XMLTestCase{
 
     public void testDocumentAssertNotXpathExists() throws Exception {
         Document controlDoc = XMLUnit.buildControlDocument(xpathNodesControlXML);
-        assertNotXpathExists("//tree[@evergreen='idunno']", controlDoc);
+        assertXpathNotExists("//tree[@evergreen='idunno']", controlDoc);
         try {
-            assertNotXpathExists("/trees/fruit/apples/yum", controlDoc);
+            assertXpathNotExists("/trees/fruit/apples/yum", controlDoc);
             fail("Xpath does exist, once");
         } catch (AssertionFailedError e) {
             // expected
         }
         try {
-            assertNotXpathExists("//tree[@evergreen='false']", controlDoc);
+            assertXpathNotExists("//tree[@evergreen='false']", controlDoc);
             fail("Xpath does exist many times");
         } catch (AssertionFailedError e) {
             // expected
@@ -380,15 +380,15 @@ public class test_XMLTestCase extends XMLTestCase{
     }
     
     public void testStringAssertNotXpathExists() throws Exception {
-        assertNotXpathExists("//tree[@evergreen='idunno']", xpathNodesControlXML);
+        assertXpathNotExists("//tree[@evergreen='idunno']", xpathNodesControlXML);
         try {
-            assertNotXpathExists("/trees/fruit/apples/yum", xpathNodesControlXML);
+            assertXpathNotExists("/trees/fruit/apples/yum", xpathNodesControlXML);
             fail("Xpath does exist, once");
         } catch (AssertionFailedError e) {
             // expected
         }
         try {
-            assertNotXpathExists("//tree[@evergreen='false']", xpathNodesControlXML);
+            assertXpathNotExists("//tree[@evergreen='false']", xpathNodesControlXML);
             fail("Xpath does exist many times");
         } catch (AssertionFailedError e) {
             // expected

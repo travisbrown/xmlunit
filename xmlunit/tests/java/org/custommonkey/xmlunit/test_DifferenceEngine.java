@@ -63,8 +63,12 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     private CollectingDifferenceListener listener;
     private DifferenceEngine engine;
     private Document document;
-    private final static ElementQualifier 
-    	DEFAULT_ELEMENT_QUALIFIER = new ElementNameQualifier();
+    
+    private final ComparisonController PSEUDO_DIFF = new SimpleComparisonController();
+	private final ComparisonController PSEUDO_DETAILED_DIFF = new NeverHaltingComparisonController();
+
+	private final static ElementQualifier
+		DEFAULT_ELEMENT_QUALIFIER = new ElementNameQualifier();
     private final static String TEXT_A = "the pack on my back is aching";
     private final static String TEXT_B = "the straps seem to cut me like a knife";
     private final static String COMMENT_A = "Im no clown I wont back down";
@@ -599,10 +603,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     public void testXpathLocation12() throws Exception {
-        engine = new DifferenceEngine(new ComparisonController() {
-		public boolean haltComparison(Difference afterDifference) {
-			return false; // simulate DetailedDiff behaviour
-		}});
+        engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
     	String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
     	String test = "<stuff><item id=\"1\"/></stuff>";
     	listenToDifferences(control, test);
@@ -613,10 +614,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     public void testXpathLocation13() throws Exception {
-        engine = new DifferenceEngine(new ComparisonController() {
-		public boolean haltComparison(Difference afterDifference) {
-			return false; // simulate DetailedDiff behaviour
-		}});
+		engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
     	String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
     	String test = "<stuff><?item data?></stuff>";
     	listenToDifferences(control, test);
@@ -627,10 +625,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     public void testXpathLocation14() throws Exception {
-        engine = new DifferenceEngine(new ComparisonController() {
-		public boolean haltComparison(Difference afterDifference) {
-			return false; // simulate DetailedDiff behaviour
-		}});
+		engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
     	String control = "<stuff><thing id=\"1\"/><item id=\"2\"/></stuff>";
     	String test = "<stuff><item id=\"2\"/><item id=\"1\"/></stuff>";
     	listenToDifferences(control, test);
@@ -654,7 +649,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 
     public void setUp() throws Exception {
         resetListener();
-        engine = new DifferenceEngine(new SimpleComparisonController());
+        engine = new DifferenceEngine(PSEUDO_DIFF);
         DocumentBuilder documentBuilder = XMLUnit.getControlParser();
         document = documentBuilder.newDocument();
     }
@@ -670,6 +665,12 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 	private class SimpleComparisonController implements ComparisonController {
 		public boolean haltComparison(Difference afterDifference) {
 			return !afterDifference.isRecoverable();
+		}
+	}
+	
+	private class NeverHaltingComparisonController implements ComparisonController {
+		public boolean haltComparison(Difference afterDifference) {
+			return false;
 		}
 	}
 	

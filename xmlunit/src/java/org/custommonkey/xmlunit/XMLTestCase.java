@@ -62,6 +62,10 @@ import org.xml.sax.SAXException;
  * <li><strong><code>assertXMLIdentical</code></strong><br/>
  *  assert that two pieces of XML markup are <i>identical</i>. In most cases
  *  this assertion is too strong and <code>assertXMLEqual</code> is sufficient</li>
+ * <li><strong><code>assertXpathExists</code></strong><br/> 
+ * assert that an XPath expression matches at least one node</li>
+ * <li><strong><code>assertXpathNotExists</code></strong><br/> 
+ * assert that an XPath expression does not match any nodes</li>
  * <li><strong><code>assertXpathsEqual</code></strong><br/>
  *  assert that the nodes obtained by executing two Xpaths
  *  are <i>similar</i></li>
@@ -81,10 +85,13 @@ import org.xml.sax.SAXException;
  *  assert that a piece of XML markup is valid with respect to a DTD: either
  *  by using the markup's own DTD or a different DTD</li>
  * <li><strong><code>assertNodeTestPasses</code></strong><br/>
- *  assert that a piece of XML markup passes a {@link NodeTest}</li>
+ *  assert that a piece of XML markup passes a {@link NodeTest NodeTest}</li>
  * </ul>
- * All similarity and difference testing is done using {@link Diff Diff}
- *  instances.
+ * All underlying similarity and difference testing is done using 
+ * {@link Diff Diff} instances which can be instantiated and evaluated
+ * independently of an XMLTestCase.
+ * @see Diff#similar()
+ * @see Diff#identical()
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class XMLTestCase extends TestCase implements XSLTConstants {
@@ -123,7 +130,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
     }
 
     /**
-     * Overide default sax parser used to parser documents
+     * Overide default sax parser used to parse documents
      * @deprecated this is a global setting and should be invoked on
      *  {@link XMLUnit#setTestParser XMLUnit} instead
      */
@@ -795,7 +802,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inXMLString
      * @see SimpleXpathEngine which provides the underlying evaluation mechanism
      */
-    public void assertNotXpathExists(String xPathExpression, 
+    public void assertXpathNotExists(String xPathExpression, 
     String inXMLString) 
     throws TransformerException, ParserConfigurationException,
     IOException, SAXException {
@@ -803,13 +810,27 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
         assertNotXpathExists(xPathExpression, inDocument);
     }
     
+	/**
+	 * Assert that a specific XPath does NOT exist in some given XML
+	 * @param inXpathExpression
+	 * @param inXMLString
+	 * @deprecated Use assertXpathNotExists instead
+	 */
+	public void assertNotXpathExists(String xPathExpression,
+	String inXMLString)
+	throws TransformerException, ParserConfigurationException,
+	IOException, SAXException {
+		Document inDocument = XMLUnit.buildControlDocument(inXMLString);
+		assertNotXpathExists(xPathExpression, inDocument);
+	}
+
     /**
      * Assert that a specific XPath does NOT exist in some given XML
      * @param inXpathExpression
      * @param inDocument
      * @see SimpleXpathEngine which provides the underlying evaluation mechanism
      */
-    public void assertNotXpathExists(String xPathExpression, 
+    public void assertXpathNotExists(String xPathExpression, 
     Document inDocument) 
     throws TransformerException {
         SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
@@ -819,6 +840,23 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
         assertEquals("Should be zero matches for Xpath " + 
             xPathExpression, 0, matches);
     }
+    
+	/**
+	 * Assert that a specific XPath does NOT exist in some given XML
+	 * @param inXpathExpression
+	 * @param inDocument
+	 * @deprecated Use assertXpathNotExists instead
+	 */
+	public void assertNotXpathExists(String xPathExpression,
+	Document inDocument)
+	throws TransformerException {
+		SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
+		NodeList nodeList = simpleXpathEngine.getMatchingNodes(
+			xPathExpression, inDocument);
+		int matches = nodeList.getLength();
+		assertEquals("Should be zero matches for Xpath " +
+			xPathExpression, 0, matches);
+	}
 
     /**
      * Assert that a String containing XML contains valid XML: the String must
