@@ -71,13 +71,13 @@ namespace XmlUnit.Tests {
         private static readonly string MY_SOLAR_SYSTEM = "<solar-system><planet name='Earth' position='3' supportsLife='yes'/><planet name='Venus' position='4'/></solar-system>";
         
         [Test] public void AssertXPathExistsWorksForExistentXPath() {
-            XmlAssertion.AssertXpathExists("//planet[@name='Earth']", 
+            XmlAssertion.AssertXPathExists("//planet[@name='Earth']", 
                                            MY_SOLAR_SYSTEM);
         }
         
         [Test] public void AssertXPathExistsFailsForNonExistentXPath() {
             try {
-                XmlAssertion.AssertXpathExists("//star[@name='alpha centauri']", 
+                XmlAssertion.AssertXPathExists("//star[@name='alpha centauri']", 
                                                MY_SOLAR_SYSTEM);
                 Assertion.Fail("Expected assertion failure");
             } catch (AssertionException e) {

@@ -11,23 +11,30 @@ namespace XmlUnit {
         }
         
         public bool XPathExists(string forSomeXml) {
-            XPathNodeIterator iterator = GetNodeIterator(forSomeXml);
+            return XPathExists(new StringReader(forSomeXml));
+        }
+        
+        public bool XPathExists(TextReader forReader) {
+            XPathNodeIterator iterator = GetNodeIterator(forReader);
             return (iterator.Count > 0);
         }
         
-        private XPathNodeIterator GetNodeIterator(string forSomeXml) {
-            XPathNavigator xpathNavigator = GetNavigator(forSomeXml);
+        private XPathNodeIterator GetNodeIterator(TextReader forReader) {
+            XPathNavigator xpathNavigator = GetNavigator(forReader);
             return xpathNavigator.Select(_xPathExpression);            
         }
-        
-        private XPathNavigator GetNavigator(string forSomeXml) {
-            TextReader reader = new StringReader(forSomeXml);
-            XPathDocument xpathDocument = new XPathDocument(reader);
+                
+        private XPathNavigator GetNavigator(TextReader forReader) {            
+            XPathDocument xpathDocument = new XPathDocument(forReader);
             return xpathDocument.CreateNavigator();
         }
                 
         public string EvaluateXPath(string forSomeXml) {
-            XPathNavigator xpathNavigator = GetNavigator(forSomeXml);
+            return EvaluateXPath(new StringReader(forSomeXml));
+        }
+        
+        public string EvaluateXPath(TextReader forReader) {
+            XPathNavigator xpathNavigator = GetNavigator(forReader);
             XPathExpression xPathExpression = xpathNavigator.Compile(_xPathExpression);
             if (xPathExpression.ReturnType == XPathResultType.NodeSet) {
                 return EvaluateXPath(xpathNavigator);
