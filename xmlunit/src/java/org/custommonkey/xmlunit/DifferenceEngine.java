@@ -63,44 +63,45 @@ public class DifferenceEngine implements DifferenceConstants {
     private static final String NULL_NODE = "null";
     private static final String NOT_NULL_NODE = "not null";
     private final ComparisonController controller;
-    private final XpathNodeTracker controlTracker = new XpathNodeTracker();
-    private final XpathNodeTracker testTracker = new XpathNodeTracker();
-	private ElementQualifier elementQualifier;
-    
-    public DifferenceEngine(ComparisonController controller) {
-    	this(controller, new ElementNameQualifier());
-    }
-    
-    public DifferenceEngine(ComparisonController controller, ElementQualifier elementQualifier) {
-    	this.controller = controller;
-    	this.elementQualifier = elementQualifier;
-    }
+    private final XpathNodeTracker controlTracker;
+    private final XpathNodeTracker testTracker;
     
     /**
-     * Entry point for Node comparison testing
-     * @param control
-     * @param test
-     * @param listener
-     * @param elementQualifier
+     * Simple constructor
+     * @param controller the instance used to determine whether a Difference
+     * detected by this class should halt further comparison or not
+     * @see ComparisonController#haltComparison(Difference)
      */
-    public void compare(Node control, Node test, DifferenceListener listener, ElementQualifier elementQualifier) {
-    	ElementQualifier oldElementQualifier = this.elementQualifier;
-    	if (elementQualifier != null) {
-    		this.elementQualifier = elementQualifier;
-    	}
+    public DifferenceEngine(ComparisonController controller) {
+    	this.controller = controller;
+    	this.controlTracker = new XpathNodeTracker();
+    	this.testTracker = new XpathNodeTracker();
+    }
+        
+    /**
+     * Entry point for Node comparison testing.
+     * @param control Control XML to compare
+     * @param test Test XML to compare
+     * @param listener Notified of any {@link Difference differences} detected
+     * during node comparison testing
+     * @param elementQualifier Used to determine which elements qualify for
+     * comparison e.g. when a node has repeated child elements that may occur
+     * in any sequence and that sequence is not considered important. 
+     */
+    public void compare(Node control, Node test, DifferenceListener listener, 
+    ElementQualifier elementQualifier) {
     	controlTracker.reset();
     	testTracker.reset();
         try {
             compare(getNullOrNotNull(control), getNullOrNotNull(test),
                 control, test, listener, NODE_TYPE);
             if (control!=null) {
-                compareNode(control, test, listener);
+                compareNode(control, test, listener, elementQualifier);
             }
         } catch (DifferenceFoundException e) {
             // thrown by the protected compare() method to terminate the
             // comparison and unwind the call stack back to here
-        }
-    	this.elementQualifier = oldElementQualifier;
+        }    	
     }
 	
     private String getNullOrNotNull(Node aNode) {
@@ -113,10 +114,12 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param control
      * @param test
      * @param listener
+     * @param elementQualifier
      * @throws DifferenceFoundException
      */
     protected void compareNode(Node control, Node test,
-    DifferenceListener listener) throws DifferenceFoundException {
+    DifferenceListener listener, ElementQualifier elementQualifier) 
+    throws DifferenceFoundException {
         boolean comparable = compareNodeBasics(control, test, listener);
         boolean isDocumentNode = false;
 
@@ -145,7 +148,8 @@ public class DifferenceEngine implements DifferenceConstants {
 	                break;
 	            case Node.DOCUMENT_NODE:
 	                isDocumentNode = true;
-	                compareDocument((Document)control, (Document) test, listener);
+	                compareDocument((Document)control, (Document) test, 
+	                	listener, elementQualifier);
 	                break;
 	            default:
 	                listener.skippedComparison(control, test);
@@ -157,12 +161,12 @@ public class DifferenceEngine implements DifferenceConstants {
             Element controlElement = ((Document)control).getDocumentElement();
             Element testElement = ((Document)test).getDocumentElement();
             if (controlElement!=null && testElement!=null) {
-                compareNode(controlElement, testElement, listener);
+                compareNode(controlElement, testElement, listener, elementQualifier);
             }
         } else {
         	controlTracker.indent();
         	testTracker.indent();
-            compareNodeChildren(control, test, listener);
+            compareNodeChildren(control, test, listener, elementQualifier);
             controlTracker.outdent();
             testTracker.outdent();
         }
@@ -173,10 +177,12 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param control
      * @param test
      * @param listener
+     * @param elementQualifier
      * @throws DifferenceFoundException
      */
     protected void compareDocument(Document control, Document test, 
-    DifferenceListener listener) throws DifferenceFoundException {
+    DifferenceListener listener, ElementQualifier elementQualifier) 
+    throws DifferenceFoundException {
         DocumentType controlDoctype = control.getDoctype();
         DocumentType testDoctype = test.getDoctype();
         compare(getNullOrNotNull(controlDoctype), 
@@ -184,7 +190,7 @@ public class DifferenceEngine implements DifferenceConstants {
             controlDoctype, testDoctype, listener, 
             HAS_DOCTYPE_DECLARATION);
         if (controlDoctype!=null && testDoctype!=null) {
-            compareNode(controlDoctype, testDoctype, listener);
+            compareNode(controlDoctype, testDoctype, listener, elementQualifier);
         }
     }
 
@@ -239,10 +245,12 @@ public class DifferenceEngine implements DifferenceConstants {
      * @param control
      * @param test
      * @param listener
+     * @param elementQualifier
      * @throws DifferenceFoundException
      */
     protected void compareNodeChildren(Node control, Node test,
-    DifferenceListener listener) throws DifferenceFoundException {
+    DifferenceListener listener, ElementQualifier elementQualifier) 
+    throws DifferenceFoundException {
         if (control.hasChildNodes() && test.hasChildNodes()) {
             NodeList controlChildren = control.getChildNodes();
             NodeList testChildren = test.getChildNodes();
@@ -252,7 +260,7 @@ public class DifferenceEngine implements DifferenceConstants {
             compare(controlLength, testLength, control, test, listener,
                 CHILD_NODELIST_LENGTH);
             compareNodeList(controlChildren, testChildren,
-                controlLength.intValue(), listener);
+                controlLength.intValue(), listener, elementQualifier);
         }
     }
 
@@ -260,18 +268,19 @@ public class DifferenceEngine implements DifferenceConstants {
      * Compare the contents of two node list one by one, assuming that order
      * of children is NOT important: matching begins at same position in test
      * list as control list.
-     * An {@link ElementQualifier ElementQualifier} instance is used to
-     * determine which of the child elements in the test NodeList should be
-     * compared to the current child element in the control NodeList.
      * @param control
      * @param test
      * @param numNodes convenience parameter because the calling method should
      *  know the value already
      * @param listener
+     * @param elementQualifier used to determine which of the child elements in
+     * the test NodeList should be compared to the current child element in the
+     * control NodeList.
      * @throws DifferenceFoundException
      */
     protected void compareNodeList(NodeList control, NodeList test,
-    int numNodes, DifferenceListener listener) throws DifferenceFoundException {
+    int numNodes, DifferenceListener listener, ElementQualifier elementQualifier) 
+    throws DifferenceFoundException {
         Node nextControl, nextTest = null;
         int j = 0;
         int lastTestNode = test.getLength() - 1;
@@ -313,7 +322,7 @@ public class DifferenceEngine implements DifferenceConstants {
             nextTest = test.item(j);
             compare(new Integer(i), new Integer(j),
                 nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
-            compareNode(nextControl, nextTest, listener);
+            compareNode(nextControl, nextTest, listener, elementQualifier);
         }
     }
 

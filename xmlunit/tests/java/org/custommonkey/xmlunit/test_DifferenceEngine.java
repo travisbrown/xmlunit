@@ -63,6 +63,8 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     private CollectingDifferenceListener listener;
     private DifferenceEngine engine;
     private Document document;
+    private final static ElementQualifier 
+    	DEFAULT_ELEMENT_QUALIFIER = new ElementNameQualifier();
     private final static String TEXT_A = "the pack on my back is aching";
     private final static String TEXT_B = "the straps seem to cut me like a knife";
     private final static String COMMENT_A = "Im no clown I wont back down";
@@ -378,7 +380,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     Difference expectedDifference, boolean fatal) {
         try {
             engine.compareHasChildNodes(control, test, listener);
-            engine.compareNodeChildren(control, test, listener);
+            engine.compareNodeChildren(control, test, listener, DEFAULT_ELEMENT_QUALIFIER);
             if (fatal) {
                 fail("Expected fatal difference");
             }
@@ -420,7 +422,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     Difference expectedDifference, boolean fatal) {
         try {
             engine.compareNodeList(control.getChildNodes(), test.getChildNodes(),
-                control.getChildNodes().getLength(), listener);
+                control.getChildNodes().getLength(), listener, DEFAULT_ELEMENT_QUALIFIER);
             if (fatal) {
                 fail("Expected fatal difference");
             }
@@ -642,7 +644,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 		throws SAXException, IOException, ParserConfigurationException {
 		Document controlDoc = XMLUnit.buildControlDocument(control);
 		Document testDoc = XMLUnit.buildTestDocument(test);
-		engine.compare(controlDoc, testDoc, listener, null);
+		engine.compare(controlDoc, testDoc, listener, DEFAULT_ELEMENT_QUALIFIER);
 	}
     	
 

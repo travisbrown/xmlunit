@@ -133,14 +133,23 @@ implements DifferenceListener, ComparisonController {
 		this(control.getNode().getOwnerDocument(), test.getNode().getOwnerDocument());
 	}
 
+	/**
+ 	 * Construct a Diff that compares the XML in two Documents using a specific
+ 	 * DifferenceEngine
+	 */
+	public Diff(Document controlDoc, Document testDoc, DifferenceEngine comparator) {
+		this(controlDoc, testDoc, comparator, new ElementNameQualifier());
+	}
+
     /**
      * Construct a Diff that compares the XML in two Documents using a specific
-     * DifferenceEngine
+     * DifferenceEngine and ElementQualifier
      */
-    public Diff(Document controlDoc, Document testDoc,
-    DifferenceEngine comparator) {
+    public Diff(Document controlDoc, Document testDoc, DifferenceEngine comparator, 
+    ElementQualifier elementQualifier) {
         this.controlDoc = getWhitespaceManipulatedDocument(controlDoc);
         this.testDoc = getWhitespaceManipulatedDocument(testDoc);
+        this.elementQualifierDelegate = elementQualifier;
         if (comparator == null) {
 	        this.differenceEngine = new DifferenceEngine(this);
         } else {
@@ -155,7 +164,8 @@ implements DifferenceListener, ComparisonController {
      * @param prototype a prototypical instance
      */
     protected Diff(Diff prototype) {
-    	this(prototype.controlDoc, prototype.testDoc, prototype.differenceEngine);
+    	this(prototype.controlDoc, prototype.testDoc, prototype.differenceEngine, 
+    		prototype.elementQualifierDelegate);
     }
 
     /**
