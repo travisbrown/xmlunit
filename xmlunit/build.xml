@@ -45,7 +45,7 @@ in build.properties</fail>
 
   <target name="test" depends="compile">
     <mkdir dir="${test.report.dir}"/>
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
+    <junit printsummary="yes" haltonfailure="no" fork="yes" forkMode="perBatch">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="user.dir" value="${basedir}"/>
       <!--
@@ -63,7 +63,7 @@ in build.properties</fail>
         <pathelement path="${java.class.path}"/>
       </classpath>
       <formatter type="xml"/>
-      <batchtest fork="yes" todir="${test.report.dir}">
+      <batchtest todir="${test.report.dir}">
         <fileset dir="${test.dir}/java">
           <include name="**/test_*.java"/>
         </fileset>
