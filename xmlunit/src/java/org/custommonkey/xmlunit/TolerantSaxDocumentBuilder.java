@@ -121,14 +121,16 @@ extends DefaultHandler implements LexicalHandler {
      */
     public void characters(char[] data, int start, int end) {
         if (end > start)  {
-        String characterData = new String(data, start, end - start);
-        trace("characters:" + characterData);
-        if (currentElement == null) {
-            warn("Can't append text node to null currentElement");
+            String characterData = new String(data, start, end - start);
+            trace("characters:" + characterData);
+            if (currentElement == null) {
+                warn("Can't append text node to null currentElement");
+            } else {
+                Text textNode = currentDocument.createTextNode(characterData);
+                currentElement.appendChild(textNode);
+            }
         } else {
-            Text textNode = currentDocument.createTextNode(characterData);
-            currentElement.appendChild(textNode);
-        }
+            warn("characters called with end < start");
         }
     }
 
