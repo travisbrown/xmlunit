@@ -120,13 +120,15 @@ extends DefaultHandler implements LexicalHandler {
      * ContentHandler method.
      */
     public void characters(char[] data, int start, int end) {
-        String characterData = new String(data, start, end);
+        if (end > start)  {
+        String characterData = new String(data, start, end - start);
         trace("characters:" + characterData);
         if (currentElement == null) {
             warn("Can't append text node to null currentElement");
         } else {
             Text textNode = currentDocument.createTextNode(characterData);
             currentElement.appendChild(textNode);
+        }
         }
     }
 
