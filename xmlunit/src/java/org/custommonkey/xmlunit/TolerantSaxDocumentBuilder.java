@@ -119,9 +119,9 @@ extends DefaultHandler implements LexicalHandler {
     /**
      * ContentHandler method.
      */
-    public void characters(char[] data, int start, int end) {
-        if (end > start)  {
-            String characterData = new String(data, start, end - start);
+    public void characters(char[] data, int start, int length) {
+        if (length >= 0)  {
+            String characterData = new String(data, start, length);
             trace("characters:" + characterData);
             if (currentElement == null) {
                 warn("Can't append text node to null currentElement");
@@ -130,7 +130,7 @@ extends DefaultHandler implements LexicalHandler {
                 currentElement.appendChild(textNode);
             }
         } else {
-            warn("characters called with end < start");
+            warn("characters called with negative length");
         }
     }
 

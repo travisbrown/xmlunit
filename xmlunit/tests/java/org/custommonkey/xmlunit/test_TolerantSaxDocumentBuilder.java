@@ -131,16 +131,6 @@ public class test_TolerantSaxDocumentBuilder extends XMLTestCase {
         assertTrue(builder.getTrace(), builder.getTrace().indexOf("WARNING") != -1);
     }
 
-    // Bug 839000
-    public void testCharactersMethodDealsWithSubArrays() {
-        char[] data = new char[10];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = (char) ('0' + i);
-        }
-        builder.characters(data, 6, 10);
-        
-    }
-
     public void setUp() throws Exception {
         builder = new TolerantSaxDocumentBuilder(XMLUnit.newTestParser());
         parser = SAXParserFactory.newInstance().newSAXParser();
