@@ -90,12 +90,22 @@ public class test_XMLTestCase extends XMLTestCase{
     /**
      * Test the comparision of two files
      */
-    public void testCompareFiles() throws Exception {
+    public void testXMLEqualsFiles() throws Exception {
         assertXMLEqual(new FileReader(
                 test_Constants.BASEDIR + "/tests/etc/test1.xml"),
             new FileReader(
                 test_Constants.BASEDIR + "/tests/etc/test1.xml"));
         assertXMLNotEqual(new FileReader(
+                test_Constants.BASEDIR + "/tests/etc/test1.xml"),
+            new FileReader(
+                test_Constants.BASEDIR + "/tests/etc/test2.xml"));
+
+        // Bug 956372
+        assertXMLEqual("equal message", new FileReader(
+                test_Constants.BASEDIR + "/tests/etc/test1.xml"),
+            new FileReader(
+                test_Constants.BASEDIR + "/tests/etc/test1.xml"));
+        assertXMLNotEqual("notEqual message", new FileReader(
                 test_Constants.BASEDIR + "/tests/etc/test1.xml"),
             new FileReader(
                 test_Constants.BASEDIR + "/tests/etc/test2.xml"));
@@ -393,6 +403,38 @@ public class test_XMLTestCase extends XMLTestCase{
         } catch (AssertionFailedError e) {
             // expected
         }
+    }
+
+    // Bug 585555
+    public void testUnusedNamespacesDontMatter() throws Exception
+    {
+        XMLUnit.setIgnoreWhitespace(true);
+        String a = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<outer xmlns:NS2=\"http://namespace2/foo\">\n" +
+            "    <inner xmlns:NS2=\"http://namespace2/\">5</inner>\n" +
+            "</outer>\n";
+
+        String b = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<outer xmlns:NS2=\"http://namespace2\">\n" +
+            "    <inner xmlns:NS2=\"http://namespace2/\">5</inner>\n" +
+            "</outer>\n";
+
+        assertXMLEqual(a, b);
+    }
+
+    // Bug 585555
+    public void testNamespaceMatters() throws Exception
+    {
+        XMLUnit.setIgnoreWhitespace(true);
+        String a = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<outer xmlns=\"http://namespace2/\">\n" +
+            "</outer>";
+
+        String b = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<outer xmlns=\"http://namespace2\">\n" +
+            "</outer>\n";
+
+        assertXMLNotEqual(a, b);
     }
 
     public test_XMLTestCase(String name) {

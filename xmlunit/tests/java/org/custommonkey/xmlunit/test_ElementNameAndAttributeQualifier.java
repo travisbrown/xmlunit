@@ -179,6 +179,39 @@ public class test_ElementNameAndAttributeQualifier extends TestCase {
 			elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 	}
 
+    // Bug 952920
+    public void testQualifyingAttributeMissingInControl() throws Exception {
+        elementNameAndAttributeQualifier = new ElementNameAndAttributeQualifier("foo");
+        assertQualifyingAttributeMissingInControl();
+        elementNameAndAttributeQualifier = new ElementNameAndAttributeQualifier(new String[] {"foo", "bar"});
+        assertQualifyingAttributeMissingInControl();
+    }
+        
+    private void assertQualifyingAttributeMissingInControl()
+	throws Exception {
+	Element control = document.createElement(TAG_NAME);
+
+        Element test = document.createElement(TAG_NAME);
+        assertTrue("empty elements match",
+                   elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+        test.setAttribute("id", "1");
+        assertTrue("extra attribute on test matches",
+                   elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+        control.setAttribute("id", "2");
+        assertTrue("differerent values for extra attribute still matches",
+                   elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+        control.setAttribute("uid", "1");
+        assertTrue("extra attribute on control matches",
+                   elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+
+        test.setAttribute("foo", "1");
+        assertFalse("no match if attribute is present in test",
+                   elementNameAndAttributeQualifier.qualifyForComparison(control, test));
+	}
+
 	public void setUp() throws Exception {
 		document = XMLUnit.newControlParser().newDocument();
 	}
