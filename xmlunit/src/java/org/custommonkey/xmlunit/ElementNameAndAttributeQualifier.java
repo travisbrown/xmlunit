@@ -121,12 +121,19 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
 			} 
 		}
 			
-		String nsURI;
+		String nsURI, name;
 		for (int i=0; i < qualifyingAttributes.length; ++i) {
+                    if (qualifyingAttributes[i] != null) {
 			nsURI = qualifyingAttributes[i].getNamespaceURI(); 
 			controlValue = qualifyingAttributes[i].getNodeValue();
+                        name = qualifyingAttributes[i].getName();
+                    } else {
+                        // cannot be "*" case
+                        nsURI = controlValue = "";
+                        name = qualifyingAttrNames[i];
+                    }
 			if (nsURI == null || nsURI.length() == 0) {
-				testValue = test.getAttribute(qualifyingAttributes[i].getName());
+				testValue = test.getAttribute(name);
 			} else {
 				testValue = test.getAttributeNS(nsURI, qualifyingAttributes[i].getLocalName());
 			}

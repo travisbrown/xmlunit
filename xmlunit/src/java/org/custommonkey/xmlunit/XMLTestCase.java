@@ -374,7 +374,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXMLNotEqual(String err, Reader control, Reader test)
     throws SAXException, IOException, ParserConfigurationException {
-    	XMLAssert.assertXMLEqual(err, control, test);
+    	XMLAssert.assertXMLNotEqual(err, control, test);
     }
 
     /**
