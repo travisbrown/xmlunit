@@ -71,6 +71,7 @@ in build.properties</fail>
       <batchtest fork="yes" todir="${test.report.dir}">
         <fileset dir="${test.dir}/java">
           <include name="**/test_XMLTestCase.java"/>
+        </fileset>
       </batchtest>
     </junit>
 
