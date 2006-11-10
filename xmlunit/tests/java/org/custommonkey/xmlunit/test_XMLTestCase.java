@@ -437,6 +437,38 @@ public class test_XMLTestCase extends XMLTestCase{
         assertXMLNotEqual(a, b);
     }
 
+    // Bug 741636
+    public void testXpathCount() throws Exception {
+        assertXpathEvaluatesTo("25", "count(//td)",
+                               "<div><p>" +
+                               "</p><table><tr><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td></tr><tr><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td></tr><tr><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td></tr><tr><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td></tr><tr><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td><td><p>" +
+                               "</p></td></tr></table></div>");
+    }
+
     public test_XMLTestCase(String name) {
         super(name);
     }
