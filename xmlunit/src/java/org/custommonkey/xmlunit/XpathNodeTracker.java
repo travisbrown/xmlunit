@@ -94,7 +94,7 @@ public class XpathNodeTracker implements XMLConstants {
 		int last = indentationList.size() - 1;
 		indentationList.remove(last);
 		--last;
-		if (last > 0) {
+		if (last >= 0) {
 			currentEntry = (TrackingEntry) indentationList.get(last);
 		}
 	}
