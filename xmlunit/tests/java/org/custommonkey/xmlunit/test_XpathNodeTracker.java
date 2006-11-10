@@ -180,7 +180,15 @@ public class test_XpathNodeTracker extends TestCase {
 		xpathNodeTracker.visited(element);
 		assertEquals("visited root element again", "/repeated[2]", xpathNodeTracker.toXpathString());
 	}
-			
+	
+    // bug 1047364
+	public void testEmptyIndentOutdentRootNode() {
+            xpathNodeTracker.indent();
+            xpathNodeTracker.outdent();
+		xpathNodeTracker.visitedNode(DUMMY_NODE, "diary");
+		assertEquals("root node", "/diary[1]", xpathNodeTracker.toXpathString());
+	}
+	
 	public void setUp() {
 		xpathNodeTracker = new XpathNodeTracker();
 		xpathNodeTracker.reset();
