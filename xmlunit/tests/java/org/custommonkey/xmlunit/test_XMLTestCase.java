@@ -479,6 +479,12 @@ public class test_XMLTestCase extends XMLTestCase{
                                "</p></td></tr></table></div>");
     }
 
+    // bug 1418497
+    public void testAssertXpathExistsFails() throws Exception {
+        String xmlDocument = "<axrtable> <schema name=\"emptySchema\"><relation name=\"\"></relation></schema></axrtable>";
+        assertXpathExists("/axrtable/schema", xmlDocument);
+    }
+
     public test_XMLTestCase(String name) {
         super(name);
     }
