@@ -69,18 +69,6 @@ public class test_XMLUnit extends TestCase{
             before == XMLUnit.newControlParser());
     }
 
-    public void testSetTestEntityResolver() {
-        EntityResolver resolver = new DefaultHandler();
-        XMLUnit.setTestEntityResolver(resolver);
-        fail("//assertEquals(resolver, XMLUnit.newTestParser().getEntityResolver());");
-    }
-
-    public void testSetControlEntityResolver() {
-        EntityResolver resolver = new DefaultHandler();
-        XMLUnit.setControlEntityResolver(resolver);
-        fail("//assertEquals(resolver, XMLUnit.newControlParser().getEntityResolver());");
-    }
-
     public void testIgnoreWhitespace() throws Exception {
         assertEquals("should not ignore whitespace by default",
             false, XMLUnit.getIgnoreWhitespace());

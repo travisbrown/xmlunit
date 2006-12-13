@@ -408,6 +408,8 @@ public class test_XMLTestCase extends XMLTestCase{
     // Bug 585555
     public void testUnusedNamespacesDontMatter() throws Exception
     {
+        boolean startValueIgnoreWhitespace = XMLUnit.getIgnoreWhitespace();
+        try {
         XMLUnit.setIgnoreWhitespace(true);
         String a = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
             "<outer xmlns:NS2=\"http://namespace2/foo\">\n" +
@@ -420,11 +422,16 @@ public class test_XMLTestCase extends XMLTestCase{
             "</outer>\n";
 
         assertXMLEqual(a, b);
+        } finally {
+            XMLUnit.setIgnoreWhitespace(startValueIgnoreWhitespace);
+        }
     }
 
     // Bug 585555
     public void testNamespaceMatters() throws Exception
     {
+        boolean startValueIgnoreWhitespace = XMLUnit.getIgnoreWhitespace();
+        try {
         XMLUnit.setIgnoreWhitespace(true);
         String a = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
             "<outer xmlns=\"http://namespace2/\">\n" +
@@ -435,6 +442,9 @@ public class test_XMLTestCase extends XMLTestCase{
             "</outer>\n";
 
         assertXMLNotEqual(a, b);
+        } finally {
+            XMLUnit.setIgnoreWhitespace(startValueIgnoreWhitespace);
+        }
     }
 
     // Bug 741636
