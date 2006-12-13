@@ -190,7 +190,8 @@ public class HTMLDocumentBuilder {
                     startPos = 0;
                 }
                 if (startPos < data.length) {
-                    saxContentHandler.characters(data, startPos, data.length);
+                    saxContentHandler.characters(data, startPos,
+                                                 data.length - startPos);
                 }
             } catch (SAXException e) {
                 handleSAXException(e);
