@@ -130,8 +130,9 @@ public class DifferenceEngine implements DifferenceConstants {
 	                compareElement((Element)control, (Element)test, listener);
 	                break;
 	            case Node.CDATA_SECTION_NODE:
-	                compareCDataSection((CDATASection)control,
-	                    (CDATASection)test, listener);
+	            case Node.TEXT_NODE:
+	                compareText((CharacterData) control,
+                                    (CharacterData) test, listener);
 	                break;
 	            case Node.COMMENT_NODE:
 	                compareComment((Comment)control, (Comment)test, listener);
@@ -143,9 +144,6 @@ public class DifferenceEngine implements DifferenceConstants {
 	            case Node.PROCESSING_INSTRUCTION_NODE:
 	                compareProcessingInstruction((ProcessingInstruction)control,
 	                    (ProcessingInstruction)test, listener);
-	                break;
-	            case Node.TEXT_NODE:
-	                compareText((Text)control, (Text)test, listener);
 	                break;
 	            case Node.DOCUMENT_NODE:
 	                isDocumentNode = true;
@@ -206,20 +204,31 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected boolean compareNodeBasics(Node control, Node test,
     DifferenceListener listener) throws DifferenceFoundException {
-		controlTracker.visited(control);
-		testTracker.visited(test);
+        controlTracker.visited(control);
+        testTracker.visited(test);
 
         Short controlType = new Short(control.getNodeType());
         Short testType = new Short(test.getNodeType());
 
-        compare(controlType, testType, control, test, listener,
-            NODE_TYPE);
+        boolean textAndCDATA = comparingTextAndCDATA(control.getNodeType(),
+                                                     test.getNodeType());
+        if (!textAndCDATA) {
+            compare(controlType, testType, control, test, listener,
+                    NODE_TYPE);
+        }
         compare(control.getNamespaceURI(), test.getNamespaceURI(),
             control, test, listener, NAMESPACE_URI);
         compare(control.getPrefix(), test.getPrefix(),
             control, test, listener, NAMESPACE_PREFIX);
             
-        return controlType.equals(testType);
+        return textAndCDATA || controlType.equals(testType);
+    }
+
+    private boolean comparingTextAndCDATA(short controlType, short testType) {
+        return
+            controlType == Node.TEXT_NODE && testType == Node.CDATA_SECTION_NODE
+            ||
+            testType == Node.TEXT_NODE && controlType == Node.CDATA_SECTION_NODE;
     }
 
     /**
@@ -451,7 +460,7 @@ public class DifferenceEngine implements DifferenceConstants {
     }
 
     /**
-     * Compare two CDATA sections
+     * Compare two CDATA sections - unused, kept for backwards compatibility
      * @param control
      * @param test
      * @param listener
@@ -459,7 +468,7 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareCDataSection(CDATASection control, CDATASection test,
     DifferenceListener listener) throws DifferenceFoundException {
-        compareCharacterData(control, test, listener, CDATA_VALUE);
+        compareText(control, test, listener);
     }
 
     /**
@@ -509,16 +518,30 @@ public class DifferenceEngine implements DifferenceConstants {
     }
 
     /**
-     * Compare text
+     * Compare text - unused, kept for backwards compatibility
      * @param control
      * @param test
      * @param listener
      * @throws DifferenceFoundException
      */
     protected void compareText(Text control, Text test,
-    DifferenceListener listener)
-    throws DifferenceFoundException {
-        compareCharacterData(control, test, listener, TEXT_VALUE);
+                               DifferenceListener listener)
+        throws DifferenceFoundException {
+        compareText((CharacterData) control, (CharacterData) test, listener);
+    }
+
+    /**
+     * Compare text
+     * @param control
+     * @param test
+     * @param listener
+     * @throws DifferenceFoundException
+     */
+    protected void compareText(CharacterData control, CharacterData test,
+                               DifferenceListener listener)
+        throws DifferenceFoundException {
+        compareCharacterData(control, test, listener,
+                             control instanceof CDATASection ? CDATA_VALUE : TEXT_VALUE);
     }
 
     /**

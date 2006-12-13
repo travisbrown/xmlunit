@@ -543,4 +543,11 @@ public class test_Diff extends TestCase{
             "</farm>";
         assertFalse(buildDiff(left, right).similar());
     }
+
+    public void testCDATA() throws Exception {
+        String expected = "<a>Hello</a>";
+        String actual = "<a><![CDATA[Hello]]></a>";
+        assertTrue(buildDiff(expected, actual).similar());
+        assertTrue(buildDiff(expected, actual).identical());
+    }
 }
