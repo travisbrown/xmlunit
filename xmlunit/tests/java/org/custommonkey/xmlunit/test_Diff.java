@@ -516,4 +516,31 @@ public class test_Diff extends TestCase{
 		protected abstract void examineDifferenceContents(Difference difference) ;
 	} 
 			
+
+    public void testIssue1189681() throws Exception {
+        String left = "" +
+            "<farm>\n" +
+            "<size>100</size>\n" +
+            " <animal>\n" +
+            "<name>Cow</name>\n" +
+            " </animal>\n"
+            +
+            " <animal>\n" +
+            "<name>Sheep</name>\n" +
+            " </animal>\n"
+            +
+            "</farm>";
+        String right = "" +
+            "<farm>\n" +
+            " <animal>\n" +
+            "<name>Sheep</name>\n" +
+            " </animal>\n"
+            +
+            " <size>100</size>\n" +
+            " <animal>\n" +
+            " <name>Cow</name>\n" +
+            " </animal>\n" +
+            "</farm>";
+        assertFalse(buildDiff(left, right).similar());
+    }
 }
