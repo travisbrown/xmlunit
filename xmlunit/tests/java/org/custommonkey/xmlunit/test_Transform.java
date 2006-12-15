@@ -51,15 +51,15 @@ import org.w3c.dom.Document;
 public class test_Transform extends TestCase{
     private static final String FLEABALL = "<fleaball><animal><shaggy>dog</shaggy></animal></fleaball>";
 
-    private static final String DOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + test_Constants.LINE_SEPARATOR + "<dog/>" ;
+    private static final String DOG = 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dog/>" ;
 
     private Transform transform;
     private File animal;
 
     public void testGetResultString() throws Exception {
         transform = new Transform(FLEABALL, animal);
-        assertEquals(DOG, transform.getResultString());
+        assertEquals(DOG, stripLineFeeds(transform.getResultString()));
     }
 
     public void testGetResultDocument() throws Exception {
@@ -84,7 +84,7 @@ public class test_Transform extends TestCase{
 
     public void testDOMSourceAndFile() throws Exception {
         transform = new Transform(XMLUnit.buildControlDocument(FLEABALL), animal);
-        assertEquals(DOG, transform.getResultString());
+        assertEquals(DOG, stripLineFeeds(transform.getResultString()));
     }
 
     public void testDOMSourceAndString() throws Exception {
@@ -94,7 +94,7 @@ public class test_Transform extends TestCase{
             int length = reader.read(animalXSL);
             transform = new Transform(XMLUnit.buildControlDocument(FLEABALL),
                 new String(animalXSL, 0, length));
-            assertEquals(DOG, transform.getResultString());
+            assertEquals(DOG, stripLineFeeds(transform.getResultString()));
         } finally {
             reader.close();
         }
@@ -135,6 +135,16 @@ public class test_Transform extends TestCase{
      */
     public static TestSuite suite(){
         return new TestSuite(test_Transform.class);
+    }
+
+    private static String stripLineFeeds(String s) {
+        int index = s.indexOf(test_Constants.LINE_SEPARATOR);
+        while (index > -1) {
+            s = s.substring(0, index)
+                + s.substring(index + test_Constants.LINE_SEPARATOR.length()) ;
+            index = s.indexOf(test_Constants.LINE_SEPARATOR);
+        }
+        return s;
     }
 }
 

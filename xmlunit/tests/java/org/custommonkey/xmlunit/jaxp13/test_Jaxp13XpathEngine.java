@@ -34,11 +34,13 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
+package org.custommonkey.xmlunit.jaxp13;
 
 import javax.xml.transform.OutputKeys;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.custommonkey.xmlunit.XMLUnit;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -46,9 +48,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * JUnit test for SimpleXpathEngine
+ * JUnit test for Jaxp13XpathEngine
  */
-public class test_SimpleXpathEngine extends TestCase {
+public class test_Jaxp13XpathEngine extends TestCase {
     private String[] testAttrNames = {"attrOne", "attrTwo"};
     private String testString =
         "<test><nodeWithoutAttributes>intellectual property rights </nodeWithoutAttributes>"
@@ -57,14 +59,7 @@ public class test_SimpleXpathEngine extends TestCase {
         + testAttrNames[1] + "=\"is the answer \">free your code from its chains"
         + "</nodeWithAttributes></test>";
     private Document testDocument;
-    private SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
-
-    public void testGetXPathResultNode() throws Exception {
-        Node result = simpleXpathEngine.getXPathResultNode("test", testDocument);
-        SimpleSerializer serializer = new SimpleSerializer();
-        serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        assertEquals(testString, serializer.serialize(result.getFirstChild()));
-    }
+    private Jaxp13XpathEngine simpleXpathEngine = new Jaxp13XpathEngine();
 
     public void testGetMatchingNodesNoMatches() throws Exception {
         NodeList nodeList = simpleXpathEngine.getMatchingNodes("toast", testDocument);
@@ -85,10 +80,6 @@ public class test_SimpleXpathEngine extends TestCase {
     }
 
     public void testGetMatchingNodesMatchText() throws Exception {
-        if (isJava5OrNewer()) {
-            // fails with "more recent" version of Xalan shipping with Java5
-            return;
-        }
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
             "test//text()", testDocument);
         assertEquals(3, nodeList.getLength());
@@ -124,10 +115,6 @@ public class test_SimpleXpathEngine extends TestCase {
     }
 
     public void testEvaluate() throws Exception {
-        if (isJava5OrNewer()) {
-            // fails with "more recent" version of Xalan shipping with Java5
-            return;
-        }
         String result = simpleXpathEngine.evaluate(
             "count(test//node())", testDocument);
         assertEquals("3 elements and 3 text nodes", "6", result);
@@ -137,21 +124,8 @@ public class test_SimpleXpathEngine extends TestCase {
         testDocument = XMLUnit.buildControlDocument(testString);
     }
 
-    public test_SimpleXpathEngine(String name) {
+    public test_Jaxp13XpathEngine(String name) {
         super(name);
-    }
-
-    public static TestSuite suite() {
-        return new TestSuite(test_SimpleXpathEngine.class);
-    }
-
-    private static boolean isJava5OrNewer() {
-        try {
-            Class.forName("java.net.Proxy");
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
 }

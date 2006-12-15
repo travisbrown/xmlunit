@@ -60,7 +60,7 @@ import org.w3c.dom.NodeList;
  * this approach seemed to be the simplest thing that could possibly work...)
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
-public class SimpleXpathEngine implements XSLTConstants {
+public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
 
     /**
      * What every XSL transform needs
