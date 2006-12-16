@@ -9,6 +9,13 @@
     <property name="dist.dir" value="dist"/>
     <property name="docs.dir" value="doc"/>
     <property file="build.properties"/>
+    <available property="jaxp13+" classname="javax.xml.xpath.XPath"/>
+    <condition property="jaxp13+.impl">
+      <and>
+        <isset property="jaxp13+"/>
+        <available classname="java.net.Proxy"/>
+      </and>
+    </condition>
   </target>
 
   <target name="check-props" unless="test.report.dir">
@@ -40,6 +47,7 @@ in build.properties</fail>
         <pathelement location="${junit.lib}"/>
         <pathelement path="${java.class.path}"/>
       </classpath>
+      <exclude name="**/jaxp13/**" unless="jaxp13+"/>
     </javac>
   </target>
 
@@ -66,6 +74,7 @@ in build.properties</fail>
       <batchtest todir="${test.report.dir}">
         <fileset dir="${test.dir}/java">
           <include name="**/test_*.java"/>
+          <exclude name="**/jaxp13/**" unless="jaxp13+.impl"/>
         </fileset>
       </batchtest>
       <batchtest fork="yes" todir="${test.report.dir}">
