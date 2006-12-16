@@ -36,6 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -48,7 +50,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
@@ -73,10 +74,8 @@ public class Transform {
      * Create a transformation using String input XML and String stylesheet
      * @param input
      * @param stylesheet
-     * @throws TransformerConfigurationException
      */
-    public Transform(String input, String stylesheet)
-    throws TransformerConfigurationException {
+    public Transform(String input, String stylesheet) {
         this(new StreamSource(new StringReader(input)),
             new StreamSource(new StringReader(stylesheet)));
     }
@@ -85,10 +84,8 @@ public class Transform {
      * Create a transformation using String input XML and stylesheet in a File
      * @param input
      * @param stylesheet
-     * @throws TransformerConfigurationException
      */
-    public Transform(String input, File stylesheet)
-    throws TransformerConfigurationException {
+    public Transform(String input, File stylesheet) {
         this(new StreamSource(new StringReader(input)),
             new StreamSource(stylesheet));
     }
@@ -96,10 +93,8 @@ public class Transform {
     /**
      * Create a transformation that allows us to serialize a DOM Node
      * @param source
-     * @throws TransformerConfigurationException
      */
-    public Transform(Node sourceNode)
-    throws TransformerConfigurationException {
+    public Transform(Node sourceNode) {
         this(sourceNode, (Source)null);
     }
 
@@ -107,10 +102,8 @@ public class Transform {
      * Create a transformation from an input Node and stylesheet in a String
      * @param sourceNode
      * @param stylesheet
-     * @throws TransformerConfigurationException
      */
-    public Transform(Node sourceNode, String stylesheet)
-    throws TransformerConfigurationException {
+    public Transform(Node sourceNode, String stylesheet) {
         this(sourceNode, new StreamSource(new StringReader(stylesheet)));
     }
 
@@ -118,10 +111,8 @@ public class Transform {
      * Create a transformation from an input Node and stylesheet in a File
      * @param sourceNode
      * @param stylesheet
-     * @throws TransformerConfigurationException
      */
-    public Transform(Node sourceNode, File stylesheet)
-    throws TransformerConfigurationException{
+    public Transform(Node sourceNode, File stylesheet) {
         this(sourceNode, new StreamSource(stylesheet));
     }
 
@@ -130,8 +121,7 @@ public class Transform {
      * @param sourceNode
      * @param stylesheetSource
      */
-    private Transform(Node sourceNode, Source stylesheetSource)
-    throws TransformerConfigurationException {
+    private Transform(Node sourceNode, Source stylesheetSource) {
         this(new DOMSource(sourceNode), stylesheetSource);
     }
 
@@ -139,10 +129,8 @@ public class Transform {
      * Create a transformation using Source input XML and Source stylesheet
      * @param inputReader
      * @param stylesheetReader
-     * @throws TransformerConfigurationException
      */
-    public Transform(Source inputSource, Source stylesheetSource)
-    throws TransformerConfigurationException {
+    public Transform(Source inputSource, Source stylesheetSource) {
         this.inputSource = inputSource;
         provideSystemIdIfRequired(inputSource);
 
@@ -174,16 +162,20 @@ public class Transform {
     /**
      * Factory method
      * @param stylesheetSource
+     * @throws ConfigurationException
      * @return
-     * @throws TransformerConfigurationException
      */
     private Transformer getTransformer(Source stylesheetSource)
-    throws TransformerConfigurationException {
-        TransformerFactory factory = XMLUnit.getTransformerFactory();
-        if (stylesheetSource == null) {
-            return factory.newTransformer();
+        throws ConfigurationException {
+        try {
+            TransformerFactory factory = XMLUnit.getTransformerFactory();
+            if (stylesheetSource == null) {
+                return factory.newTransformer();
+            }
+            return factory.newTransformer(stylesheetSource);
+        } catch (javax.xml.transform.TransformerConfigurationException ex) {
+            throw new ConfigurationException(ex);
         }
-        return factory.newTransformer(stylesheetSource);
     }
 
     /**

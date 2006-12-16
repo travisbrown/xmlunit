@@ -284,9 +284,9 @@ public class HTMLDocumentBuilder {
             Object attrName, attrValue;
 
             attributes.clear();
-            for(Enumeration enum = attributeSet.getAttributeNames();
-            enum.hasMoreElements(); ) {
-                attrName = enum.nextElement();
+            for(Enumeration en = attributeSet.getAttributeNames();
+                en.hasMoreElements(); ) {
+                attrName = en.nextElement();
                 attrValue = attributeSet.getAttribute(attrName);
                 attributes.addAttribute("", "", attrName.toString(),
                     "CDATA", attrValue.toString());

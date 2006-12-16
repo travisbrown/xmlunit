@@ -36,8 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit.jaxp13;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.custommonkey.xmlunit.XpathEngine;
-import org.custommonkey.xmlunit.XpathException;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -55,8 +56,12 @@ public class Jaxp13XpathEngine implements XpathEngine {
 
     private final XPath xpath;
 
-    public Jaxp13XpathEngine() {
-        xpath = XPathFactory.newInstance().newXPath();
+    public Jaxp13XpathEngine() throws ConfigurationException {
+        try {
+            xpath = XPathFactory.newInstance().newXPath();
+        } catch (Exception ex) {
+            throw new ConfigurationException(ex);
+        }
     }
 
     /**
@@ -73,7 +78,7 @@ public class Jaxp13XpathEngine implements XpathEngine {
             return (NodeList) xpath.evaluate(select, document,
                                              XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
-            throw new XpathException(ex.getMessage(), ex);
+            throw new XpathException(ex);
         }
     }
     
@@ -91,7 +96,7 @@ public class Jaxp13XpathEngine implements XpathEngine {
         try {
             return xpath.evaluate(select, document);
         } catch (XPathExpressionException ex) {
-            throw new XpathException(ex.getMessage(), ex);
+            throw new XpathException(ex);
         }
     }
 

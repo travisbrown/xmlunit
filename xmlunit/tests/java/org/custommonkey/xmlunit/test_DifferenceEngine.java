@@ -41,7 +41,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -636,7 +635,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
 	private void listenToDifferences(String control, String test)
-		throws SAXException, IOException, ParserConfigurationException {
+		throws SAXException, IOException {
 		Document controlDoc = XMLUnit.buildControlDocument(control);
 		Document testDoc = XMLUnit.buildTestDocument(test);
 		engine.compare(controlDoc, testDoc, listener, DEFAULT_ELEMENT_QUALIFIER);

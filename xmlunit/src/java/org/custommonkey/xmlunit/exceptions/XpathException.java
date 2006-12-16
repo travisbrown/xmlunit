@@ -34,41 +34,30 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
-
-import org.custommonkey.xmlunit.exceptions.ConfigurationException;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+package org.custommonkey.xmlunit.exceptions;
 
 /**
- * Abstraction of an engine evaluating XPath expressions.
+ * Exception an {@link org.custommonkey.xmlunit.XpathEngine
+ * XpathEngine} is allowed to throw.
  */
-public interface XpathEngine {
+public class XpathException extends XMLUnitException {
 
     /**
-     * Execute the specified xpath syntax <code>select</code> expression
-     * on the specified document and return the list of nodes (could have
-     * length zero) that match
-     * @param select
-     * @param document
-     * @return list of matching nodes
-     * @throws TransformerException
+     * Inititializes the exeption.
+     *
+     * @param cause the root cause of the exception
      */
-    NodeList getMatchingNodes(String select, Document document)
-        throws ConfigurationException, XpathException;
-    
-    /**
-     * Evaluate the result of executing the specified xpath syntax
-     * <code>select</code> expression on the specified document
-     * @param select
-     * @param document
-     * @return evaluated result
-     * @throws TransformerException
-     */
-    String evaluate(String select, Document document)
-        throws ConfigurationException, XpathException;
+    public XpathException(Throwable t) {
+        this(t != null ? t.getMessage() : null, t);
+    }
 
+    /**
+     * Inititializes the exeption.
+     *
+     * @param message the detail message
+     * @param cause the root cause of the exception
+     */
+    public XpathException(String message, Throwable t) {
+        super(message, t);
+    }
 }

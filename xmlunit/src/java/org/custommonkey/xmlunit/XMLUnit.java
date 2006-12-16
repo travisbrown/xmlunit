@@ -36,14 +36,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -90,8 +89,7 @@ public final class XMLUnit {
      * parsers. Note: setting the control parser before any test cases
      * are run will affect the test parser as well.
      */
-    public static void setControlParser(String className)
-    throws FactoryConfigurationError {
+    public static void setControlParser(String className) {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", className);
         controlBuilderFactory = null;
         controlBuilderFactory = getControlDocumentBuilderFactory();
@@ -100,16 +98,21 @@ public final class XMLUnit {
      * Get the <code>DocumentBuilder</code> instance used to parse the control
      * XML in an XMLTestCase.
      * @return parser for control values
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException
      */
     public static DocumentBuilder newControlParser()
-    throws ParserConfigurationException {
-        controlBuilderFactory = getControlDocumentBuilderFactory();
-        DocumentBuilder builder = controlBuilderFactory.newDocumentBuilder() ;
-        if(controlEntityResolver!=null){
-            builder.setEntityResolver(controlEntityResolver);
+        throws ConfigurationException {
+        try {
+            controlBuilderFactory = getControlDocumentBuilderFactory();
+            DocumentBuilder builder =
+                controlBuilderFactory.newDocumentBuilder();
+            if (controlEntityResolver!=null) {
+                builder.setEntityResolver(controlEntityResolver);
+            }
+            return builder;
+        } catch (ParserConfigurationException ex) {
+            throw new ConfigurationException(ex);
         }
-        return builder;
     }
 
     /**
@@ -157,8 +160,7 @@ public final class XMLUnit {
      * parsers. Note: setting the test parser before any test cases
      * are run will affect the control parser as well.
      */
-    public static void setTestParser(String className)
-    throws FactoryConfigurationError {
+    public static void setTestParser(String className) {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory", className);
         testBuilderFactory = null;
         testBuilderFactory = getTestDocumentBuilderFactory();
@@ -167,26 +169,31 @@ public final class XMLUnit {
      * Get the <code>DocumentBuilder</code> instance used to parse the test XML
      * in an XMLTestCase.
      * @return parser for test values
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException
      */
     public static DocumentBuilder newTestParser()
-    throws ParserConfigurationException {
-        testBuilderFactory = getTestDocumentBuilderFactory();
-        DocumentBuilder builder = testBuilderFactory.newDocumentBuilder();
-        if(testEntityResolver!=null){
-            builder.setEntityResolver(testEntityResolver);
+        throws ConfigurationException {
+        try {
+            testBuilderFactory = getTestDocumentBuilderFactory();
+            DocumentBuilder builder = testBuilderFactory.newDocumentBuilder();
+            if (testEntityResolver!=null) {
+                builder.setEntityResolver(testEntityResolver);
+            }
+            return builder;
+        } catch (ParserConfigurationException ex) {
+            throw new ConfigurationException(ex);
         }
-        return builder;
     }
 
     /**
      * Get the <code>DocumentBuilder</code> instance used to parse the test XML
      * in an XMLTestCase.
      * @return parser for test values
+     * @throws ConfigurationException
      * @deprecated use newTestParser()
      */
     public static DocumentBuilder getTestParser()
-    throws ParserConfigurationException {
+        throws ConfigurationException {
         return newTestParser();
     }
 
@@ -195,9 +202,10 @@ public final class XMLUnit {
      * in an XMLTestCase.
      * @return parser for control values
      * @deprecated use newControlParser()
+     * @throws ConfigurationException
      */
     public static DocumentBuilder getControlParser()
-    throws ParserConfigurationException {
+        throws ConfigurationException {
         return newControlParser();
     }
 
@@ -251,11 +259,10 @@ public final class XMLUnit {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      * @deprecated use Diff constructor directly
      */
-    public static Diff compare(Reader control, Reader test) throws SAXException,
-    IOException, ParserConfigurationException {
+    public static Diff compare(Reader control, Reader test)
+        throws SAXException, IOException {
         return new Diff(control, test);
     }
 
@@ -266,11 +273,10 @@ public final class XMLUnit {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      * @deprecated use Diff constructor directly
      */
-    public static Diff compare(InputSource control, InputSource test) throws SAXException,
-    IOException, ParserConfigurationException {
+    public static Diff compare(InputSource control, InputSource test)
+        throws SAXException, IOException {
         return new Diff(control, test);
     }
 
@@ -281,11 +287,10 @@ public final class XMLUnit {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      * @deprecated use Diff constructor directly
      */
     public static Diff compare(String control, Reader test) throws SAXException,
-    IOException, ParserConfigurationException {
+                                                                   IOException {
         return new Diff(new StringReader(control), test);
     }
 
@@ -296,11 +301,10 @@ public final class XMLUnit {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      * @deprecated use Diff constructor directly
      */
     public static Diff compare(Reader control, String test) throws SAXException,
-    IOException, ParserConfigurationException {
+                                                                   IOException {
         return new Diff(control, new StringReader(test));
     }
 
@@ -311,11 +315,10 @@ public final class XMLUnit {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      * @deprecated use Diff constructor directly
      */
     public static Diff compare(String control, String test) throws SAXException,
-    IOException, ParserConfigurationException {
+                                                                   IOException {
         return new Diff(control, test);
     }
 
@@ -326,10 +329,9 @@ public final class XMLUnit {
      * @return Document representation of the String content
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static Document buildControlDocument(String fromXML)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         return buildDocument(newControlParser(), new StringReader(fromXML));
     }
 
@@ -340,10 +342,9 @@ public final class XMLUnit {
      * @return Document representation of the String content
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static Document buildControlDocument(InputSource fromSource)
-    throws IOException, SAXException, ParserConfigurationException {
+        throws IOException, SAXException {
         return buildDocument(newControlParser(), fromSource);
     }
 
@@ -354,10 +355,9 @@ public final class XMLUnit {
      * @return Document representation of the String content
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static Document buildTestDocument(String fromXML)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         return buildDocument(newTestParser(), new StringReader(fromXML));
     }
 
@@ -368,10 +368,9 @@ public final class XMLUnit {
      * @return Document representation of the String content
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static Document buildTestDocument(InputSource fromSource)
-    throws IOException, SAXException, ParserConfigurationException {
+        throws IOException, SAXException {
         return buildDocument(newTestParser(), fromSource);
     }
 
@@ -406,10 +405,8 @@ public final class XMLUnit {
      * Overide the transformer to use for XSLT transformations (and by
      * implication serialization and XPaths).
      * This is useful when comparing transformer implementations.
-     * @throws TransformerFactoryConfigurationError
      */
-    public static void setTransformerFactory(String className)
-    throws TransformerFactoryConfigurationError {
+    public static void setTransformerFactory(String className) {
         System.setProperty("javax.xml.transform.TransformerFactory",
             className);
         transformerFactory = null;
@@ -420,12 +417,9 @@ public final class XMLUnit {
      * Get the transformer to use for XSLT transformations (and by
      * implication serialization and XPaths).
      * @return the current transformer factory in use
-     * @throws TransformerFactoryConfigurationError if unable to construct
      * a new instance of the default transformer factory
-     * @throws TransformerFactoryConfigurationError
      */
-    public static TransformerFactory getTransformerFactory()
-    throws TransformerFactoryConfigurationError {
+    public static TransformerFactory getTransformerFactory() {
         if (transformerFactory == null) {
             transformerFactory = TransformerFactory.newInstance();
         }
@@ -459,10 +453,8 @@ public final class XMLUnit {
      *  empty Text nodes
      * @param forDocument
      * @return a <code>Transform</code> to do the whitespace stripping
-     * @throws TransformerConfigurationException
      */
-    public static Transform getStripWhitespaceTransform(Document forDocument)
-    throws TransformerConfigurationException {
+    public static Transform getStripWhitespaceTransform(Document forDocument) {
         return new Transform(forDocument, STRIP_WHITESPACE_STYLESHEET);
     }
 
@@ -474,71 +466,67 @@ public final class XMLUnit {
         return "1.0"; 
     }
 
-	/**
-	 * Compare XML documents provided by two Reader classes
-	 * @param control Control document
-	 * @param test Document to test
-	 * @return Diff object describing differences in documents
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 */
-	public static Diff compareXML(Reader control, Reader test)
-	throws SAXException, IOException, ParserConfigurationException {
-	    return new Diff(control, test);
-	}
+    /**
+     * Compare XML documents provided by two Reader classes
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Diff compareXML(Reader control, Reader test)
+        throws SAXException, IOException {
+        return new Diff(control, test);
+    }
 
-	/**
-	 * Compare XML documents provided by two Reader classes
-	 * @param control Control document
-	 * @param test Document to test
-	 * @return Diff object describing differences in documents
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 */
-	public static Diff compareXML(String control, Reader test)
-	throws SAXException, IOException, ParserConfigurationException {
-	    return new Diff(new StringReader(control), test);
-	}
+    /**
+     * Compare XML documents provided by two Reader classes
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Diff compareXML(String control, Reader test)
+        throws SAXException, IOException {
+        return new Diff(new StringReader(control), test);
+    }
 
-	/**
-	 * Compare XML documents provided by two Reader classes
-	 * @param control Control document
-	 * @param test Document to test
-	 * @return Diff object describing differences in documents
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 */
-	public static Diff compareXML(Reader control, String test)
-	throws SAXException, IOException, ParserConfigurationException {
-	    return new Diff(control, new StringReader(test));
-	}
+    /**
+     * Compare XML documents provided by two Reader classes
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Diff compareXML(Reader control, String test)
+        throws SAXException, IOException {
+        return new Diff(control, new StringReader(test));
+    }
 
-	/**
-	 * Compare two XML documents provided as strings
-	 * @param control Control document
-	 * @param test Document to test
-	 * @return Diff object describing differences in documents
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 */
-	public static Diff compareXML(String control, String test)
-	throws SAXException, IOException, ParserConfigurationException {
-	    return new Diff(control, test);
-	}
+    /**
+     * Compare two XML documents provided as strings
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Diff compareXML(String control, String test)
+        throws SAXException, IOException {
+        return new Diff(control, test);
+    }
 
-	/**
-	 * Compare two XML documents provided as strings
-	 * @param control Control document
-	 * @param test Document to test
-	 * @return Diff object describing differences in documents
-	 */
-	public static Diff compareXML(Document control, Document test) {
-	    return new Diff(control, test);
-	}
+    /**
+     * Compare two XML documents provided as strings
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     */
+    public static Diff compareXML(Document control, Document test) {
+        return new Diff(control, test);
+    }
 
 }
 

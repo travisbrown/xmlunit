@@ -36,6 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -47,9 +49,9 @@ import org.xml.sax.SAXParseException;
 import org.w3c.dom.Document;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Validates XML against its internal or external DOCTYPE, or a completely
@@ -82,16 +84,20 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * Baseline constructor: called by all others
      * @param inputSource
      * @param usingDoctypeReader
-     * @throws ParserConfigurationException
      * @throws SAXException
+     * @throws ConfigurationException if validation could not be turned on
      */
     protected Validator(InputSource inputSource, boolean usingDoctypeReader)
-        throws ParserConfigurationException, SAXException {
+        throws SAXException, ConfigurationException {
         isValid = null;
         messages = new StringBuffer();
         SAXParserFactory factory = XMLUnit.getSAXParserFactory();
         factory.setValidating(true);
-        parser = factory.newSAXParser();
+        try {
+            parser = factory.newSAXParser();
+        } catch (ParserConfigurationException ex) {
+            throw new ConfigurationException(ex);
+        }
 
         this.validationInputSource = inputSource;
         this.usingDoctypeReader = usingDoctypeReader;
@@ -107,12 +113,11 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @param document
      * @param systemID
      * @param doctype
-     * @throws ParserConfigurationException if unable to turn validation feature
-     *  on in JAXP factory
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
      */
     public Validator(Document document, String systemID, String doctype)
-        throws ParserConfigurationException, SAXException {
+        throws SAXException, ConfigurationException {
         this(new InputStreamReader(new NodeInputStream(document)),
             systemID, doctype);
     }
@@ -122,12 +127,11 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * Validates the contents of the Reader using the DTD or schema referenced
      *  by those contents.
      * @param readerForValidation
-     * @throws ParserConfigurationException if unable to turn validation feature
-     *  on in JAXP factory
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
      */
     public Validator(Reader readerForValidation)
-        throws ParserConfigurationException, SAXException {
+        throws SAXException, ConfigurationException {
         this(new InputSource(readerForValidation),
             (readerForValidation instanceof DoctypeReader));
     }
@@ -140,12 +144,11 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      *  there is no DOCTYPE in the markup use the 3-argument constructor
      * @param readerForValidation
      * @param systemID
-     * @throws ParserConfigurationException if unable to turn validation feature
-     *  on in JAXP factory
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
      */
     public Validator(Reader readerForValidation, String systemID)
-        throws ParserConfigurationException, SAXException {
+        throws SAXException, ConfigurationException {
         this(readerForValidation);
         validationInputSource.setSystemId(systemID);
     }
@@ -157,11 +160,11 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @param readerForValidation
      * @param systemID
      * @param doctype
-     * @throws ParserConfigurationException
      * @throws SAXException
+     * @throws ConfigurationException if validation could not be turned on
      */
     public Validator(Reader readerForValidation, String systemID, String doctype)
-        throws ParserConfigurationException, SAXException {
+        throws SAXException, ConfigurationException {
         this(new DoctypeReader(readerForValidation, doctype, systemID));
         validationInputSource.setSystemId(systemID);
     }

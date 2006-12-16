@@ -36,13 +36,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XpathException;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
 
 import junit.framework.TestCase;
 import org.w3c.dom.Document;
@@ -112,10 +111,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public Diff compareXML(Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         return XMLUnit.compareXML(control, test);
     }
 
@@ -126,10 +124,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public Diff compareXML(String control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         return XMLUnit.compareXML(new StringReader(control), test);
     }
 
@@ -140,10 +137,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public Diff compareXML(Reader control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         return XMLUnit.compareXML(control, new StringReader(test));
     }
 
@@ -154,10 +150,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @return Diff object describing differences in documents
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public Diff compareXML(String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         return XMLUnit.compareXML(control, test);
     }
 
@@ -187,7 +182,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param msg additional message to display if assertion fails
      * @deprecated Use XMLTestCase#assertXMLEqual(String, Diff, boolean) instead
      */
-    public void assertXMLEqual(Diff diff, boolean assertion, String msg) {    	
+    public void assertXMLEqual(Diff diff, boolean assertion, String msg) {
     	XMLAssert.assertXMLEqual(msg, diff, assertion);
     }
     
@@ -197,7 +192,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param diff the result of an XML comparison
      * @param assertion true if asserting that result is similar
      */
-    public void assertXMLEqual(String msg, Diff diff, boolean assertion) {    	
+    public void assertXMLEqual(String msg, Diff diff, boolean assertion) {
     	XMLAssert.assertXMLEqual(msg, diff, assertion);
     }
 
@@ -237,10 +232,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLEqual(String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLEqual(control, test);
     }
 
@@ -259,10 +253,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLEqual(Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLEqual(control, test);
     }
 
@@ -273,10 +266,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLEqual(String err, String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLEqual(err, control, test);
     }
 
@@ -287,7 +279,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      */
     public void assertXMLEqual(String err, Document control, Document test) {
-		XMLAssert.assertXMLEqual(err, control, test);
+        XMLAssert.assertXMLEqual(err, control, test);
     }
 
     /**
@@ -297,11 +289,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLEqual(String err, Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
-		XMLAssert.assertXMLEqual(err, control, test);
+        throws SAXException, IOException {
+        XMLAssert.assertXMLEqual(err, control, test);
     }
 
     /**
@@ -310,10 +301,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLNotEqual(String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLNotEqual(control, test);
     }
 
@@ -324,10 +314,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLNotEqual(String err, String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLNotEqual(err, control, test);
     }
 
@@ -356,10 +345,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLNotEqual(Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLNotEqual(control, test);
     }
 
@@ -370,10 +358,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public void assertXMLNotEqual(String err, Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
     	XMLAssert.assertXMLNotEqual(err, control, test);
     }
 
@@ -382,12 +369,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
      * @see XpathEngine
      */
     public void assertXpathsEqual(String controlXpath, String testXpath,
     Document document)
-        throws TransformerException, ParserConfigurationException, XpathException {
+        throws XpathException {
     	XMLAssert.assertXpathsEqual(controlXpath, testXpath, document);
     }
 
@@ -399,13 +385,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public void assertXpathsEqual(String controlXpath, String testXpath,
-    String inXMLString)
-    throws SAXException, ParserConfigurationException,
-           TransformerException, IOException, XpathException {
+                                  String inXMLString)
+        throws SAXException, IOException, XpathException {
     	XMLAssert.assertXpathsEqual(controlXpath, testXpath, inXMLString);
     }
 
@@ -417,13 +400,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public void assertXpathsEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
     	XMLAssert.assertXpathsEqual(controlXpath, inControlXMLString,
             testXpath, inTestXMLString);
     }
@@ -434,11 +415,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathTwo
      * @param document
      * @see XpathEngine
-     * @throws TransformerException
      */
     public void assertXpathsEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
     	XMLAssert.assertXpathsEqual(controlXpath, controlDocument, testXpath, testDocument);
     }
 
@@ -447,12 +427,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
      * @see XpathEngine
      */
     public void assertXpathsNotEqual(String controlXpath, String testXpath,
     Document document)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
     	XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, document);
     }
 
@@ -464,13 +443,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public void assertXpathsNotEqual(String controlXpath, String testXpath,
     String inXMLString)
-    throws SAXException, ParserConfigurationException,
-    TransformerException, IOException, XpathException {
+        throws SAXException,
+               IOException, XpathException {
     	XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, inXMLString);
     }
 
@@ -482,13 +459,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public void assertXpathsNotEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
     	XMLAssert.assertXpathsNotEqual(controlXpath, inControlXMLString,
             testXpath, inTestXMLString);
     }
@@ -499,11 +474,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathTwo
      * @param document
      * @see XpathEngine
-     * @throws TransformerException
      */
     public void assertXpathsNotEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
     	XMLAssert.assertXpathsNotEqual(controlXpath, controlDocument, testXpath, testDocument);
     }
 
@@ -512,13 +486,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      * @see XpathEngine
      */
     public void assertXpathValuesEqual(String controlXpath, String testXpath,
     Document document)
-    throws TransformerException, ParserConfigurationException, XpathException {
+        throws XpathException {
     	XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, document);
     }
 
@@ -530,14 +502,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesEqual(String controlXpath, String testXpath,
     String inXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, TransformerConfigurationException, XpathException {
+    throws SAXException, IOException,
+           XpathException {
     	XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, inXMLString);
     }
 
@@ -549,14 +518,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, TransformerConfigurationException, XpathException {
+    throws SAXException, IOException,
+           XpathException {
     	XMLAssert.assertXpathValuesEqual(controlXpath, inControlXMLString,
             testXpath, inTestXMLString);
     }
@@ -567,12 +533,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathTwo
      * @param document
      * @see XpathEngine
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, ParserConfigurationException, XpathException {
+        throws XpathException {
     	XMLAssert.assertXpathValuesEqual(controlXpath, controlDocument, testXpath, testDocument);
     }
 
@@ -584,14 +548,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesNotEqual(String controlXpath, String testXpath,
     String inXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, TransformerConfigurationException, XpathException {
+    throws SAXException, IOException,
+           XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath, inXMLString);
     }
 
@@ -601,12 +562,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesNotEqual(String controlXpath, String testXpath,
     Document document)
-    throws TransformerException, ParserConfigurationException, XpathException {
+        throws XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath, document);
     }
 
@@ -619,14 +578,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesNotEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, TransformerConfigurationException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, inControlXMLString,
             testXpath, inTestXMLString);
     }
@@ -637,12 +593,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public void assertXpathValuesNotEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, ParserConfigurationException, XpathException {
+        throws XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, controlDocument, testXpath, testDocument);
     }
 
@@ -653,15 +607,12 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathEvaluatesTo(String expectedValue,
     String xpathExpression, String inXMLString)
-    throws SAXException, IOException, ParserConfigurationException,
-    TransformerException, TransformerConfigurationException, XpathException {
+        throws SAXException, IOException, 
+               XpathException {
     	XMLAssert.assertXpathEvaluatesTo(expectedValue, xpathExpression, inXMLString);
     }
 
@@ -670,13 +621,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param expectedValue
      * @param xpathExpression
      * @param inDocument
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathEvaluatesTo(String expectedValue,
     String xpathExpression, Document inDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
     	XMLAssert.assertXpathEvaluatesTo(expectedValue, xpathExpression, inDocument);
     }
 
@@ -687,9 +636,8 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathExists(String xPathExpression, 
-    String inXMLString) 
-    throws TransformerException, ParserConfigurationException,
-    IOException, SAXException, XpathException {
+                                  String inXMLString) 
+        throws IOException, SAXException, XpathException {
     	XMLAssert.assertXpathExists(xPathExpression, inXMLString);
     }
     
@@ -701,7 +649,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXpathExists(String xPathExpression, 
     Document inDocument) 
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
     	XMLAssert.assertXpathExists(xPathExpression, inDocument);
     }
 
@@ -713,23 +661,21 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXpathNotExists(String xPathExpression, 
     String inXMLString) 
-    throws TransformerException, ParserConfigurationException,
-    IOException, SAXException, XpathException {
+        throws IOException, SAXException, XpathException {
     	XMLAssert.assertXpathNotExists(xPathExpression, inXMLString);
     }
     
-	/**
-	 * Assert that a specific XPath does NOT exist in some given XML
-	 * @param inXpathExpression
-	 * @param inXMLString
-	 * @deprecated Use assertXpathNotExists instead
-	 */
-	public void assertNotXpathExists(String xPathExpression,
-	String inXMLString)
-	throws TransformerException, ParserConfigurationException,
-	IOException, SAXException , XpathException{
-		XMLAssert.assertXpathNotExists(xPathExpression, inXMLString);
-	}
+    /**
+     * Assert that a specific XPath does NOT exist in some given XML
+     * @param inXpathExpression
+     * @param inXMLString
+     * @deprecated Use assertXpathNotExists instead
+     */
+    public void assertNotXpathExists(String xPathExpression,
+                                     String inXMLString)
+	throws IOException, SAXException , XpathException {
+        XMLAssert.assertXpathNotExists(xPathExpression, inXMLString);
+    }
 
     /**
      * Assert that a specific XPath does NOT exist in some given XML
@@ -739,33 +685,32 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXpathNotExists(String xPathExpression, 
     Document inDocument) 
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
     	XMLAssert.assertXpathNotExists(xPathExpression, inDocument);
     }
     
-	/**
-	 * Assert that a specific XPath does NOT exist in some given XML
-	 * @param inXpathExpression
-	 * @param inDocument
-	 * @deprecated Use assertXpathNotExists instead
-	 */
-	public void assertNotXpathExists(String xPathExpression,
-	Document inDocument)
-	throws TransformerException, XpathException, ParserConfigurationException {
-		XMLAssert.assertXpathNotExists(xPathExpression, inDocument);
-
-	}
+    /**
+     * Assert that a specific XPath does NOT exist in some given XML
+     * @param inXpathExpression
+     * @param inDocument
+     * @deprecated Use assertXpathNotExists instead
+     */
+    public void assertNotXpathExists(String xPathExpression,
+                                     Document inDocument)
+        throws XpathException {
+        XMLAssert.assertXpathNotExists(xPathExpression, inDocument);
+    }
 
     /**
      * Assert that a String containing XML contains valid XML: the String must
      * contain a DOCTYPE declaration to be validated
      * @param xmlString
      * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException if validation could not be turned on
      * @see Validator
      */
     public void assertXMLValid(String xmlString)
-    throws SAXException, ParserConfigurationException {
+        throws SAXException, ConfigurationException {
     	XMLAssert.assertXMLValid(xmlString);
     }
 
@@ -776,11 +721,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xmlString
      * @param systemId
      * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException if validation could not be turned on
      * @see Validator
      */
     public void assertXMLValid(String xmlString, String systemId)
-    throws SAXException, ParserConfigurationException {
+        throws SAXException, ConfigurationException {
     	XMLAssert.assertXMLValid(xmlString, systemId);
     }
 
@@ -792,11 +737,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param systemId
      * @param doctype
      * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException if validation could not be turned on
      * @see Validator
      */
     public void assertXMLValid(String xmlString, String systemId, String doctype)
-    throws SAXException, ParserConfigurationException {
+        throws SAXException, ConfigurationException {
     	XMLAssert.assertXMLValid(xmlString, systemId, doctype);
     }
 
@@ -816,14 +761,13 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param nodeType The node type to be tested: constants defined
      *  in {@link Node org.w3c.dom.Node} e.g. <code>Node.ELEMENT_NODE</code>
      * @throws SAXException
-     * @throws ParserConfigurationException
      * @throws IOException
      * @see AbstractNodeTester
      * @see CountingNodeTester
      */
     public void assertNodeTestPasses(String xmlString, NodeTester tester,
-    short nodeType)
-    throws SAXException, ParserConfigurationException, IOException {
+                                     short nodeType)
+        throws SAXException, IOException {
     	XMLAssert.assertNodeTestPasses(xmlString, tester, nodeType);
     }
 

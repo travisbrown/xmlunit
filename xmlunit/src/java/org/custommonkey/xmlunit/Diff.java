@@ -39,7 +39,6 @@ package org.custommonkey.xmlunit;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
@@ -86,16 +85,16 @@ implements DifferenceListener, ComparisonController {
     /**
      * Construct a Diff that compares the XML in two Strings
      */
-    public Diff(String control, String test) throws SAXException, IOException,
-    ParserConfigurationException {
+    public Diff(String control, String test)
+        throws SAXException, IOException {
         this(new StringReader(control), new StringReader(test));
     }
 
     /**
      * Construct a Diff that compares the XML read from two Readers
      */
-    public Diff(Reader control, Reader test) throws SAXException, IOException,
-    ParserConfigurationException {
+    public Diff(Reader control, Reader test)
+        throws SAXException, IOException {
         this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
             XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
     }
@@ -111,8 +110,8 @@ implements DifferenceListener, ComparisonController {
      * Construct a Diff that compares the XML in a control Document against the
      * result of a transformation
      */
-    public Diff(String control, Transform testTransform) throws IOException,
-    TransformerException, ParserConfigurationException, SAXException {
+    public Diff(String control, Transform testTransform)
+        throws IOException, TransformerException, SAXException {
         this(XMLUnit.buildControlDocument(control),
             testTransform.getResultDocument());
     }
@@ -120,33 +119,36 @@ implements DifferenceListener, ComparisonController {
 	/**
 	 * Construct a Diff that compares the XML read from two JAXP InputSources
 	 */
-	public Diff(InputSource control, InputSource test) throws SAXException, IOException,
-	ParserConfigurationException {
+    public Diff(InputSource control, InputSource test)
+        throws SAXException, IOException {
 		this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
 			XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
 	}
 
-	/**
-	 * Construct a Diff that compares the XML in two JAXP DOMSources
-	 */
-	public Diff(DOMSource control, DOMSource test) {
-		this(control.getNode().getOwnerDocument(), test.getNode().getOwnerDocument());
-	}
+    /**
+     * Construct a Diff that compares the XML in two JAXP DOMSources
+     */
+    public Diff(DOMSource control, DOMSource test) {
+        this(control.getNode().getOwnerDocument(),
+             test.getNode().getOwnerDocument());
+    }
 
-	/**
- 	 * Construct a Diff that compares the XML in two Documents using a specific
- 	 * DifferenceEngine
-	 */
-	public Diff(Document controlDoc, Document testDoc, DifferenceEngine comparator) {
-		this(controlDoc, testDoc, comparator, new ElementNameQualifier());
-	}
+    /**
+     * Construct a Diff that compares the XML in two Documents using a specific
+     * DifferenceEngine
+     */
+    public Diff(Document controlDoc, Document testDoc,
+                DifferenceEngine comparator) {
+        this(controlDoc, testDoc, comparator, new ElementNameQualifier());
+    }
 
     /**
      * Construct a Diff that compares the XML in two Documents using a specific
      * DifferenceEngine and ElementQualifier
      */
-    public Diff(Document controlDoc, Document testDoc, DifferenceEngine comparator, 
-    ElementQualifier elementQualifier) {
+    public Diff(Document controlDoc, Document testDoc,
+                DifferenceEngine comparator, 
+                ElementQualifier elementQualifier) {
         this.controlDoc = getWhitespaceManipulatedDocument(controlDoc);
         this.testDoc = getWhitespaceManipulatedDocument(testDoc);
         this.elementQualifierDelegate = elementQualifier;

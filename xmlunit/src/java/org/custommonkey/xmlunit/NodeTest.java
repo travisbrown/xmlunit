@@ -46,7 +46,6 @@ import org.w3c.dom.traversal.DocumentTraversal;
 import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.NodeIterator;
 import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Encapsulation of the Node-by-Node testing of a DOM Document
@@ -63,8 +62,8 @@ public class NodeTest {
     /**
      * Construct a NodeTest for the DOM built using the String and JAXP
      */
-    public NodeTest(String xmlString) throws SAXException,
-    ParserConfigurationException, IOException {
+    public NodeTest(String xmlString)
+        throws SAXException, IOException {
         this(new StringReader(xmlString));
     }
 
@@ -72,7 +71,7 @@ public class NodeTest {
      * Construct a NodeTest for the DOM built using the Reader and JAXP
      */
     public NodeTest(Reader reader) throws SAXException,
-    ParserConfigurationException, IOException {
+                                          IOException {
         this(XMLUnit.buildDocument(XMLUnit.newControlParser(), reader));
     }
 

@@ -36,14 +36,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XpathException;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
 
 import junit.framework.Assert;
 import org.w3c.dom.Document;
@@ -166,10 +166,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLEqual(String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(diff, true);
     }
@@ -190,10 +189,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLEqual(Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(diff, true);
     }
@@ -205,10 +203,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLEqual(String err, String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(err, diff, true);
     }
@@ -219,7 +216,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param control XML to be compared against
      * @param test XML to be tested
      */
-    public static void assertXMLEqual(String err, Document control, Document test) {
+    public static void assertXMLEqual(String err, Document control,
+                                      Document test) {
         Diff diff = new Diff(control, test);
         assertXMLEqual(err, diff, true);
     }
@@ -231,10 +229,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLEqual(String err, Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(err, diff, true);
     }
@@ -245,10 +242,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLNotEqual(String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(diff, false);
     }
@@ -260,10 +256,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLNotEqual(String err, String control, String test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(err, diff, false);
     }
@@ -284,7 +279,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param control XML to be compared against
      * @param test XML to be tested
      */
-    public static void assertXMLNotEqual(String err, Document control, Document test) {
+    public static void assertXMLNotEqual(String err, Document control,
+                                         Document test) {
         Diff diff = new Diff(control, test);
         assertXMLEqual(err, diff, false);
     }
@@ -295,10 +291,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLNotEqual(Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(diff, false);
     }
@@ -310,10 +305,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
      */
     public static void assertXMLNotEqual(String err, Reader control, Reader test)
-    throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException {
         Diff diff = new Diff(control, test);
         assertXMLEqual(err, diff, false);
     }
@@ -323,12 +317,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
      * @see XpathEngine
      */
     public static void assertXpathsEqual(String controlXpath, String testXpath,
-    Document document)
-    throws TransformerException, XpathException, ParserConfigurationException {
+                                         Document document)
+        throws XpathException {
         assertXpathsEqual(controlXpath, document, testXpath, document);
     }
 
@@ -340,13 +333,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public static void assertXpathsEqual(String controlXpath, String testXpath,
-    String inXMLString)
-    throws SAXException, ParserConfigurationException,
-    TransformerException, IOException, XpathException {
+                                         String inXMLString)
+        throws SAXException, IOException, XpathException {
         assertXpathsEqual(controlXpath, testXpath,
             XMLUnit.buildControlDocument(inXMLString));
     }
@@ -359,13 +349,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public static void assertXpathsEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
         assertXpathsEqual(
             controlXpath, XMLUnit.buildControlDocument(inControlXMLString),
             testXpath, XMLUnit.buildTestDocument(inTestXMLString));
@@ -377,11 +365,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathTwo
      * @param document
      * @see XpathEngine
-     * @throws TransformerException
      */
     public static void assertXpathsEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
         XpathEngine xpath = newXpathEngine();
         Diff diff = new Diff(asXpathResultDocument(XMLUnit.newControlParser(),
                                                    xpath.getMatchingNodes(controlXpath,
@@ -397,12 +384,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
      * @see XpathEngine
      */
     public static void assertXpathsNotEqual(String controlXpath, String testXpath,
-    Document document)
-    throws TransformerException, XpathException, ParserConfigurationException {
+                                            Document document)
+        throws XpathException {
         assertXpathsNotEqual(controlXpath, document, testXpath, document);
     }
 
@@ -414,13 +400,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public static void assertXpathsNotEqual(String controlXpath, String testXpath,
     String inXMLString)
-    throws SAXException, ParserConfigurationException,
-    TransformerException, IOException, XpathException {
+        throws SAXException, IOException, XpathException {
         assertXpathsNotEqual(controlXpath, testXpath,
             XMLUnit.buildControlDocument(inXMLString));
     }
@@ -433,13 +416,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     public static void assertXpathsNotEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
         assertXpathsNotEqual(
             controlXpath, XMLUnit.buildControlDocument(inControlXMLString),
             testXpath, XMLUnit.buildTestDocument(inTestXMLString));
@@ -451,11 +432,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathTwo
      * @param document
      * @see XpathEngine
-     * @throws TransformerException
      */
     public static void assertXpathsNotEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-        throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
         XpathEngine xpath = newXpathEngine();
         Diff diff = new Diff(asXpathResultDocument(XMLUnit.newControlParser(),
                                                    xpath.getMatchingNodes(controlXpath,
@@ -471,13 +451,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      * @see XpathEngine
      */
     public static void assertXpathValuesEqual(String controlXpath, String testXpath,
     Document document)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
         assertXpathValuesEqual(controlXpath, document, testXpath, document);
     }
 
@@ -489,14 +467,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesEqual(String controlXpath, String testXpath,
     String inXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException, ParserConfigurationException {
+        throws SAXException, IOException,
+               XpathException {
         assertXpathValuesEqual(controlXpath, testXpath,
             XMLUnit.buildControlDocument(inXMLString));
     }
@@ -509,14 +484,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException, ParserConfigurationException {
+        throws SAXException, IOException,
+               XpathException {
         assertXpathValuesEqual(controlXpath,
             XMLUnit.buildControlDocument(inControlXMLString),
             testXpath, XMLUnit.buildTestDocument(inTestXMLString));
@@ -528,12 +500,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathTwo
      * @param document
      * @see XpathEngine
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
         XpathEngine xpath = newXpathEngine();
         assertEquals(xpath.evaluate(controlXpath, controlDocument),
             xpath.evaluate(testXpath, testDocument));
@@ -547,14 +517,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesNotEqual(String controlXpath, String testXpath,
     String inXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException, ParserConfigurationException {
+        throws SAXException, IOException,
+               XpathException {
         assertXpathValuesNotEqual(controlXpath, testXpath,
             XMLUnit.buildControlDocument(inXMLString));
     }
@@ -565,12 +532,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesNotEqual(String controlXpath, String testXpath,
-    Document document)
-    throws TransformerException, XpathException, ParserConfigurationException {
+                                                 Document document)
+        throws XpathException {
         assertXpathValuesNotEqual(controlXpath, document, testXpath, document);
     }
 
@@ -583,14 +548,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inTestXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesNotEqual(String controlXpath,
     String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, ParserConfigurationException, IOException,
-    TransformerException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
         assertXpathValuesNotEqual(controlXpath,
             XMLUnit.buildControlDocument(inControlXMLString),
             testXpath, XMLUnit.buildTestDocument(inTestXMLString));
@@ -602,12 +564,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public static void assertXpathValuesNotEqual(String controlXpath, Document controlDocument,
     String testXpath, Document testDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+        throws XpathException {
         XpathEngine xpath = newXpathEngine();
         String control = xpath.evaluate(controlXpath, controlDocument);
         String test = xpath.evaluate(testXpath, testDocument);
@@ -629,15 +589,12 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public static void assertXpathEvaluatesTo(String expectedValue,
     String xpathExpression, String inXMLString)
-    throws SAXException, IOException, ParserConfigurationException,
-    TransformerException, XpathException {
+        throws SAXException, IOException,
+               XpathException {
         Document document = XMLUnit.buildControlDocument(inXMLString);
         assertXpathEvaluatesTo(expectedValue, xpathExpression, document);
     }
@@ -647,13 +604,12 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param expectedValue
      * @param xpathExpression
      * @param inDocument
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public static void assertXpathEvaluatesTo(String expectedValue,
-    String xpathExpression, Document inDocument)
-    throws TransformerException, XpathException, ParserConfigurationException {
+                                              String xpathExpression,
+                                              Document inDocument)
+        throws XpathException {
         XpathEngine simpleXpathEngine = newXpathEngine();
         assertEquals(expectedValue,
             simpleXpathEngine.evaluate(xpathExpression, inDocument));
@@ -667,8 +623,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
      */
     public static void assertXpathExists(String xPathExpression, 
     String inXMLString) 
-    throws TransformerException, ParserConfigurationException,
-    IOException, SAXException, XpathException {
+        throws IOException, SAXException, XpathException {
         Document inDocument = XMLUnit.buildControlDocument(inXMLString);
         assertXpathExists(xPathExpression, inDocument);
     }
@@ -680,8 +635,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public static void assertXpathExists(String xPathExpression, 
-    Document inDocument) 
-    throws TransformerException, XpathException, ParserConfigurationException {
+                                         Document inDocument) 
+        throws XpathException {
         XpathEngine simpleXpathEngine = newXpathEngine();
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
             xPathExpression, inDocument);
@@ -698,8 +653,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
      */
     public static void assertXpathNotExists(String xPathExpression, 
     String inXMLString) 
-    throws TransformerException, ParserConfigurationException,
-    IOException, SAXException, XpathException {
+        throws IOException, SAXException, XpathException {
         Document inDocument = XMLUnit.buildControlDocument(inXMLString);
         assertXpathNotExists(xPathExpression, inDocument);
     }
@@ -711,8 +665,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public static void assertXpathNotExists(String xPathExpression, 
-    Document inDocument) 
-    throws TransformerException, XpathException, ParserConfigurationException {
+                                            Document inDocument) 
+        throws XpathException {
         XpathEngine simpleXpathEngine = newXpathEngine();
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
             xPathExpression, inDocument);
@@ -726,11 +680,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * contain a DOCTYPE declaration to be validated
      * @param xmlString
      * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException if validation could not be turned on
      * @see Validator
      */
     public static void assertXMLValid(String xmlString)
-    throws SAXException, ParserConfigurationException {
+        throws SAXException, ConfigurationException {
         assertXMLValid(new Validator(new StringReader(xmlString)));
     }
 
@@ -741,11 +695,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param xmlString
      * @param systemId
      * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException if validation could not be turned on
      * @see Validator
      */
     public static void assertXMLValid(String xmlString, String systemId)
-    throws SAXException, ParserConfigurationException {
+    throws SAXException, ConfigurationException {
         assertXMLValid(new Validator(new StringReader(xmlString), systemId));
     }
 
@@ -757,11 +711,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param systemId
      * @param doctype
      * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws ConfigurationException if validation could not be turned on
      * @see Validator
      */
     public static void assertXMLValid(String xmlString, String systemId, String doctype)
-    throws SAXException, ParserConfigurationException {
+    throws SAXException, ConfigurationException {
         assertXMLValid(new Validator(new StringReader(xmlString), systemId, doctype));
     }
 
@@ -781,14 +735,13 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param nodeType The node type to be tested: constants defined
      *  in {@link Node org.w3c.dom.Node} e.g. <code>Node.ELEMENT_NODE</code>
      * @throws SAXException
-     * @throws ParserConfigurationException
      * @throws IOException
      * @see AbstractNodeTester
      * @see CountingNodeTester
      */
     public static void assertNodeTestPasses(String xmlString, NodeTester tester,
-    short nodeType)
-    throws SAXException, ParserConfigurationException, IOException {
+                                            short nodeType)
+        throws SAXException, IOException {
         NodeTest test = new NodeTest(xmlString);
         assertNodeTestPasses(test, tester, new short[] {nodeType}, true);
     }

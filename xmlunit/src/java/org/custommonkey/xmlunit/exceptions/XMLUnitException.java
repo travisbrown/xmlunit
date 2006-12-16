@@ -34,41 +34,31 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
-
-import org.custommonkey.xmlunit.exceptions.ConfigurationException;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+package org.custommonkey.xmlunit.exceptions;
 
 /**
- * Abstraction of an engine evaluating XPath expressions.
+ * Base class of any checked exception that can be thrown within
+ * XMLUnit.
  */
-public interface XpathEngine {
+public abstract class XMLUnitException extends Exception {
+    private final Throwable cause;
 
     /**
-     * Execute the specified xpath syntax <code>select</code> expression
-     * on the specified document and return the list of nodes (could have
-     * length zero) that match
-     * @param select
-     * @param document
-     * @return list of matching nodes
-     * @throws TransformerException
+     * Inititializes the exeption.
+     *
+     * @param message the detail message
+     * @param cause the root cause of the exception
      */
-    NodeList getMatchingNodes(String select, Document document)
-        throws ConfigurationException, XpathException;
-    
+    protected XMLUnitException(String message, Throwable cause) {
+        super(message);
+        this.cause = cause;
+    }
+
     /**
-     * Evaluate the result of executing the specified xpath syntax
-     * <code>select</code> expression on the specified document
-     * @param select
-     * @param document
-     * @return evaluated result
-     * @throws TransformerException
+     * Root cause of the exception, if any.
      */
-    String evaluate(String select, Document document)
-        throws ConfigurationException, XpathException;
+    public Throwable getCause() {
+        return cause;
+    }
 
 }

@@ -36,12 +36,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XpathException;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -111,15 +113,20 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * @param xslt
      * @param document
      * @param result
-     * @throws TransformerConfigurationException
      * @throws TransformerException
+     * @throws ConfigurationException
      */
-    private void performTransform(String xslt, Document document, Result result)
-    throws TransformerConfigurationException, TransformerException {
-        StreamSource source = new StreamSource(new StringReader(xslt));
-        Transformer transformer =
-            XMLUnit.getTransformerFactory().newTransformer(source);
-        transformer.transform(new DOMSource(document), result);
+    private void performTransform(String xslt, Document document,
+                                  Result result)
+        throws TransformerException, ConfigurationException {
+        try {
+            StreamSource source = new StreamSource(new StringReader(xslt));
+            Transformer transformer =
+                XMLUnit.getTransformerFactory().newTransformer(source);
+            transformer.transform(new DOMSource(document), result);
+        } catch (javax.xml.transform.TransformerConfigurationException ex) {
+            throw new ConfigurationException(ex);
+        }
     }
 
     /**
@@ -127,11 +134,12 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * node of the resulting Document.
      * @param select
      * @param document
-     * @return the root node of the Document created by the copy-of transform.
+     * @throws ConfigurationException
      * @throws TransformerException
+     * @return the root node of the Document created by the copy-of transform.
      */
     protected Node getXPathResultNode(String select, Document document)
-    throws TransformerException {
+        throws ConfigurationException, TransformerException {
         return getXPathResultAsDocument(select, document).getDocumentElement();
     }
 
@@ -140,11 +148,13 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * Used for XMLTestCase comparison
      * @param select
      * @param document
-     * @return the Document created by the copy-of transform.
+     * @throws ConfigurationException
      * @throws TransformerException
+     * @return the Document created by the copy-of transform.
      */
-    protected Document getXPathResultAsDocument(String select, Document document)
-    throws TransformerException {
+    protected Document getXPathResultAsDocument(String select,
+                                                Document document)
+        throws ConfigurationException, TransformerException {
         DOMResult result = new DOMResult();
         performTransform(getCopyTransformation(select), document, result);
         return (Document) result.getNode();
@@ -157,12 +167,14 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * @param select
      * @param document
      * @return list of matching nodes
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public NodeList getMatchingNodes(String select, Document document)
-    throws TransformerException, TransformerConfigurationException {
-        return getXPathResultNode(select, document).getChildNodes();
+        throws ConfigurationException, XpathException {
+        try {
+            return getXPathResultNode(select, document).getChildNodes();
+        } catch (TransformerException ex) {
+            throw new XpathException("Failed to apply stylesheet", ex);
+        }
     }
 
     /**
@@ -171,14 +183,16 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * @param select
      * @param document
      * @return evaluated result
-     * @throws TransformerException
-     * @throws TransformerConfigurationException
      */
     public String evaluate(String select, Document document)
-    throws TransformerException, TransformerConfigurationException {
-        StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        performTransform(getValueTransformation(select), document, result);
-        return writer.toString();
+        throws ConfigurationException, XpathException {
+        try {
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            performTransform(getValueTransformation(select), document, result);
+            return writer.toString();
+        } catch (TransformerException ex) {
+            throw new XpathException("Failed to apply stylesheet", ex);
+        }
     }
 }

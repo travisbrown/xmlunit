@@ -34,13 +34,14 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
+package org.custommonkey.xmlunit.exceptions;
 
 /**
- * Exception an {@link XpathEngine XpathEngine} is allowed to throw.
+ * Base class of any RuntimeException that can be thrown within
+ * XMLUnit.
  */
-public class XpathException extends Exception {
-    private Throwable cause;
+public abstract class XMLUnitRuntimeException extends RuntimeException {
+    private final Throwable cause;
 
     /**
      * Inititializes the exeption.
@@ -48,7 +49,7 @@ public class XpathException extends Exception {
      * @param message the detail message
      * @param cause the root cause of the exception
      */
-    public XpathException(String message, Throwable cause) {
+    protected XMLUnitRuntimeException(String message, Throwable cause) {
         super(message);
         this.cause = cause;
     }
