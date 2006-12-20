@@ -38,6 +38,7 @@ package org.custommonkey.xmlunit.jaxp13;
 
 import org.custommonkey.xmlunit.exceptions.ConfigurationException;
 import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.XpathEngine;
 
 import javax.xml.xpath.XPath;
@@ -100,4 +101,7 @@ public class Jaxp13XpathEngine implements XpathEngine {
         }
     }
 
+    public void setNamespaceContext(NamespaceContext ctx) {
+        xpath.setNamespaceContext(new XMLUnitNamespaceContext2Jaxp13(ctx));
+    }
 }

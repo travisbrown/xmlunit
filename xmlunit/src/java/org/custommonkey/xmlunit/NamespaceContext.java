@@ -36,43 +36,28 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import org.custommonkey.xmlunit.exceptions.ConfigurationException;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.Iterator;
 
 /**
- * Abstraction of an engine evaluating XPath expressions.
+ * Interface used by XpathEngine in order to map prefixes to namespace URIs.
+ *
+ * <p>This is modelled after javax.xml.namespace.NamespaceContext but
+ * reduced to our needs.</p>
  */
-public interface XpathEngine {
+public interface NamespaceContext {
+    /**
+     * Obtain the URI for a given prefix.
+     *
+     * <p>Unlike the method in javax.xml.namespace.NamespaceContext
+     * doesn't have to implement any special handling for predefined
+     * prefix values.</p>
+     *
+     * @return null if the prefix is unknown.
+     */
+    String getNamespaceURI(String prefix);
 
     /**
-     * Execute the specified xpath syntax <code>select</code> expression
-     * on the specified document and return the list of nodes (could have
-     * length zero) that match
-     * @param select
-     * @param document
-     * @return list of matching nodes
-     * @throws TransformerException
+     * Get all prefixes of this context.
      */
-    NodeList getMatchingNodes(String select, Document document)
-        throws ConfigurationException, XpathException;
-    
-    /**
-     * Evaluate the result of executing the specified xpath syntax
-     * <code>select</code> expression on the specified document
-     * @param select
-     * @param document
-     * @return evaluated result
-     * @throws TransformerException
-     */
-    String evaluate(String select, Document document)
-        throws ConfigurationException, XpathException;
-
-    /**
-     * Establish a namespace context.
-     */
-    void setNamespaceContext(NamespaceContext ctx);
+    Iterator getPrefixes();
 }

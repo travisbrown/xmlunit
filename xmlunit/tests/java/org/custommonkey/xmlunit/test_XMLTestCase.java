@@ -39,6 +39,7 @@ package org.custommonkey.xmlunit;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.StringReader;
+import java.util.HashMap;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
@@ -50,6 +51,15 @@ import org.w3c.dom.Node;
  * Test case used to test the XMLTestCase
  */
 public class test_XMLTestCase extends XMLTestCase{
+    private static final String PREFIX = "foo";
+    private static final String TEST_NS = "urn:org.example";
+    private static final NamespaceContext NS_CONTEXT;
+    static {
+        HashMap m = new HashMap();
+        m.put(PREFIX, TEST_NS);
+        NS_CONTEXT = new SimpleNamespaceContext(m);
+    }
+
     private final String[] control = new String[]{
         "<root/>",
         "<root></root>",
@@ -150,6 +160,10 @@ public class test_XMLTestCase extends XMLTestCase{
     private static final String xpathValuesTestXML =
             "<root><outer attr=\"urk\"><inner attr=\"ugh\">"
             + "testDocument</inner></outer></root>";
+    private static final String xpathValuesControlXMLNS =
+        addNamespaceToDocument(xpathValuesControlXML);
+    private static final String xpathValuesTestXMLNS =
+        addNamespaceToDocument(xpathValuesTestXML);
 
     public void testXpathValuesEqualUsingDocument() throws Exception {
         Document controlDocument = XMLUnit.buildControlDocument(xpathValuesControlXML);
@@ -164,6 +178,29 @@ public class test_XMLTestCase extends XMLTestCase{
             "//text()", testDocument);
     }
 
+    public void testXpathValuesEqualUsingDocumentNS() throws Exception {
+        Document controlDocument = XMLUnit.buildControlDocument(xpathValuesControlXMLNS);
+        Document testDocument = XMLUnit.buildTestDocument(xpathValuesTestXMLNS);
+
+        assertXpathValuesNotEqual("//text()",
+                                  "//inner/text()", controlDocument);
+        assertXpathValuesEqual("//text()",
+                               "//" + PREFIX + ":inner/text()",
+                               controlDocument,
+                               NS_CONTEXT);
+        assertXpathValuesEqual("//" + PREFIX + ":inner/@attr", controlDocument,
+                               "//" + PREFIX + ":outer/@attr", testDocument,
+                               NS_CONTEXT);
+
+        assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
+                                  "//" + PREFIX + ":outer/@attr",
+                                  controlDocument, NS_CONTEXT);
+        assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
+                                  controlDocument,
+                                  "//text()",
+                                  testDocument, NS_CONTEXT);
+    }
+
     public void testXpathValuesEqualUsingString() throws Exception {
         assertXpathValuesEqual("//text()", "//inner/text()", xpathValuesControlXML);
         assertXpathValuesEqual("//inner/@attr", xpathValuesControlXML,
@@ -172,6 +209,26 @@ public class test_XMLTestCase extends XMLTestCase{
         assertXpathValuesNotEqual("//inner/text()", "//outer/@attr", xpathValuesControlXML);
         assertXpathValuesNotEqual("//inner/text()", xpathValuesControlXML,
             "//text()", xpathValuesTestXML);
+    }
+
+    public void testXpathValuesEqualUsingStringNS() throws Exception {
+        assertXpathValuesNotEqual("//text()", "//inner/text()",
+                                  xpathValuesControlXMLNS);
+        assertXpathValuesEqual("//text()",
+                               "//" + PREFIX + ":inner/text()",
+                               xpathValuesControlXMLNS, NS_CONTEXT);
+        assertXpathValuesEqual("//" + PREFIX + ":inner/@attr",
+                               xpathValuesControlXMLNS,
+                               "//" + PREFIX + ":outer/@attr",
+                               xpathValuesTestXMLNS, NS_CONTEXT);
+
+        assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
+                                  "//" + PREFIX + ":outer/@attr",
+                                  xpathValuesControlXMLNS, NS_CONTEXT);
+        assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
+                                  xpathValuesControlXMLNS,
+                                  "//text()", xpathValuesTestXMLNS,
+                                  NS_CONTEXT);
     }
 
     public void testXpathEvaluatesTo() throws Exception {
@@ -188,6 +245,36 @@ public class test_XMLTestCase extends XMLTestCase{
         try {
             assertXpathEvaluatesTo("yeah", "//outer/@attr", testDocument);
             fail("Expected assertion to fail #2");
+        } catch (AssertionFailedError e) {
+        }
+
+    }
+
+    public void testXpathEvaluatesToNS() throws Exception {
+        try {
+            assertXpathEvaluatesTo("urk", "//outer/@attr",
+                                   xpathValuesControlXMLNS);
+            fail("Expected assertion to fail #1");
+        } catch (AssertionFailedError e) {
+        }
+        assertXpathEvaluatesTo("urk", "//" + PREFIX + ":outer/@attr",
+                               xpathValuesControlXMLNS, NS_CONTEXT);
+        try {
+            assertXpathEvaluatesTo("yum", "//" + PREFIX + ":inner/@attr",
+                                   xpathValuesControlXMLNS, NS_CONTEXT);
+            fail("Expected assertion to fail #2");
+        } catch (AssertionFailedError e) {
+        }
+        assertXpathEvaluatesTo("2", "count(//@attr)", xpathValuesControlXMLNS,
+                               NS_CONTEXT);
+
+        Document testDocument = XMLUnit.buildTestDocument(xpathValuesTestXMLNS);
+        assertXpathEvaluatesTo("ugh", "//" + PREFIX + ":inner/@attr",
+                               testDocument, NS_CONTEXT);
+        try {
+            assertXpathEvaluatesTo("yeah", "//" + PREFIX + ":outer/@attr",
+                                   testDocument, NS_CONTEXT);
+            fail("Expected assertion to fail #3");
         } catch (AssertionFailedError e) {
         }
 
@@ -487,6 +574,12 @@ public class test_XMLTestCase extends XMLTestCase{
 
     public test_XMLTestCase(String name) {
         super(name);
+    }
+
+    private static String addNamespaceToDocument(String original) {
+        int pos = original.indexOf(">");
+        return original.substring(0, pos) + " xmlns='" + TEST_NS + "'"
+            + original.substring(pos);
     }
 
     /**

@@ -41,6 +41,7 @@ import org.custommonkey.xmlunit.exceptions.XpathException;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Iterator;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -64,13 +65,22 @@ import org.w3c.dom.NodeList;
  */
 public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
 
+    private NamespaceContext ctx = SimpleNamespaceContext.EMPTY_CONTEXT;
+
     /**
      * What every XSL transform needs
      * @return
      */
     private StringBuffer getXSLTBase() {
-        return new StringBuffer(XML_DECLARATION)
+        StringBuffer result = new StringBuffer(XML_DECLARATION)
             .append(XSLT_START);
+        String tmp = result.toString();
+        int close = tmp.lastIndexOf('>');
+        if (close == -1) {
+            close = tmp.length();
+        }
+        result.insert(close, getNamespaceDeclarations());
+        return result;
     }
 
     /**
@@ -194,5 +204,41 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
         } catch (TransformerException ex) {
             throw new XpathException("Failed to apply stylesheet", ex);
         }
+    }
+
+    public void setNamespaceContext(NamespaceContext ctx) {
+        this.ctx = ctx;
+    }
+
+    /**
+     * returns namespace declarations for all namespaces known to the
+     * current context.
+     */
+    private String getNamespaceDeclarations() {
+        StringBuffer nsDecls = new StringBuffer();
+        String quoteStyle = "'";
+        for (Iterator keys = ctx.getPrefixes(); keys.hasNext(); ) {
+            String prefix = (String) keys.next();
+            String uri = ctx.getNamespaceURI(prefix);
+            if (uri == null) {
+                continue;
+            }
+            // this shouldn't have happened, but better safe than sorry
+            if (prefix == null) {
+                prefix = "";
+            }
+
+            if (uri.indexOf("'") != -1) {
+                quoteStyle = "\"";
+            }
+            nsDecls.append(" ").append(XMLNS_PREFIX);
+            if (prefix.length() > 0) {
+                nsDecls.append(':');
+            }
+            nsDecls.append(prefix).append('=')
+                .append(quoteStyle).append(uri).append(quoteStyle)
+                .append(' ');
+        }
+        return nsDecls.toString();
     }
 }

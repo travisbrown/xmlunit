@@ -36,43 +36,42 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-import org.custommonkey.xmlunit.exceptions.ConfigurationException;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
- * Abstraction of an engine evaluating XPath expressions.
+ * Implementation of NamespaceContext that's backed by a map.
  */
-public interface XpathEngine {
+public class SimpleNamespaceContext implements NamespaceContext {
+    /* prefix -> NS URI */
+    private final Map/*<String, String>*/ prefixMap;
 
     /**
-     * Execute the specified xpath syntax <code>select</code> expression
-     * on the specified document and return the list of nodes (could have
-     * length zero) that match
-     * @param select
-     * @param document
-     * @return list of matching nodes
-     * @throws TransformerException
+     * An empty context containing no prefixes at all.
      */
-    NodeList getMatchingNodes(String select, Document document)
-        throws ConfigurationException, XpathException;
-    
-    /**
-     * Evaluate the result of executing the specified xpath syntax
-     * <code>select</code> expression on the specified document
-     * @param select
-     * @param document
-     * @return evaluated result
-     * @throws TransformerException
-     */
-    String evaluate(String select, Document document)
-        throws ConfigurationException, XpathException;
+    public static final SimpleNamespaceContext EMPTY_CONTEXT =
+        new SimpleNamespaceContext(Collections.EMPTY_MAP);
 
     /**
-     * Establish a namespace context.
+     * Creates a NamespaceContext backed by the given map.
+     *
+     * <p>Copies the map, changes made to the given map after calling
+     * the constructor are not reflected into the
+     * NamespaceContext.</p>
+     *
+     * @param prefixMap maps prefix to Namespace URI
      */
-    void setNamespaceContext(NamespaceContext ctx);
+    public SimpleNamespaceContext(Map prefixMap) {
+        this.prefixMap = new HashMap(prefixMap);
+    }
+
+    public String getNamespaceURI(String prefix) {
+        return (String) prefixMap.get(prefix);
+    }
+
+    public Iterator getPrefixes() {
+        return prefixMap.keySet().iterator();
+    }
 }
