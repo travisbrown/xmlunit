@@ -64,7 +64,7 @@ public final class XMLUnit {
     private static boolean ignoreWhitespace = false;
     private static EntityResolver testEntityResolver = null;
     private static EntityResolver controlEntityResolver = null;
-
+    private static NamespaceContext namespaceContext = null;
 
     private static final String STRIP_WHITESPACE_STYLESHEET
         = new StringBuffer(XMLConstants.XML_DECLARATION)
@@ -528,5 +528,41 @@ public final class XMLUnit {
         return new Diff(control, test);
     }
 
+    /**
+     * Get the NamespaceContext to use in XPath tests.
+     */
+    public static NamespaceContext getXpathNamespaceContext() {
+        return namespaceContext;
+    }
+
+    /**
+     * Set the NamespaceContext to use in XPath tests.
+     */
+    public static void setXpathNamespaceContext(NamespaceContext ctx) {
+        namespaceContext = ctx;
+    }
+
+    /**
+     * Obtains an XpathEngine to use in XPath tests.
+     */
+    public static XpathEngine newXpathEngine() {
+        XpathEngine eng = null;
+        try {
+            Class.forName("javax.xml.xpath.XPath");
+            Class c = Class.forName("org.custommonkey.xmlunit.jaxp13"
+                                    + ".Jaxp13XpathEngine");
+            eng = (XpathEngine) c.newInstance();
+        } catch (Throwable ex) {
+            // should probably only catch ClassNotFoundException, but some
+            // constellations - like Ant shipping a more recent version of
+            // xml-apis than the JDK - may contain the JAXP 1.3 interfaces
+            // without implementations
+            eng = new SimpleXpathEngine();
+        }
+        if (namespaceContext != null) {
+            eng.setNamespaceContext(namespaceContext);
+        }
+        return eng;
+    }
 }
 

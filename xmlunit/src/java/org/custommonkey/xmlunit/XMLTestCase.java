@@ -374,21 +374,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
     public void assertXpathsEqual(String controlXpath, String testXpath,
                                   Document document)
         throws XpathException {
-        assertXpathsEqual(controlXpath, testXpath, document, null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in the same document are equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
-     * @see XpathEngine
-     */
-    public void assertXpathsEqual(String controlXpath, String testXpath,
-                                  Document document, NamespaceContext ctx)
-        throws XpathException {
-    	XMLAssert.assertXpathsEqual(controlXpath, testXpath, document, ctx);
+    	XMLAssert.assertXpathsEqual(controlXpath, testXpath, document);
     }
 
     /**
@@ -403,24 +389,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
     public void assertXpathsEqual(String controlXpath, String testXpath,
                                   String inXMLString)
         throws SAXException, IOException, XpathException {
-        assertXpathsEqual(controlXpath, testXpath, inXMLString,
-                          (NamespaceContext) null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in the same XML string are
-     * equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param inXMLString
-     * @param ctx
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathsEqual(String controlXpath, String testXpath,
-                                  String inXMLString, NamespaceContext ctx)
-        throws SAXException, IOException, XpathException {
-    	XMLAssert.assertXpathsEqual(controlXpath, testXpath, inXMLString, ctx);
+    	XMLAssert.assertXpathsEqual(controlXpath, testXpath, inXMLString);
     }
 
     /**
@@ -429,35 +398,16 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inControlXMLString
      * @param xpathTwo
      * @param inTestXMLString
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathsEqual(String controlXpath,
-    String inControlXMLString, String testXpath, String inTestXMLString)
-        throws SAXException, IOException,
-               XpathException {
-        assertXpathsEqual(controlXpath, inControlXMLString, testXpath,
-                          inTestXMLString, null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in two XML strings are equal
-     * @param xpathOne
-     * @param inControlXMLString
-     * @param xpathTwo
-     * @param inTestXMLString
-     * @param ctx
      * @throws SAXException
      * @throws IOException
      */
     public void assertXpathsEqual(String controlXpath,
                                   String inControlXMLString, String testXpath,
-                                  String inTestXMLString,
-                                  NamespaceContext ctx)
+                                  String inTestXMLString)
         throws SAXException, IOException,
                XpathException {
     	XMLAssert.assertXpathsEqual(controlXpath, inControlXMLString,
-                                    testXpath, inTestXMLString, ctx);
+                                    testXpath, inTestXMLString);
     }
 
     /**
@@ -465,30 +415,14 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @see XpathEngine
-     */
-    public void assertXpathsEqual(String controlXpath, Document controlDocument,
-    String testXpath, Document testDocument)
-        throws XpathException {
-        assertXpathsEqual(controlXpath, controlDocument, testXpath,
-                          testDocument, null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in two documents are equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
      * @see XpathEngine
      */
     public void assertXpathsEqual(String controlXpath,
                                   Document controlDocument,
-                                  String testXpath, Document testDocument,
-                                  NamespaceContext ctx)
+                                  String testXpath, Document testDocument)
         throws XpathException {
     	XMLAssert.assertXpathsEqual(controlXpath, controlDocument, testXpath,
-                                    testDocument, ctx);
+                                    testDocument);
     }
 
     /**
@@ -501,21 +435,7 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
     public void assertXpathsNotEqual(String controlXpath, String testXpath,
                                      Document document)
         throws XpathException {
-        assertXpathsNotEqual(controlXpath, testXpath, document, null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in the same document are NOT equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
-     * @see XpathEngine
-     */
-    public void assertXpathsNotEqual(String controlXpath, String testXpath,
-                                     Document document, NamespaceContext ctx)
-        throws XpathException {
-    	XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, document, ctx);
+    	XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, document);
     }
 
     /**
@@ -528,30 +448,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @throws IOException
      */
     public void assertXpathsNotEqual(String controlXpath, String testXpath,
-    String inXMLString)
+                                     String inXMLString)
         throws SAXException,
                IOException, XpathException {
-        assertXpathsNotEqual(controlXpath, testXpath, inXMLString,
-                             (NamespaceContext) null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in the same XML string are NOT
-     * equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param inXMLString
-     * @param ctx
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathsNotEqual(String controlXpath, String testXpath,
-                                     String inXMLString,
-                                     NamespaceContext ctx)
-        throws SAXException,
-               IOException, XpathException {
-    	XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, inXMLString,
-                                       ctx);
+    	XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, inXMLString);
     }
 
     /**
@@ -560,35 +460,16 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inControlXMLString
      * @param xpathTwo
      * @param inTestXMLString
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathsNotEqual(String controlXpath,
-    String inControlXMLString, String testXpath, String inTestXMLString)
-        throws SAXException, IOException,
-               XpathException {
-        assertXpathsNotEqual(controlXpath, inControlXMLString, testXpath,
-                             inTestXMLString, null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in two XML strings are NOT equal
-     * @param xpathOne
-     * @param inControlXMLString
-     * @param xpathTwo
-     * @param inTestXMLString
-     * @param ctx
      * @throws SAXException
      * @throws IOException
      */
     public void assertXpathsNotEqual(String controlXpath,
                                      String inControlXMLString,
-                                     String testXpath, String inTestXMLString,
-                                     NamespaceContext ctx)
+                                     String testXpath, String inTestXMLString)
         throws SAXException, IOException,
                XpathException {
     	XMLAssert.assertXpathsNotEqual(controlXpath, inControlXMLString,
-                                       testXpath, inTestXMLString, ctx);
+                                       testXpath, inTestXMLString);
     }
 
     /**
@@ -596,30 +477,14 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @see XpathEngine
-     */
-    public void assertXpathsNotEqual(String controlXpath, Document controlDocument,
-    String testXpath, Document testDocument)
-        throws XpathException {
-        assertXpathsNotEqual(controlXpath, controlDocument, testXpath,
-                             testDocument, null);
-    }
-
-    /**
-     * Assert that the node lists of two Xpaths in two documents are NOT equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
      * @see XpathEngine
      */
     public void assertXpathsNotEqual(String controlXpath,
                                      Document controlDocument,
-                                     String testXpath, Document testDocument,
-                                     NamespaceContext ctx)
+                                     String testXpath, Document testDocument)
         throws XpathException {
     	XMLAssert.assertXpathsNotEqual(controlXpath, controlDocument,
-                                       testXpath, testDocument, ctx);
+                                       testXpath, testDocument);
     }
 
     /**
@@ -630,24 +495,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @see XpathEngine
      */
     public void assertXpathValuesEqual(String controlXpath, String testXpath,
-    Document document)
+                                       Document document)
         throws XpathException {
-        assertXpathValuesEqual(controlXpath, testXpath, document, null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in the same document are equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
-     * @see XpathEngine
-     */
-    public void assertXpathValuesEqual(String controlXpath, String testXpath,
-                                       Document document, NamespaceContext ctx)
-        throws XpathException {
-    	XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, document,
-                                         ctx);
+    	XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, document);
     }
 
     /**
@@ -660,30 +510,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @throws IOException
      */
     public void assertXpathValuesEqual(String controlXpath, String testXpath,
-    String inXMLString)
+                                       String inXMLString)
     throws SAXException, IOException,
            XpathException {
-        assertXpathValuesEqual(controlXpath, testXpath, inXMLString,
-                               (NamespaceContext) null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in the same XML string are
-     *  equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param inXMLString
-     * @param ctx
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathValuesEqual(String controlXpath, String testXpath,
-                                       String inXMLString,
-                                       NamespaceContext ctx)
-    throws SAXException, IOException,
-           XpathException {
-    	XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, inXMLString,
-                                         ctx);
+    	XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, inXMLString);
     }
 
     /**
@@ -692,36 +522,17 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inControlXMLString
      * @param xpathTwo
      * @param inTestXMLString
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathValuesEqual(String controlXpath,
-    String inControlXMLString, String testXpath, String inTestXMLString)
-    throws SAXException, IOException,
-           XpathException {
-        assertXpathValuesEqual(controlXpath, inControlXMLString, testXpath,
-                               inTestXMLString, null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in two XML strings are equal
-     * @param xpathOne
-     * @param inControlXMLString
-     * @param xpathTwo
-     * @param inTestXMLString
-     * @param ctx
      * @throws SAXException
      * @throws IOException
      */
     public void assertXpathValuesEqual(String controlXpath,
                                        String inControlXMLString,
                                        String testXpath,
-                                       String inTestXMLString,
-                                       NamespaceContext ctx)
+                                       String inTestXMLString)
     throws SAXException, IOException,
            XpathException {
     	XMLAssert.assertXpathValuesEqual(controlXpath, inControlXMLString,
-                                         testXpath, inTestXMLString, ctx);
+                                         testXpath, inTestXMLString);
     }
 
     /**
@@ -729,30 +540,14 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     * @see XpathEngine
-     */
-    public void assertXpathValuesEqual(String controlXpath, Document controlDocument,
-    String testXpath, Document testDocument)
-        throws XpathException {
-        assertXpathValuesEqual(controlXpath, controlDocument, testXpath,
-                               testDocument, null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in two documents are equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
      * @see XpathEngine
      */
     public void assertXpathValuesEqual(String controlXpath,
                                        Document controlDocument,
-                                       String testXpath, Document testDocument,
-                                       NamespaceContext ctx)
+                                       String testXpath, Document testDocument)
         throws XpathException {
     	XMLAssert.assertXpathValuesEqual(controlXpath, controlDocument,
-                                         testXpath, testDocument, ctx);
+                                         testXpath, testDocument);
     }
 
     /**
@@ -765,30 +560,11 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @throws IOException
      */
     public void assertXpathValuesNotEqual(String controlXpath, String testXpath,
-    String inXMLString)
-    throws SAXException, IOException,
-           XpathException {
-        assertXpathValuesNotEqual(controlXpath, testXpath, inXMLString,
-                                  (NamespaceContext) null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in the same XML string are
-     * NOT equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param inXMLString
-     * @param ctx
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathValuesNotEqual(String controlXpath, String testXpath,
-                                          String inXMLString,
-                                          NamespaceContext ctx)
+                                          String inXMLString)
     throws SAXException, IOException,
            XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath,
-                                            inXMLString, ctx);
+                                            inXMLString);
     }
 
     /**
@@ -799,25 +575,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param document
      */
     public void assertXpathValuesNotEqual(String controlXpath, String testXpath,
-    Document document)
+                                          Document document)
         throws XpathException {
-        assertXpathValuesNotEqual(controlXpath, testXpath, document, null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in the same document are
-     * NOT equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
-     */
-    public void assertXpathValuesNotEqual(String controlXpath, String testXpath,
-                                          Document document,
-                                          NamespaceContext ctx)
-        throws XpathException {
-    	XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath, document,
-                                            ctx);
+    	XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath, document);
     }
 
     /**
@@ -827,37 +587,17 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param inControlXMLString
      * @param xpathTwo
      * @param inTestXMLString
-     * @throws SAXException
-     * @throws IOException
-     */
-    public void assertXpathValuesNotEqual(String controlXpath,
-    String inControlXMLString, String testXpath, String inTestXMLString)
-        throws SAXException, IOException,
-               XpathException {
-        assertXpathValuesNotEqual(controlXpath, inControlXMLString, testXpath,
-                                  inTestXMLString, null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in two XML strings are
-     * NOT equal
-     * @param xpathOne
-     * @param inControlXMLString
-     * @param xpathTwo
-     * @param inTestXMLString
-     * @param ctx
      * @throws SAXException
      * @throws IOException
      */
     public void assertXpathValuesNotEqual(String controlXpath,
                                           String inControlXMLString,
                                           String testXpath,
-                                          String inTestXMLString,
-                                          NamespaceContext ctx)
+                                          String inTestXMLString)
         throws SAXException, IOException,
                XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, inControlXMLString,
-                                            testXpath, inTestXMLString, ctx);
+                                            testXpath, inTestXMLString);
     }
 
     /**
@@ -866,30 +606,14 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @param xpathOne
      * @param xpathTwo
      * @param document
-     */
-    public void assertXpathValuesNotEqual(String controlXpath, Document controlDocument,
-    String testXpath, Document testDocument)
-        throws XpathException {
-        assertXpathValuesNotEqual(controlXpath, controlDocument, testXpath,
-                                  testDocument, null);
-    }
-
-    /**
-     * Assert that the evaluation of two Xpaths in two documents are
-     * NOT equal
-     * @param xpathOne
-     * @param xpathTwo
-     * @param document
-     * @param ctx
      */
     public void assertXpathValuesNotEqual(String controlXpath,
                                           Document controlDocument,
                                           String testXpath,
-                                          Document testDocument,
-                                          NamespaceContext ctx)
+                                          Document testDocument)
         throws XpathException {
     	XMLAssert.assertXpathValuesNotEqual(controlXpath, controlDocument,
-                                            testXpath, testDocument, ctx);
+                                            testXpath, testDocument);
     }
 
     /**
@@ -902,45 +626,12 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathEvaluatesTo(String expectedValue,
-    String xpathExpression, String inXMLString)
-        throws SAXException, IOException, 
-               XpathException {
-        assertXpathEvaluatesTo(expectedValue, xpathExpression, inXMLString,
-                               null);
-    }
-
-    /**
-     * Assert the value of an Xpath expression in an XML String
-     * @param expectedValue
-     * @param xpathExpression
-     * @param inXMLString
-     * @param ctx
-     * @throws SAXException
-     * @throws IOException
-     * @see XpathEngine which provides the underlying evaluation mechanism
-     */
-    public void assertXpathEvaluatesTo(String expectedValue,
                                        String xpathExpression,
-                                       String inXMLString,
-                                       NamespaceContext ctx)
+                                       String inXMLString)
         throws SAXException, IOException, 
                XpathException {
     	XMLAssert.assertXpathEvaluatesTo(expectedValue, xpathExpression,
-                                         inXMLString, ctx);
-    }
-
-    /**
-     * Assert the value of an Xpath expression in an DOM Document
-     * @param expectedValue
-     * @param xpathExpression
-     * @param inDocument
-     * @see XpathEngine which provides the underlying evaluation mechanism
-     */
-    public void assertXpathEvaluatesTo(String expectedValue,
-    String xpathExpression, Document inDocument)
-        throws XpathException {
-        assertXpathEvaluatesTo(expectedValue, xpathExpression, inDocument,
-                               null);
+                                         inXMLString);
     }
 
     /**
@@ -953,23 +644,10 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXpathEvaluatesTo(String expectedValue,
                                        String xpathExpression,
-                                       Document inDocument,
-                                       NamespaceContext ctx)
+                                       Document inDocument)
         throws XpathException {
     	XMLAssert.assertXpathEvaluatesTo(expectedValue, xpathExpression,
-                                         inDocument, ctx);
-    }
-
-    /**
-     * Assert that a specific XPath exists in some given XML
-     * @param inXpathExpression
-     * @param inXMLString
-     * @see XpathEngine which provides the underlying evaluation mechanism
-     */
-    public void assertXpathExists(String xPathExpression, 
-                                  String inXMLString) 
-        throws IOException, SAXException, XpathException {
-        assertXpathExists(xPathExpression, inXMLString, null);
+                                         inDocument);
     }
 
     /**
@@ -980,35 +658,21 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathExists(String xPathExpression, 
-                                  String inXMLString,
-                                  NamespaceContext ctx) 
+                                  String inXMLString)
         throws IOException, SAXException, XpathException {
-    	XMLAssert.assertXpathExists(xPathExpression, inXMLString, ctx);
+    	XMLAssert.assertXpathExists(xPathExpression, inXMLString);
     }
     
     /**
      * Assert that a specific XPath exists in some given XML
      * @param inXpathExpression
      * @param inDocument
-     * @see XpathEngine which provides the underlying evaluation mechanism
-     */
-    public void assertXpathExists(String xPathExpression, 
-    Document inDocument) 
-        throws XpathException {
-        assertXpathExists(xPathExpression, inDocument, null);
-    }
-
-    /**
-     * Assert that a specific XPath exists in some given XML
-     * @param inXpathExpression
-     * @param inDocument
      * @param ctx
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
-    public void assertXpathExists(String xPathExpression, 
-                                  Document inDocument, NamespaceContext ctx) 
+    public void assertXpathExists(String xPathExpression, Document inDocument) 
         throws XpathException {
-    	XMLAssert.assertXpathExists(xPathExpression, inDocument, ctx);
+    	XMLAssert.assertXpathExists(xPathExpression, inDocument);
     }
 
     /**
@@ -1018,23 +682,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathNotExists(String xPathExpression, 
-    String inXMLString) 
+                                     String inXMLString)
         throws IOException, SAXException, XpathException {
-        assertXpathNotExists(xPathExpression, inXMLString, null);
-    }
-
-    /**
-     * Assert that a specific XPath does NOT exist in some given XML
-     * @param inXpathExpression
-     * @param inXMLString
-     * @param ctx
-     * @see XpathEngine which provides the underlying evaluation mechanism
-     */
-    public void assertXpathNotExists(String xPathExpression, 
-                                     String inXMLString,
-                                     NamespaceContext ctx) 
-        throws IOException, SAXException, XpathException {
-    	XMLAssert.assertXpathNotExists(xPathExpression, inXMLString, ctx);
+    	XMLAssert.assertXpathNotExists(xPathExpression, inXMLString);
     }
     
     /**
@@ -1056,22 +706,9 @@ public class XMLTestCase extends TestCase implements XSLTConstants {
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathNotExists(String xPathExpression, 
-    Document inDocument) 
+                                     Document inDocument) 
         throws XpathException {
-        assertXpathNotExists(xPathExpression, inDocument, null);
-    }
-    
-    /**
-     * Assert that a specific XPath does NOT exist in some given XML
-     * @param inXpathExpression
-     * @param inDocument
-     * @param ctx
-     * @see XpathEngine which provides the underlying evaluation mechanism
-     */
-    public void assertXpathNotExists(String xPathExpression, 
-                                     Document inDocument, NamespaceContext ctx) 
-        throws XpathException {
-    	XMLAssert.assertXpathNotExists(xPathExpression, inDocument, ctx);
+    	XMLAssert.assertXpathNotExists(xPathExpression, inDocument);
     }
     
     /**

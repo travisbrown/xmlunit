@@ -184,21 +184,20 @@ public class test_XMLTestCase extends XMLTestCase{
 
         assertXpathValuesNotEqual("//text()",
                                   "//inner/text()", controlDocument);
+        XMLUnit.setXpathNamespaceContext(NS_CONTEXT);
         assertXpathValuesEqual("//text()",
                                "//" + PREFIX + ":inner/text()",
-                               controlDocument,
-                               NS_CONTEXT);
+                               controlDocument);
         assertXpathValuesEqual("//" + PREFIX + ":inner/@attr", controlDocument,
-                               "//" + PREFIX + ":outer/@attr", testDocument,
-                               NS_CONTEXT);
+                               "//" + PREFIX + ":outer/@attr", testDocument);
 
         assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
                                   "//" + PREFIX + ":outer/@attr",
-                                  controlDocument, NS_CONTEXT);
+                                  controlDocument);
         assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
                                   controlDocument,
                                   "//text()",
-                                  testDocument, NS_CONTEXT);
+                                  testDocument);
     }
 
     public void testXpathValuesEqualUsingString() throws Exception {
@@ -214,21 +213,21 @@ public class test_XMLTestCase extends XMLTestCase{
     public void testXpathValuesEqualUsingStringNS() throws Exception {
         assertXpathValuesNotEqual("//text()", "//inner/text()",
                                   xpathValuesControlXMLNS);
+        XMLUnit.setXpathNamespaceContext(NS_CONTEXT);
         assertXpathValuesEqual("//text()",
                                "//" + PREFIX + ":inner/text()",
-                               xpathValuesControlXMLNS, NS_CONTEXT);
+                               xpathValuesControlXMLNS);
         assertXpathValuesEqual("//" + PREFIX + ":inner/@attr",
                                xpathValuesControlXMLNS,
                                "//" + PREFIX + ":outer/@attr",
-                               xpathValuesTestXMLNS, NS_CONTEXT);
+                               xpathValuesTestXMLNS);
 
         assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
                                   "//" + PREFIX + ":outer/@attr",
-                                  xpathValuesControlXMLNS, NS_CONTEXT);
+                                  xpathValuesControlXMLNS);
         assertXpathValuesNotEqual("//" + PREFIX + ":inner/text()",
                                   xpathValuesControlXMLNS,
-                                  "//text()", xpathValuesTestXMLNS,
-                                  NS_CONTEXT);
+                                  "//text()", xpathValuesTestXMLNS);
     }
 
     public void testXpathEvaluatesTo() throws Exception {
@@ -257,23 +256,24 @@ public class test_XMLTestCase extends XMLTestCase{
             fail("Expected assertion to fail #1");
         } catch (AssertionFailedError e) {
         }
+
+        XMLUnit.setXpathNamespaceContext(NS_CONTEXT);
         assertXpathEvaluatesTo("urk", "//" + PREFIX + ":outer/@attr",
-                               xpathValuesControlXMLNS, NS_CONTEXT);
+                               xpathValuesControlXMLNS);
         try {
             assertXpathEvaluatesTo("yum", "//" + PREFIX + ":inner/@attr",
-                                   xpathValuesControlXMLNS, NS_CONTEXT);
+                                   xpathValuesControlXMLNS);
             fail("Expected assertion to fail #2");
         } catch (AssertionFailedError e) {
         }
-        assertXpathEvaluatesTo("2", "count(//@attr)", xpathValuesControlXMLNS,
-                               NS_CONTEXT);
+        assertXpathEvaluatesTo("2", "count(//@attr)", xpathValuesControlXMLNS);
 
         Document testDocument = XMLUnit.buildTestDocument(xpathValuesTestXMLNS);
         assertXpathEvaluatesTo("ugh", "//" + PREFIX + ":inner/@attr",
-                               testDocument, NS_CONTEXT);
+                               testDocument);
         try {
             assertXpathEvaluatesTo("yeah", "//" + PREFIX + ":outer/@attr",
-                                   testDocument, NS_CONTEXT);
+                                   testDocument);
             fail("Expected assertion to fail #3");
         } catch (AssertionFailedError e) {
         }
@@ -580,6 +580,10 @@ public class test_XMLTestCase extends XMLTestCase{
         int pos = original.indexOf(">");
         return original.substring(0, pos) + " xmlns='" + TEST_NS + "'"
             + original.substring(pos);
+    }
+
+    public void tearDown() {
+        XMLUnit.setXpathNamespaceContext(null);
     }
 
     /**
