@@ -124,6 +124,24 @@ extends TestCase {
             1, recoverable);
     }
 
+    public void testIssue771839() throws Exception {
+        String xmlString1 = "<location>"
+            + "<street-address>22 any street</street-address>"
+            + "<postcode id='3'>XY0099Z</postcode>"
+            + "</location>";
+        String xmlString2 = "<location>"
+            + "<postcode1 id='1'>EC3M 1EB</postcode1>"
+            + "<street-address>20 east cheap</street-address>"
+            + "</location>";
+
+        Diff d = new Diff(xmlString1, xmlString2);
+        d.overrideDifferenceListener(listener);
+        assertFalse(d.similar());
+        assertTrue("postcode was matched against postcode1",
+                   d.toString().indexOf("Expected element tag name 'postcode'"
+                                        + " but was 'postcode1'") > -1);
+    }
+
     public void setUp() {
         listener = 
             new IgnoreTextAndAttributeValuesDifferenceListener();    

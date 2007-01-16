@@ -36,6 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.CDATASection;
@@ -288,37 +291,38 @@ public class DifferenceEngine implements DifferenceConstants {
      * control NodeList.
      * @throws DifferenceFoundException
      */
-    protected void compareNodeList(NodeList control, NodeList test,
-    int numNodes, DifferenceListener listener, ElementQualifier elementQualifier) 
-    throws DifferenceFoundException {
-        Node nextControl, nextTest = null;
+    protected void compareNodeList(final NodeList control, final NodeList test,
+                                   final int numNodes,
+                                   final DifferenceListener listener,
+                                   final ElementQualifier elementQualifier) 
+        throws DifferenceFoundException {
+
         int j = 0;
-        int lastTestNode = test.getLength() - 1;
-        boolean matchOnElement, matchFound;
-        short findNodeType;
+        final int lastTestNode = test.getLength() - 1;
         testTracker.preloadNodeList(test);
 
+        HashMap/*<Node, Node>*/ matchingNodes = new HashMap();
+        HashMap/*<Node, Integer>*/ matchingNodeIndexes = new HashMap();
+
+        // first pass to find the matching nodes in control and test docs
         for (int i=0; i < numNodes; ++i) {
-            nextControl = control.item(i);
-            if (nextControl instanceof Element) {
-                matchOnElement = true;
-            } else {
-                matchOnElement = false;
-            }
-            findNodeType = nextControl.getNodeType();
+            Node nextControl = control.item(i);
+            boolean matchOnElement = nextControl instanceof Element;
+            short findNodeType = nextControl.getNodeType();
             int startAt = ( i > lastTestNode ? lastTestNode : i);
             j = startAt;
             
-            matchFound = false;
+            boolean matchFound = false;
 
             while (!matchFound) {
-                if (matchOnElement && test.item(j) instanceof Element
-                && elementQualifier.qualifyForComparison((Element)nextControl, (Element)test.item(j))) {
-                    matchFound = true;
-                } else if (!matchOnElement
-                && findNodeType == test.item(j).getNodeType()) {
-                    matchFound = true;
-                } else {
+                if (findNodeType == test.item(j).getNodeType()) {
+                    matchFound = !matchOnElement
+                        || elementQualifier == null
+                        || elementQualifier
+                        .qualifyForComparison((Element)nextControl,
+                                              (Element)test.item(j));
+                }
+                if (!matchFound) {
                     ++j;
                     if (j > lastTestNode) {
                         j = 0;
@@ -329,10 +333,48 @@ public class DifferenceEngine implements DifferenceConstants {
                     }
                 }
             }
-            nextTest = test.item(j);
-        	compareNode(nextControl, nextTest, listener, elementQualifier);
-            compare(new Integer(i), new Integer(j),
-                nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
+            if (matchFound) {
+                matchingNodes.put(nextControl, test.item(j));
+                matchingNodeIndexes.put(nextControl, new Integer(j));
+            }
+        }
+
+        // next, do the actual comparision on those that matched - or
+        // match them against the first test nodes that didn't match
+        // any other control nodes
+        Collection matchingTestNodes = matchingNodes.values();
+        for (int i=0; i < numNodes; ++i) {
+            Node nextControl = control.item(i);
+            Node nextTest = (Node) matchingNodes.get(nextControl);
+            Integer testIndex = (Integer) matchingNodeIndexes.get(nextControl);
+            if (nextTest == null) {
+                short findNodeType = nextControl.getNodeType();
+                int startAt = ( i > lastTestNode ? lastTestNode : i);
+                j = startAt;
+            
+                boolean matchFound = false;
+
+                while (!matchFound) {
+                    if (test.item(j).getNodeType() == findNodeType
+                        && !matchingTestNodes.contains(test.item(j))) {
+                        matchFound = true;
+                    } else {
+                        ++j;
+                        if (j > lastTestNode) {
+                            j = 0;
+                        }
+                        if (j == startAt) {
+                            // been through all children
+                            break;
+                        }
+                    }
+                }
+                nextTest = test.item(j);
+                testIndex = new Integer(j);
+            }
+            compareNode(nextControl, nextTest, listener, elementQualifier);
+            compare(new Integer(i), testIndex,
+                    nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
         }
     }
 
