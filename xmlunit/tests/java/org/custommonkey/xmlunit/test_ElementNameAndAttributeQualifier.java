@@ -212,6 +212,37 @@ public class test_ElementNameAndAttributeQualifier extends TestCase {
                    elementNameAndAttributeQualifier.qualifyForComparison(control, test));
 	}
 
+    /**
+     * @see https://sourceforge.net/forum/forum.php?thread_id=1135716&forum_id=73274l
+     */
+    public void testHelpForumThread1135716() throws Exception {
+        String control = "<class id=\"c0\"> "
+            + "<method id=\"c0_m0\"> "
+            + "<dependency_info stmtId=\"c0_m0_s4\"> "
+            + "<dependent tid=\"c3_m1_s18\"/> "
+            + "<dependent tid=\"c3_m1_s32\"/> "
+            + "<dependent tid=\"c3_m1_s26\"/> "
+            + "</dependency_info> "
+            + "</method> "
+            + "</class>";
+        String test = "<class id=\"c0\"> "
+            + "<method id=\"c0_m0\"> "
+            + "<dependency_info stmtId=\"c0_m0_s4\"> "
+            + "<dependent tid=\"c3_m1_s32\"/> "
+            + "<dependent tid=\"c3_m1_s18\"/> "
+            + "<dependent tid=\"c3_m1_s26\"/> "
+            + "</dependency_info> "
+            + "</method> "
+            + "</class>";
+        Diff d = new Diff(control, test);
+        assertFalse(d.similar());
+
+        // reset
+        d = new Diff(control, test);
+        d.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+        assertTrue(d.similar());
+    }
+
 	public void setUp() throws Exception {
 		document = XMLUnit.newControlParser().newDocument();
 	}
