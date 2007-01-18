@@ -455,6 +455,8 @@ public class DifferenceEngine implements DifferenceConstants {
 	            }
         	}
         }
+        controlTracker.clearTrackedAttribute();
+        testTracker.clearTrackedAttribute();
     }
     
     private String getUnNamespacedNodeName(Node aNode) {

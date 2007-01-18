@@ -634,6 +634,24 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     		listener.testXpath);    	
     }
 
+    public void testIssue1027863() throws Exception {
+        engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
+    	String control = "<stuff><item id=\"1\"><thing/></item></stuff>";
+    	String test = "<stuff><item id=\"2\"/></stuff>";
+    	listenToDifferences(control, test);
+        assertEquals("15th difference type",
+                     DifferenceEngine.HAS_CHILD_NODES_ID,
+                     listener.comparingWhat);
+        assertEquals("15th difference control value", "true",
+                     listener.expected);
+        assertEquals("15th difference test value", "false",
+                     listener.actual);
+    	assertEquals("15th control xpath", "/stuff[1]/item[1]", 
+                     listener.controlXpath);
+    	assertEquals("15th test xpath", "/stuff[1]/item[1]", 
+                     listener.testXpath);    	
+    }
+
 	private void listenToDifferences(String control, String test)
 		throws SAXException, IOException {
 		Document controlDoc = XMLUnit.buildControlDocument(control);

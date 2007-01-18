@@ -87,6 +87,16 @@ public class XpathNodeTracker implements XMLConstants {
 		indentationList.add(currentEntry);
 	}
 
+    /**
+     * Call after processing attributes of an element and turining to
+     * compare the child nodes.
+     */
+    public void clearTrackedAttribute() {
+        if (currentEntry != null) {
+            currentEntry.clearTrackedAttribute();
+        }
+    }
+
 	/**
 	 * Call after examining child nodes, ie before returning back one level of indentation from DOM
 	 */	
