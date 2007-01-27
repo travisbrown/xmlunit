@@ -65,6 +65,7 @@ public final class XMLUnit {
     private static EntityResolver testEntityResolver = null;
     private static EntityResolver controlEntityResolver = null;
     private static NamespaceContext namespaceContext = null;
+    private static boolean ignoreDiffBetweenTextAndCDATA = false;
 
     private static final String STRIP_WHITESPACE_STYLESHEET
         = new StringBuffer(XMLConstants.XML_DECLARATION)
@@ -563,6 +564,24 @@ public final class XMLUnit {
             eng.setNamespaceContext(namespaceContext);
         }
         return eng;
+    }
+
+    /**
+     * Whether CDATA sections and Text nodes should be considered the same.
+     *
+     * <p>The default is false.</p>
+     */
+    public static void setIgnoreDiffBetweenTextAndCDATA(boolean b) {
+        ignoreDiffBetweenTextAndCDATA = b;
+    }
+
+    /**
+     * Whether CDATA sections and Text nodes should be considered the same.
+     *
+     * <p>The default is false.</p>
+     */
+    public static boolean getIgnoreDiffBetweenTextAndCDATA() {
+        return ignoreDiffBetweenTextAndCDATA;
     }
 }
 

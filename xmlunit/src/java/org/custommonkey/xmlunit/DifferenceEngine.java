@@ -228,10 +228,12 @@ public class DifferenceEngine implements DifferenceConstants {
     }
 
     private boolean comparingTextAndCDATA(short controlType, short testType) {
-        return
-            controlType == Node.TEXT_NODE && testType == Node.CDATA_SECTION_NODE
-            ||
-            testType == Node.TEXT_NODE && controlType == Node.CDATA_SECTION_NODE;
+        return XMLUnit.getIgnoreDiffBetweenTextAndCDATA() &&
+            (controlType == Node.TEXT_NODE
+             && testType == Node.CDATA_SECTION_NODE
+             ||
+             testType == Node.TEXT_NODE
+             && controlType == Node.CDATA_SECTION_NODE);
     }
 
     /**

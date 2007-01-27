@@ -544,10 +544,22 @@ public class test_Diff extends TestCase{
         assertFalse(buildDiff(left, right).similar());
     }
 
-    public void testCDATA() throws Exception {
+    public void testCDATANoIgnore() throws Exception {
         String expected = "<a>Hello</a>";
         String actual = "<a><![CDATA[Hello]]></a>";
-        assertTrue(buildDiff(expected, actual).similar());
-        assertTrue(buildDiff(expected, actual).identical());
+        assertFalse(buildDiff(expected, actual).similar());
+        assertFalse(buildDiff(expected, actual).identical());
+    }
+
+    public void testCDATAIgnore() throws Exception {
+        try {
+            XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+            String expected = "<a>Hello</a>";
+            String actual = "<a><![CDATA[Hello]]></a>";
+            assertTrue(buildDiff(expected, actual).similar());
+            assertTrue(buildDiff(expected, actual).identical());
+        } finally {
+            XMLUnit.setIgnoreDiffBetweenTextAndCDATA(false);
+        }
     }
 }
