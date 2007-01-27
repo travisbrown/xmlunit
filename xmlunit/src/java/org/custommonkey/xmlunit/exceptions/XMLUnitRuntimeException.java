@@ -40,7 +40,7 @@ package org.custommonkey.xmlunit.exceptions;
  * Base class of any RuntimeException that can be thrown within
  * XMLUnit.
  */
-public abstract class XMLUnitRuntimeException extends RuntimeException {
+public class XMLUnitRuntimeException extends RuntimeException {
     private final Throwable cause;
 
     /**
@@ -49,7 +49,7 @@ public abstract class XMLUnitRuntimeException extends RuntimeException {
      * @param message the detail message
      * @param cause the root cause of the exception
      */
-    protected XMLUnitRuntimeException(String message, Throwable cause) {
+    public XMLUnitRuntimeException(String message, Throwable cause) {
         super(message);
         this.cause = cause;
     }

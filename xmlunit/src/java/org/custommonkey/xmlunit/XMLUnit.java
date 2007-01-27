@@ -66,6 +66,7 @@ public final class XMLUnit {
     private static EntityResolver controlEntityResolver = null;
     private static NamespaceContext namespaceContext = null;
     private static boolean ignoreDiffBetweenTextAndCDATA = false;
+    private static boolean ignoreComments = false;
 
     private static final String STRIP_WHITESPACE_STYLESHEET
         = new StringBuffer(XMLConstants.XML_DECLARATION)
@@ -73,6 +74,14 @@ public final class XMLUnit {
         .append(XSLTConstants.XSLT_XML_OUTPUT_NOINDENT)
         .append(XSLTConstants.XSLT_STRIP_WHITESPACE)
         .append(XSLTConstants.XSLT_IDENTITY_TEMPLATE)
+        .append(XSLTConstants.XSLT_END)
+        .toString();
+
+    private static final String STRIP_COMMENTS_STYLESHEET
+        = new StringBuffer(XMLConstants.XML_DECLARATION)
+        .append(XSLTConstants.XSLT_START)
+        .append(XSLTConstants.XSLT_XML_OUTPUT_NOINDENT)
+        .append(XSLTConstants.XSLT_STRIP_COMMENTS_TEMPLATE)
         .append(XSLTConstants.XSLT_END)
         .toString();
 
@@ -460,11 +469,20 @@ public final class XMLUnit {
     }
 
     /**
+     * Obtain the transformation that will strip comments from a DOM.
+     * @param forDocument
+     * @return a <code>Transform</code> to do the whitespace stripping
+     */
+    public static Transform getStripCommentsTransform(Document forDocument) {
+        return new Transform(forDocument, STRIP_COMMENTS_STYLESHEET);
+    }
+
+    /**
      * Place holder for current version info.
      * @return current version
      */
     public static String getVersion() {
-        return "1.0"; 
+        return "1.1alpha"; 
     }
 
     /**
@@ -583,5 +601,24 @@ public final class XMLUnit {
     public static boolean getIgnoreDiffBetweenTextAndCDATA() {
         return ignoreDiffBetweenTextAndCDATA;
     }
+
+    /**
+     * Whether comments should be ignored.
+     *
+     * <p>The default value is false</p>
+     */
+    public static void setIgnoreComments(boolean b) {
+        ignoreComments = b;
+    }
+
+    /**
+     * Whether comments should be ignored.
+     *
+     * <p>The default value is false</p>
+     */
+    public static boolean getIgnoreComments() {
+        return ignoreComments;
+    }
+    
 }
 

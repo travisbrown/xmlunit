@@ -273,6 +273,16 @@ public class test_Diff extends TestCase{
         }
     }
 
+    public void testCommentHandlingDoesntAffectWhitespaceHandling()
+        throws Exception {
+        try {
+            XMLUnit.setIgnoreComments(true);
+            testXMLUnitDoesNotWorkWellWithFiles();
+        } finally {
+            XMLUnit.setIgnoreComments(false);
+        }
+    }
+
     /**
      * Raised 15.05.2002
      */
@@ -560,6 +570,30 @@ public class test_Diff extends TestCase{
             assertTrue(buildDiff(expected, actual).identical());
         } finally {
             XMLUnit.setIgnoreDiffBetweenTextAndCDATA(false);
+        }
+    }
+
+    public void testCommentHandling() throws Exception {
+        String xml1 = "<foo><!-- test --><bar a=\"b\"/> </foo>";
+        String xml2 = "<foo><bar a=\"b\"><!-- test --></bar> </foo>";
+        try {
+            assertFalse(buildDiff(xml1, xml2).identical());
+            assertFalse(buildDiff(xml1, xml2).similar());
+            XMLUnit.setIgnoreComments(true);
+            assertTrue(buildDiff(xml1, xml2).identical());
+            assertTrue(buildDiff(xml1, xml2).similar());
+        } finally {
+            XMLUnit.setIgnoreComments(false);
+        }
+    }
+
+    public void testWhitespaceHandlingDoesntAffectCommentHandling()
+        throws Exception {
+        try {
+            XMLUnit.setIgnoreWhitespace(true);
+            testCommentHandling();
+        } finally {
+            XMLUnit.setIgnoreWhitespace(false);
         }
     }
 }

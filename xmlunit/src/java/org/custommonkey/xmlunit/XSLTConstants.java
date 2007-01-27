@@ -65,6 +65,15 @@ public interface XSLTConstants extends XMLConstants {
         "<xsl:template match=\"/\"><xsl:copy-of select=\".\"/></xsl:template>";
 
     /**
+     * &lt;xsl:template&gt; to copy the current nodeset into the
+     * output tree while stripping comments.
+     */
+    public static final String XSLT_STRIP_COMMENTS_TEMPLATE =
+        "<xsl:template match=\"node()[not(self::comment())]|@*\">"
+        + "<xsl:copy><xsl:apply-templates select=\"node()[not(self::comment())]|@*\"/></xsl:copy>"
+        + "</xsl:template>";
+
+    /**
      * &lt;/xsl:stylesheet&gt;
      */
     public static final String XSLT_END = "</xsl:stylesheet>";

@@ -42,6 +42,8 @@ import java.io.StringReader;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
+import org.custommonkey.xmlunit.exceptions.XMLUnitRuntimeException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -149,8 +151,8 @@ implements DifferenceListener, ComparisonController {
     public Diff(Document controlDoc, Document testDoc,
                 DifferenceEngine comparator, 
                 ElementQualifier elementQualifier) {
-        this.controlDoc = getWhitespaceManipulatedDocument(controlDoc);
-        this.testDoc = getWhitespaceManipulatedDocument(testDoc);
+        this.controlDoc = getManipulatedDocument(controlDoc);
+        this.testDoc = getManipulatedDocument(testDoc);
         this.elementQualifierDelegate = elementQualifier;
         if (comparator == null) {
 	        this.differenceEngine = new DifferenceEngine(this);
@@ -172,7 +174,8 @@ implements DifferenceListener, ComparisonController {
 
     /**
      * If {@link XMLUnit#getIgnoreWhitespace whitespace is ignored} in
-     *  differences then manipulate the content to strip the redundant whitespace
+     * differences then manipulate the content to strip the redundant
+     * whitespace
      * @param originalDoc a document making up one half of this difference
      * @return the original document with redundant whitespace removed if
      *  differences ignore whitespace
@@ -186,8 +189,43 @@ implements DifferenceListener, ComparisonController {
                 originalDoc);
             return whitespaceStripper.getResultDocument();
         } catch (TransformerException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessageAndLocation() + "\n" + e.getCause());
+            throw new XMLUnitRuntimeException(e.getMessage(), e.getCause());
+        }
+    }
+
+    /**
+     * Manipulates the given document according to the setting in the
+     * XMLUnit class.
+     *
+     * <p>This may involve:</p>
+     * <ul>
+     *   <li>stripping redundant whitespace</li>
+     *   <li>stripping comments</li>
+     * </ul>
+     *     
+     * @param orig a document making up one half of this difference
+     * @return manipulated doc
+     */
+    private Document getManipulatedDocument(Document orig) {
+        return getCommentlessDocument(getWhitespaceManipulatedDocument(orig));
+    }
+
+    /**
+     * Removes all comment nodes if {@link XMLUnit.getIgnoreComments
+     * comments are ignored}.
+     *     
+     * @param originalDoc a document making up one half of this difference
+     * @return manipulated doc
+     */
+    private Document getCommentlessDocument(Document orig) {
+        if (!XMLUnit.getIgnoreComments()) {
+            return orig;
+        }
+        try {
+            Transform commentStripper = XMLUnit.getStripCommentsTransform(orig);
+            return commentStripper.getResultDocument();
+        } catch (TransformerException e) {
+            throw new XMLUnitRuntimeException(e.getMessage(), e.getCause());
         }
     }
 
