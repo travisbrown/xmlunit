@@ -651,11 +651,44 @@ public class DifferenceEngine implements DifferenceConstants {
      *  into account if necessary)
      */
     private boolean unequalNotNull(Object expected, Object actual) {
-        if (XMLUnit.getIgnoreWhitespace()
-        && expected instanceof String && actual instanceof String) {
-            return !(((String)expected).trim().equals(((String)actual).trim()));
+        if ((XMLUnit.getIgnoreWhitespace() || XMLUnit.getNormalizeWhitespace())
+            && expected instanceof String && actual instanceof String) {
+            String expectedString = ((String) expected).trim();
+            String actualString = ((String) actual).trim();
+            if (XMLUnit.getNormalizeWhitespace()) {
+                expectedString = normalizeWhitespace(expectedString);
+                actualString = normalizeWhitespace(actualString);
+            }
+            return !expectedString.equals(actualString);
         }
         return !(expected.equals(actual));
+    }
+
+    /**
+     * Replace all whitespace characters with SPACE and collapse
+     * consecutive whitespace chars to a single SPACE.
+     */
+    final static String normalizeWhitespace(String orig) {
+        StringBuffer sb = new StringBuffer();
+        boolean lastCharWasWhitespace = false;
+        boolean changed = false;
+        char[] characters = orig.toCharArray();
+        for (int i = 0; i < characters.length; i++) {
+            if (Character.isWhitespace(characters[i])) {
+                if (lastCharWasWhitespace) {
+                    // suppress character
+                    changed = true;
+                } else {
+                    sb.append(' ');
+                    changed |= characters[i] != ' ';
+                    lastCharWasWhitespace = true;
+                }
+            } else {
+                sb.append(characters[i]);
+                lastCharWasWhitespace = false;
+            }
+        }
+        return changed ? sb.toString() : orig;
     }
 
     /**

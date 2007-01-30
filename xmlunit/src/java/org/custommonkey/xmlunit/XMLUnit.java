@@ -68,6 +68,7 @@ public final class XMLUnit {
     private static boolean ignoreDiffBetweenTextAndCDATA = false;
     private static boolean ignoreComments = false;
     private static boolean normalize = false;
+    private static boolean normalizeWhitespace = false;
 
     private static final String STRIP_WHITESPACE_STYLESHEET
         = new StringBuffer(XMLConstants.XML_DECLARATION)
@@ -245,8 +246,13 @@ public final class XMLUnit {
 
     /**
      * Whether to ignore whitespace when comparing node values.
-     * This method also invokes <code>setIgnoringElementContentWhitespace()</code>
-     *  on the underlying control AND test document builder factories.
+     *
+     * <p>This method also invokes
+     * <code>setIgnoringElementContentWhitespace()</code> on the
+     * underlying control AND test document builder factories.</p>
+     *
+     * <p>Setting this parameter has no effect on {@link
+     * setNormalizeWhitespace whitespace inside texts}.</p>
      */
     public static void setIgnoreWhitespace(boolean ignore){
         ignoreWhitespace = ignore;
@@ -652,5 +658,36 @@ public final class XMLUnit {
     public static boolean getNormalize() {
         return normalize;
     }
-}
+
+    /**
+     * Whether whitespace characters inside text nodes or attributes
+     * should be "normalized".
+     *
+     * <p>Normalized in this context means that all whitespace is
+     * replaced by the space character and adjacent whitespace
+     * characters are collapsed to a single space character.</p>
+     *
+     * <p>The default value is false.</p>
+     *
+     * <p>Setting this parameter has no effect on {@link
+     * setIgnoreWhitespace ignorable whitespace}.</p>
+     */
+    public static void setNormalizeWhitespace(boolean b) {
+        normalizeWhitespace = b;
+    }
+
+    /**
+     * Whether whitespace characters inside text nodes or attributes
+     * should be "normalized".
+     *
+     * <p>Normalized in this context means that all whitespace is
+     * replaced by the space character and adjacent whitespace
+     * characters are collapsed to a single space character.</p>
+     *
+     * <p>The default value is false.</p>
+     */
+    public static boolean getNormalizeWhitespace() {
+        return normalizeWhitespace;
+    }
+ }
 

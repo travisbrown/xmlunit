@@ -669,4 +669,18 @@ public class test_Diff extends TestCase{
         }
     }
 
+    public void testNormalizedWhitespace() throws Exception {
+        String xml1 = "<foo>a = b;</foo>";
+        String xml2 = "<foo>\r\n\ta = b; \r\n</foo>";
+        try {
+            assertFalse(buildDiff(xml1, xml2).identical());
+            assertFalse(buildDiff(xml1, xml2).similar());
+            XMLUnit.setNormalizeWhitespace(true);
+            assertTrue(buildDiff(xml1, xml2).identical());
+            assertTrue(buildDiff(xml1, xml2).similar());
+        } finally {
+            XMLUnit.setNormalizeWhitespace(false);
+        }
+    }
+
 }

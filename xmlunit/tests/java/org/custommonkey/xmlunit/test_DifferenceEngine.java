@@ -652,6 +652,14 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
                      listener.testXpath);    	
     }
 
+    public void testNormalizeWhitespace() {
+        assertEquals("a b", DifferenceEngine.normalizeWhitespace("a\rb"));
+        assertEquals("a b", DifferenceEngine.normalizeWhitespace("a  b"));
+        assertEquals("a b c d e f",
+                     DifferenceEngine
+                     .normalizeWhitespace("a\rb c\nd\te\r\n   \tf"));
+    }
+
 	private void listenToDifferences(String control, String test)
 		throws SAXException, IOException {
 		Document controlDoc = XMLUnit.buildControlDocument(control);
