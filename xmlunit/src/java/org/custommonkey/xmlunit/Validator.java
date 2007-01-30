@@ -42,11 +42,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
-import org.w3c.dom.Document;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,6 +84,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
     /**
      * Baseline constructor: called by all others
+     * 
      * @param inputSource
      * @param usingDoctypeReader
      * @throws SAXException
@@ -110,6 +113,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * not allow creation of Doctype nodes.
      * The supplied systemId and doctype name will replace any Doctype
      * settings in the Document.
+     * 
      * @param document
      * @param systemID
      * @param doctype
@@ -126,6 +130,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * Basic constructor.
      * Validates the contents of the Reader using the DTD or schema referenced
      *  by those contents.
+     *  
      * @param readerForValidation
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
      * @throws ConfigurationException if validation could not be turned on
@@ -142,6 +147,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      *  systemID. There must be DOCTYPE instruction in the markup that
      *  references the DTD or else the markup will be considered invalid: if
      *  there is no DOCTYPE in the markup use the 3-argument constructor
+     *  
      * @param readerForValidation
      * @param systemID
      * @throws SAXException if unable to obtain new Sax parser via JAXP factory
@@ -157,6 +163,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * Full constructor.
      * Validates the contents of the Reader using the DTD specified with the
      *  systemID and named with the doctype name.
+     *  
      * @param readerForValidation
      * @param systemID
      * @param doctype
@@ -171,19 +178,45 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
     /**
      * Turn on XML Schema validation.
-     * Calling this method sets the featues http://apache.org/xml/features/validation/schema & http://apache.org/xml/features/validation/dynamic
-     * to true.
-     * <b>Currently this feature only works with the Xerces 2 XML parser</b>
-     * @param use indicate that XML Schema should be used to validate documents.
+     *
+     * <p><b>This feature should work with any XML parser that is JAXP
+     * 1.2 compliant and supports XML Schema validation.</b></p>
+     *
+     * <p>For a fully JAXP 1.2 compliant parser the property {@link
+     * JAXPConstants.Properties.SCHEMA_LANGUAGE
+     * http://java.sun.com/xml/jaxp/properties/schemaLanguage} is set,
+     * if this fails the method falls back to the features
+     * http://apache.org/xml/features/validation/schema &amp;
+     * http://apache.org/xml/features/validation/dynamic which should
+     * cover early versions of Xerces 2 as well.</p>
+     *
+     * @param use indicate that XML Schema should be used to validate
+     * documents.
      * @throws SAXException
+     * @see #setJAXP12SchemaSource(Object)
      */
     public void useXMLSchema(boolean use) throws SAXException {
+        boolean tryXercesProperties = false;
+        try {
+            if (use) {
+                parser.setProperty(JAXPConstants.Properties.SCHEMA_LANGUAGE,
+                                   XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            }
+        } catch (SAXNotRecognizedException e) {
+            tryXercesProperties = true;
+        } catch (SAXNotSupportedException e) {
+            tryXercesProperties = true;
+        }
+
+        if (tryXercesProperties) {
         parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/schema", use);
         parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/dynamic", use);
+        }
     }
 
     /**
-     * Perform the validation of the source against DTD
+     * Perform the validation of the source against DTD / Schema.
+     * 
      * @return true if the input supplied to the constructor passes validation,
      *  false otherwise
      */
@@ -202,7 +235,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * Append any validation message(s) to the specified StringBuffer
+     * Append any validation message(s) to the specified StringBuffer.
+     * 
      * @param toAppendTo
      * @return specified StringBuffer with message(s) appended
      */
@@ -222,7 +256,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * Actually perform validation
+     * Actually perform validation.
      */
     private void validate() {
         if (isValid != null) {
@@ -250,7 +284,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * Deal with any parser exceptions not handled by the ErrorHandler interface
+     * Deal with any parser exceptions not handled by the ErrorHandler interface.
+     * 
      * @param e
      */
     private void parserException(Exception e) {
@@ -258,7 +293,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * ErrorHandler interface method
+     * ErrorHandler interface method.
+     * 
      * @param exception
      * @throws SAXException
      */
@@ -268,7 +304,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * ErrorHandler interface method
+     * ErrorHandler interface method.
+     * 
      * @param exception
      * @throws SAXException
      */
@@ -278,7 +315,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * ErrorHandler interface method
+     * ErrorHandler interface method.
+     * 
      * @param exception
      * @throws SAXException
      */
@@ -289,7 +327,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
     /**
      * Entity Resolver method: allows us to override an existing systemID
-     * referenced in the markup DOCTYPE instruction
+     * referenced in the markup DOCTYPE instruction.
+     * 
      * @param publicId
      * @param systemId
      * @return the sax InputSource that points to the overridden systemID
@@ -304,19 +343,46 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     }
 
     /**
-     * Deal with exceptions passed to the ErrorHandler interface by the parser
+     * Deal with exceptions passed to the ErrorHandler interface by the parser.
      */
     private void errorHandlerException(Exception e) {
         invalidate(e.getMessage());
     }
 
     /**
-     * Set the validation status flag to false and capture the message for
-     *  use later
+     * Set the validation status flag to false and capture the message for use
+     * later.
+     * 
      * @param message
      */
     private void invalidate(String message) {
         isValid = Boolean.FALSE;
         messages.append(message).append(' ');
+    }
+
+    /**
+     * As per JAXP 1.2 changes, which introduced a standard way for parsers to
+     * support schema validation. Since only W3C Schema support was included in 
+     * JAXP 1.2, this is the only mechanism currently supported by this method.
+     * 
+     * @param schemaSource
+     *            This can be one of the following:
+     * <ul>
+     *   <li>String that points to the URI of the schema</li>
+     *   <li>InputStream with the contents of the schema</li>
+     *   <li>SAX InputSource</li>
+     *   <li>File</li>
+     *   <li>an array of Objects with the contents being one of the
+     *       types defined above. An array of Objects can be used only when
+     *       the schema language has the ability to assemble a schema at
+     *       runtime. When an array of Objects is passed it is illegal to
+     *       have two schemas that share the same namespace.</li>
+     * </ul>
+     * @throws SAXException if this method of validating  isn't supported.
+     * @see http://java.sun.com/webservices/jaxp/change-requests-11.html
+     */
+    public void setJAXP12SchemaSource(Object schemaSource) throws SAXException {
+        parser.setProperty(JAXPConstants.Properties.SCHEMA_SOURCE,
+                        schemaSource);
     }
 }

@@ -133,4 +133,10 @@ public interface XMLConstants {
      * "&at;"
      */
     public static final String XPATH_ATTRIBUTE_IDENTIFIER = "@";
+
+    /**
+     * http://www.w3.org/2001/XMLSchema
+     */
+    public static final String W3C_XML_SCHEMA_NS_URI
+        = "http://www.w3.org/2001/XMLSchema";
 }
