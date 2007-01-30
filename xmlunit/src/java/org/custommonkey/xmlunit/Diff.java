@@ -199,15 +199,17 @@ implements DifferenceListener, ComparisonController {
      *
      * <p>This may involve:</p>
      * <ul>
-     *   <li>stripping redundant whitespace</li>
-     *   <li>stripping comments</li>
+     *   <li>{@link XMLUnit.setIgnoreWhitespace stripping redundant
+     *   whitespace}</li>
+     *   <li>{@link XMLUnit.setIgnoreComments stripping comments}</li>
+     *   <li>{@link XMLUnit.setNormalize normalizing Text nodes}</li>
      * </ul>
      *     
      * @param orig a document making up one half of this difference
      * @return manipulated doc
      */
     private Document getManipulatedDocument(Document orig) {
-        return getCommentlessDocument(getWhitespaceManipulatedDocument(orig));
+        return getNormalizedDocument(getCommentlessDocument(getWhitespaceManipulatedDocument(orig)));
     }
 
     /**
@@ -227,6 +229,15 @@ implements DifferenceListener, ComparisonController {
         } catch (TransformerException e) {
             throw new XMLUnitRuntimeException(e.getMessage(), e.getCause());
         }
+    }
+
+    private Document getNormalizedDocument(Document orig) {
+        if (!XMLUnit.getNormalize()) {
+            return orig;
+        }
+        Document d = (Document) orig.cloneNode(true);
+        d.normalize();
+        return d;
     }
 
     /**

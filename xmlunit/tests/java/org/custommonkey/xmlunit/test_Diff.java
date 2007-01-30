@@ -283,6 +283,16 @@ public class test_Diff extends TestCase{
         }
     }
 
+    public void testNormalizationDoesntAffectWhitespaceHandling()
+        throws Exception {
+        try {
+            XMLUnit.setNormalize(true);
+            testXMLUnitDoesNotWorkWellWithFiles();
+        } finally {
+            XMLUnit.setNormalize(false);
+        }
+    }
+
     /**
      * Raised 15.05.2002
      */
@@ -596,4 +606,67 @@ public class test_Diff extends TestCase{
             XMLUnit.setIgnoreWhitespace(false);
         }
     }
+
+    public void testNormalizationDoesntAffectCommentHandling()
+        throws Exception {
+        try {
+            XMLUnit.setNormalize(true);
+            testCommentHandling();
+        } finally {
+            XMLUnit.setNormalize(false);
+        }
+    }
+
+    public void testNormalization() throws Exception {
+        Document control = XMLUnit.newControlParser().newDocument();
+        Element root = control.createElement("root");
+        control.appendChild(root);
+        root.appendChild(control.createTextNode("Text 1"));
+        root.appendChild(control.createTextNode(" and 2"));
+        Element inner = control.createElement("inner");
+        root.appendChild(inner);
+        inner.appendChild(control.createTextNode("Text 3 and 4"));
+
+        Document test = XMLUnit.newTestParser().newDocument();
+        root = test.createElement("root");
+        test.appendChild(root);
+        root.appendChild(test.createTextNode("Text 1 and 2"));
+        inner = test.createElement("inner");
+        root.appendChild(inner);
+        inner.appendChild(test.createTextNode("Text 3"));
+        inner.appendChild(test.createTextNode(" and 4"));
+
+        assertFalse(buildDiff(control, test).identical());
+        try {
+            XMLUnit.setNormalize(true);
+            assertTrue(buildDiff(control, test).identical());
+            assertTrue(buildDiff(control, test).similar());
+        } finally {
+            XMLUnit.setNormalize(false);
+        }
+        assertFalse(buildDiff(control, test).similar());
+    }
+
+    // fails with Java 5 and later
+    public void XtestWhitespaceHandlingDoesntAffectNormalization()
+        throws Exception {
+        try {
+            XMLUnit.setIgnoreWhitespace(true);
+            testNormalization();
+        } finally {
+            XMLUnit.setIgnoreWhitespace(false);
+        }
+    }
+
+    // fails with Java 5 and later
+    public void XtestCommentHandlingDoesntAffectNormalization()
+        throws Exception {
+        try {
+            XMLUnit.setIgnoreComments(true);
+            testNormalization();
+        } finally {
+            XMLUnit.setIgnoreComments(false);
+        }
+    }
+
 }
