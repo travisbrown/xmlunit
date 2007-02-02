@@ -1,7 +1,7 @@
 <project name="xmlunit" default="compile" basedir=".">
   <!-- The properties junit.lib, xmlxsl.lib, and test.report.dir should be defined in your build.properties file -->
   <target name="props">
-    <property name="xmlunit.version" value="1.0"/>
+    <property name="xmlunit.version" value="1.1alpha"/>
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="tests"/>
     <property name="lib.dir" value="lib"/>
@@ -9,6 +9,7 @@
     <property name="dist.dir" value="dist"/>
     <property name="docs.dir" value="doc"/>
     <property file="build.properties"/>
+
     <available property="jaxp13+" classname="javax.xml.xpath.XPath"/>
     <condition property="jaxp13+.impl">
       <and>
@@ -16,6 +17,7 @@
         <available classname="java.net.Proxy"/>
       </and>
     </condition>
+    <available property="regexp.present" classname="java.util.regex.Matcher"/>
   </target>
 
   <target name="check-props" unless="test.report.dir">
@@ -48,6 +50,7 @@ in build.properties</fail>
         <pathelement path="${java.class.path}"/>
       </classpath>
       <exclude name="**/jaxp13/**" unless="jaxp13+"/>
+      <exclude name="**/*XPathRegexAssert.java" unless="regexp.present"/>
     </javac>
   </target>
 
