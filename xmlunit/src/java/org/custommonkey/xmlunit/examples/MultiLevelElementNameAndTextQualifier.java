@@ -34,12 +34,16 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
+package org.custommonkey.xmlunit.examples;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
+import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
+import org.custommonkey.xmlunit.ElementNameQualifier;
+import org.custommonkey.xmlunit.ElementQualifier;
 
 /**
  * Per popular request an interface implementation that uses element

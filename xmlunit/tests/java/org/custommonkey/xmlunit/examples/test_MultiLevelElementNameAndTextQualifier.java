@@ -34,13 +34,18 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
+package org.custommonkey.xmlunit.examples;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite; 
+
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
+import org.custommonkey.xmlunit.ElementQualifier;
+import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * JUnit testcase for MultiLevelElementNameAndTextQualifier
