@@ -74,21 +74,21 @@ public class test_Jaxp13XpathEngine extends TestCase {
 
     public void testGetMatchingNodesMatchElement() throws Exception {
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-            "test/nodeWithoutAttributes", testDocument);
+                                                               "test/nodeWithoutAttributes", testDocument);
         assertEquals(2, nodeList.getLength());
         assertEquals(Node.ELEMENT_NODE, nodeList.item(0).getNodeType());
     }
 
     public void testGetMatchingNodesMatchText() throws Exception {
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-            "test//text()", testDocument);
+                                                               "test//text()", testDocument);
         assertEquals(3, nodeList.getLength());
         assertEquals(Node.TEXT_NODE, nodeList.item(0).getNodeType());
     }
 
     public void testGetMatchingNodesCheckSubNodes() throws Exception {
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-            "test/nodeWithAttributes", testDocument);
+                                                               "test/nodeWithAttributes", testDocument);
         assertEquals(1, nodeList.getLength());
         Node aNode;
 
@@ -116,7 +116,7 @@ public class test_Jaxp13XpathEngine extends TestCase {
 
     public void testEvaluate() throws Exception {
         String result = simpleXpathEngine.evaluate(
-            "count(test//node())", testDocument);
+                                                   "count(test//node())", testDocument);
         assertEquals("3 elements and 3 text nodes", "6", result);
     }
 

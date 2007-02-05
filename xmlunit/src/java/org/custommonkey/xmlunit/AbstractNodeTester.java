@@ -71,41 +71,41 @@ public abstract class AbstractNodeTester implements NodeTester {
      */
     public void testNode(Node aNode, NodeTest forTest) throws NodeTestException {
         switch (aNode.getNodeType()) {
-            case Node.ATTRIBUTE_NODE:
-            	// should not happen as attributes are not exposed by DOM traversal
-                testAttribute((Attr)aNode);
-                break;
-            case Node.CDATA_SECTION_NODE:
-                testCDATASection((CDATASection)aNode);
-                break;
-            case Node.COMMENT_NODE:
-                testComment((Comment)aNode);
-                break;
-            case Node.DOCUMENT_TYPE_NODE:
-                testDocumentType((DocumentType)aNode);
-                break;
-            case Node.ELEMENT_NODE:
-                testElement((Element)aNode);
-                break;
-            case Node.ENTITY_NODE:
-                testEntity((Entity)aNode);
-                break;
-            case Node.ENTITY_REFERENCE_NODE:
-                testEntityReference((EntityReference)aNode);
-                break;
-            case Node.NOTATION_NODE:
-                testNotation((Notation)aNode);
-                break;
-            case Node.PROCESSING_INSTRUCTION_NODE:
-                testProcessingInstruction(
-                    (ProcessingInstruction) aNode);
-                break;
-            case Node.TEXT_NODE:
-                testText((Text)aNode);
-                break;
-            default:
-                throw new NodeTestException("No delegate method for Node type",
-                    aNode);
+        case Node.ATTRIBUTE_NODE:
+            // should not happen as attributes are not exposed by DOM traversal
+            testAttribute((Attr)aNode);
+            break;
+        case Node.CDATA_SECTION_NODE:
+            testCDATASection((CDATASection)aNode);
+            break;
+        case Node.COMMENT_NODE:
+            testComment((Comment)aNode);
+            break;
+        case Node.DOCUMENT_TYPE_NODE:
+            testDocumentType((DocumentType)aNode);
+            break;
+        case Node.ELEMENT_NODE:
+            testElement((Element)aNode);
+            break;
+        case Node.ENTITY_NODE:
+            testEntity((Entity)aNode);
+            break;
+        case Node.ENTITY_REFERENCE_NODE:
+            testEntityReference((EntityReference)aNode);
+            break;
+        case Node.NOTATION_NODE:
+            testNotation((Notation)aNode);
+            break;
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            testProcessingInstruction(
+                                      (ProcessingInstruction) aNode);
+            break;
+        case Node.TEXT_NODE:
+            testText((Text)aNode);
+            break;
+        default:
+            throw new NodeTestException("No delegate method for Node type",
+                                        aNode);
         }
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractNodeTester implements NodeTester {
     }
     
     private void unhandled(Node aNode) throws NodeTestException {
-    	throw new NodeTestException("Test fails by default in AbstractNodeTester", aNode);
+        throw new NodeTestException("Test fails by default in AbstractNodeTester", aNode);
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class AbstractNodeTester implements NodeTester {
      * @exception NodeTestException if mode Nodes were expected
      */
     public void noMoreNodes(NodeTest forTest) throws NodeTestException {
-    	//by default do nothing
+        //by default do nothing
     }
 }
 

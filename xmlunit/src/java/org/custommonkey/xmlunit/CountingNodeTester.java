@@ -74,7 +74,7 @@ public class CountingNodeTester implements NodeTester {
         resetCounter();
         if (testedNodes != expectedNumNodes) {
             throw new NodeTestException("Counted " + testedNodes
-                + " node(s) but expected " + expectedNumNodes);
+                                        + " node(s) but expected " + expectedNumNodes);
         }
     }
 

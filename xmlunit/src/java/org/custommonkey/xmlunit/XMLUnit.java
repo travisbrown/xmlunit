@@ -401,7 +401,7 @@ public final class XMLUnit {
      * @throws IOException
      */
     public static Document buildDocument(DocumentBuilder withBuilder,
-    Reader fromReader) throws SAXException, IOException {
+                                         Reader fromReader) throws SAXException, IOException {
         return buildDocument(withBuilder, new InputSource(fromReader));
     }
     /**
@@ -414,7 +414,7 @@ public final class XMLUnit {
      * @throws IOException
      */
     public static Document buildDocument(DocumentBuilder withBuilder,
-    InputSource fromSource) throws IOException, SAXException {
+                                         InputSource fromSource) throws IOException, SAXException {
         return withBuilder.parse(fromSource);
     }
 
@@ -425,7 +425,7 @@ public final class XMLUnit {
      */
     public static void setTransformerFactory(String className) {
         System.setProperty("javax.xml.transform.TransformerFactory",
-            className);
+                           className);
         transformerFactory = null;
         getTransformerFactory();
     }
@@ -689,5 +689,5 @@ public final class XMLUnit {
     public static boolean getNormalizeWhitespace() {
         return normalizeWhitespace;
     }
- }
+}
 

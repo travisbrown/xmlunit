@@ -80,7 +80,7 @@ public class Difference {
      * encountered NodeDetails
      */
     protected Difference(Difference prototype, NodeDetail controlNodeDetail,
-    NodeDetail testNodeDetail) {
+                         NodeDetail testNodeDetail) {
         this(prototype.getId(), prototype.getDescription(), prototype.isRecoverable());
         this.controlNodeDetail = controlNodeDetail;
         this.testNodeDetail = testNodeDetail;
@@ -113,7 +113,7 @@ public class Difference {
      * a DetailedDiff.
      */
     protected void setRecoverable(boolean overrideValue) {
-    	recoverable = overrideValue;
+        recoverable = overrideValue;
     }
     
     /**
@@ -121,7 +121,7 @@ public class Difference {
      * at the Node where this difference was encountered
      */
     public NodeDetail getControlNodeDetail() {
-    	return controlNodeDetail;
+        return controlNodeDetail;
     }
 
     /**
@@ -129,7 +129,7 @@ public class Difference {
      * at the Node where this difference was encountered
      */
     public NodeDetail getTestNodeDetail() {
-    	return testNodeDetail;
+        return testNodeDetail;
     }
     
     /**
@@ -153,22 +153,22 @@ public class Difference {
      * their details also
      */
     public String toString() {
-    	StringBuffer buf = new StringBuffer();
-    	if (controlNodeDetail == null || testNodeDetail == null) {
-    		appendBasicRepresentation(buf);
-    	} else {
-    		appendDetailedRepresentation(buf);
-    	}
+        StringBuffer buf = new StringBuffer();
+        if (controlNodeDetail == null || testNodeDetail == null) {
+            appendBasicRepresentation(buf);
+        } else {
+            appendDetailedRepresentation(buf);
+        }
         return buf.toString();
     }
     
     private void appendBasicRepresentation(StringBuffer buf) {
         buf.append("Difference (#").append(id).
-        	append(") ").append(description);
+            append(") ").append(description);
     }
     
     private void appendDetailedRepresentation(StringBuffer buf) {
-    	buf.append("Expected ").append(getDescription())
+        buf.append("Expected ").append(getDescription())
             .append(" '").append(controlNodeDetail.getValue())
             .append("' but was '").append(testNodeDetail.getValue())
             .append("' - comparing ");

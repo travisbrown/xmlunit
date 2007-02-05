@@ -55,11 +55,11 @@ public class test_Validator extends XMLTestCase {
     private File tempDTDFile;
 
     public void testXSchema() throws Exception{
-    	File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
-		assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", xsdFile.exists());
-		
-		File xmlFile = new File(test_Constants.BASEDIR + "/tests/etc/BookXsdGenerated.xml");
-    	assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", xmlFile.exists());
+        File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
+        assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", xsdFile.exists());
+                
+        File xmlFile = new File(test_Constants.BASEDIR + "/tests/etc/BookXsdGenerated.xml");
+        assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", xmlFile.exists());
         validator = new Validator(new FileReader(xmlFile));
 
         validator.useXMLSchema(true);
@@ -69,20 +69,20 @@ public class test_Validator extends XMLTestCase {
 
     public void testIsValidGood() throws Exception {
         String toonXML = test_Constants.XML_DECLARATION
-             + test_Constants.CHUCK_JONES_RIP_DTD_DECL
-             + test_Constants.CHUCK_JONES_RIP_XML;
+            + test_Constants.CHUCK_JONES_RIP_DTD_DECL
+            + test_Constants.CHUCK_JONES_RIP_XML;
         validator = new Validator(new StringReader(toonXML));
         assertEquals("toonXML " + validator.toString(),
-            true, validator.isValid());
+                     true, validator.isValid());
         // test XMLTestCase
         passXMLTestCaseTest(toonXML);
         passXMLTestCaseTest(validator);
 
         String noXMLDeclaration = test_Constants.CHUCK_JONES_RIP_DTD_DECL
-             + test_Constants.CHUCK_JONES_RIP_XML;
+            + test_Constants.CHUCK_JONES_RIP_XML;
         validator = new Validator(new StringReader(noXMLDeclaration));
         assertEquals("noXMLDeclaration " + validator.toString(),
-            true, validator.isValid());
+                     true, validator.isValid());
         // test XMLTestCase
         passXMLTestCaseTest(noXMLDeclaration);
         passXMLTestCaseTest(validator);
@@ -93,24 +93,24 @@ public class test_Validator extends XMLTestCase {
         assertEquals(tempDTDFile.getAbsolutePath(), true, tempDTDFile.exists());
 
         String externalDTD = test_Constants.XML_DECLARATION
-             + test_Constants.DOCUMENT_WITH_GOOD_EXTERNAL_DTD;
+            + test_Constants.DOCUMENT_WITH_GOOD_EXTERNAL_DTD;
         String tempDTDUrl = tempDTDFile.toURL().toExternalForm();
         validator = new Validator(new StringReader(externalDTD),
-            tempDTDUrl);
+                                  tempDTDUrl);
 
         assertEquals("externalDTD " + validator.toString(),
-            true, validator.isValid());
+                     true, validator.isValid());
         // test XMLTestCase
         passXMLTestCaseTest(externalDTD, tempDTDFile.toURL().toExternalForm());
         passXMLTestCaseTest(validator);
 
         String noDTD = test_Constants.XML_DECLARATION
-             + test_Constants.DOCUMENT_WITH_NO_EXTERNAL_DTD;
+            + test_Constants.DOCUMENT_WITH_NO_EXTERNAL_DTD;
         validator = new Validator(new StringReader(noDTD),
-            tempDTDFile.toURL().toExternalForm());
+                                  tempDTDFile.toURL().toExternalForm());
 
         assertEquals("noDTD " + validator.toString(),
-            false, validator.isValid());
+                     false, validator.isValid());
         // test XMLTestCase
         failXMLTestCaseTest(noDTD, tempDTDFile.toURL().toExternalForm());
         failXMLTestCaseTest(validator);
@@ -125,14 +125,14 @@ public class test_Validator extends XMLTestCase {
         String doctype = "cartoons";
         String notDoctype = "anima";
         validator = new Validator(new StringReader(noDTD),
-            systemid, doctype);
+                                  systemid, doctype);
         assertEquals(validator.toString(), true, validator.isValid());
         // test XMLTestCase
         passXMLTestCaseTest(noDTD, systemid, doctype);
         passXMLTestCaseTest(validator);
 
         validator = new Validator(new StringReader(noDTD),
-            systemid, notDoctype);
+                                  systemid, notDoctype);
         assertEquals(validator.toString(), false, validator.isValid());
         // test XMLTestCase
         failXMLTestCaseTest(noDTD, systemid, notDoctype);
@@ -141,42 +141,42 @@ public class test_Validator extends XMLTestCase {
         Document document = getDocument(noDTD);
         validator = new Validator(document, systemid, doctype);
         assertEquals("Document " + validator.toString(),
-            true, validator.isValid());
+                     true, validator.isValid());
         // test XMLTestCase
         passXMLTestCaseTest(validator);
 
         validator = new Validator(document, systemid, notDoctype);
         assertEquals("Document " + validator.toString(),
-            false, validator.isValid());
+                     false, validator.isValid());
         // test XMLTestCase
         failXMLTestCaseTest(validator);
     }
 
     public void testIsValidBad() throws Exception {
         String noDTD = test_Constants.XML_DECLARATION
-             + test_Constants.CHUCK_JONES_RIP_XML;
+            + test_Constants.CHUCK_JONES_RIP_XML;
         validator = new Validator(new StringReader(noDTD));
         assertEquals("noDTD " + validator.toString(),
-            false, validator.isValid());
+                     false, validator.isValid());
         // test XMLTestCase
         failXMLTestCaseTest(validator);
 
         String dtdTwice = test_Constants.XML_DECLARATION
-             + test_Constants.CHUCK_JONES_RIP_DTD_DECL
-             + test_Constants.CHUCK_JONES_RIP_DTD_DECL
-             + test_Constants.CHUCK_JONES_RIP_XML;
+            + test_Constants.CHUCK_JONES_RIP_DTD_DECL
+            + test_Constants.CHUCK_JONES_RIP_DTD_DECL
+            + test_Constants.CHUCK_JONES_RIP_XML;
         validator = new Validator(new StringReader(dtdTwice));
         assertEquals("dtdTwice " + validator.toString(),
-            false, validator.isValid());
+                     false, validator.isValid());
         // test XMLTestCase
         failXMLTestCaseTest(validator);
 
         String invalidXML = test_Constants.XML_DECLARATION
-             + test_Constants.CHUCK_JONES_RIP_DTD_DECL
-             + test_Constants.CHUCK_JONES_SPINNING_IN_HIS_GRAVE_XML;
+            + test_Constants.CHUCK_JONES_RIP_DTD_DECL
+            + test_Constants.CHUCK_JONES_SPINNING_IN_HIS_GRAVE_XML;
         validator = new Validator(new StringReader(invalidXML));
         assertEquals("invalidXML " + validator.toString(),
-            false, validator.isValid());
+                     false, validator.isValid());
         // test XMLTestCase
         failXMLTestCaseTest(validator);
     }
@@ -214,7 +214,7 @@ public class test_Validator extends XMLTestCase {
         assertXMLValid(xml, systemId);
     }
     private void passXMLTestCaseTest(String xml, String systemId, String doctype)
-    throws Exception {
+        throws Exception {
         assertXMLValid(xml, systemId, doctype);
     }
     private void passXMLTestCaseTest(Validator validator) throws Exception {
@@ -229,7 +229,7 @@ public class test_Validator extends XMLTestCase {
         }
     }
     private void failXMLTestCaseTest(String xml, String systemId, String doctype)
-    throws Exception {
+        throws Exception {
         try {
             assertXMLValid(xml, systemId, doctype);
             fail("Expected assertion to fail!");

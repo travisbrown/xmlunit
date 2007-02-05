@@ -66,21 +66,21 @@ public class test_XMLUnit extends TestCase{
         Object before = XMLUnit.newControlParser();
         XMLUnit.setControlParser(getDocumentBuilderFactoryImplClass());
         assertEquals("should be different", false,
-            before == XMLUnit.newControlParser());
+                     before == XMLUnit.newControlParser());
     }
 
     public void testIgnoreWhitespace() throws Exception {
         assertEquals("should not ignore whitespace by default",
-            false, XMLUnit.getIgnoreWhitespace());
+                     false, XMLUnit.getIgnoreWhitespace());
         XMLUnit.setIgnoreWhitespace(true);
         String test="<test>  monkey   </test>";
         String control="<test>monkey</test>";
         assertEquals("Should be similar", true,
-            new Diff(control, test).similar());
+                     new Diff(control, test).similar());
         try {
             XMLUnit.setIgnoreWhitespace(false);
             assertEquals("Should be different", false,
-                new Diff(control, test).similar());
+                         new Diff(control, test).similar());
         } finally {
             // restore default setting
             XMLUnit.setIgnoreWhitespace(false);
@@ -94,19 +94,19 @@ public class test_XMLUnit extends TestCase{
         Object before = XMLUnit.newTestParser();
         XMLUnit.setTestParser(getDocumentBuilderFactoryImplClass());
         assertEquals("should be different", false,
-            before==XMLUnit.newTestParser());
+                     before==XMLUnit.newTestParser());
     }
 
     public void testSetTransformerFactory() throws Exception {
         Object before = XMLUnit.getTransformerFactory();
         XMLUnit.setTransformerFactory(before.getClass().getName());
         assertEquals("should be different", false,
-            before==XMLUnit.getTransformerFactory());
+                     before==XMLUnit.getTransformerFactory());
     }
 
     public void testStripWhitespaceTransform() throws Exception {
         Document doc = XMLUnit.buildTestDocument(
-            test_Constants.XML_WITH_WHITESPACE);
+                                                 test_Constants.XML_WITH_WHITESPACE);
         Transform transform = XMLUnit.getStripWhitespaceTransform(doc);
         Diff diff = new Diff(test_Constants.XML_WITHOUT_WHITESPACE, transform);
         assertTrue(diff.similar());

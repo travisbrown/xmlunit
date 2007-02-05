@@ -77,7 +77,7 @@ public class Transform {
      */
     public Transform(String input, String stylesheet) {
         this(new StreamSource(new StringReader(input)),
-            new StreamSource(new StringReader(stylesheet)));
+             new StreamSource(new StringReader(stylesheet)));
     }
 
     /**
@@ -87,7 +87,7 @@ public class Transform {
      */
     public Transform(String input, File stylesheet) {
         this(new StreamSource(new StringReader(input)),
-            new StreamSource(stylesheet));
+             new StreamSource(stylesheet));
     }
 
     /**
@@ -144,7 +144,7 @@ public class Transform {
      */
     private void provideSystemIdIfRequired(Source source) {
         if (source!=null && (source.getSystemId() == null
-        || source.getSystemId().length() == 0)) {
+                             || source.getSystemId().length() == 0)) {
             source.setSystemId(getDefaultSystemId());
         }
     }

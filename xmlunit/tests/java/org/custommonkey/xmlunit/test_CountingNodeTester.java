@@ -59,7 +59,7 @@ public class test_CountingNodeTester extends TestCase {
 
         tester = new CountingNodeTester(3);
         test.performTest(tester,
-            new short[] {Node.TEXT_NODE, Node.ELEMENT_NODE});
+                         new short[] {Node.TEXT_NODE, Node.ELEMENT_NODE});
 
         tester = new CountingNodeTester(0);
         test.performTest(tester, Node.COMMENT_NODE);
@@ -86,7 +86,7 @@ public class test_CountingNodeTester extends TestCase {
         try {
             tester = new CountingNodeTester(2);
             test.performTest(tester,
-                new short[] {Node.TEXT_NODE, Node.ELEMENT_NODE});
+                             new short[] {Node.TEXT_NODE, Node.ELEMENT_NODE});
             fail("Expected NodeTestException");
         } catch (NodeTestException e) {
             // failure, as expected

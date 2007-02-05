@@ -93,7 +93,7 @@ public class test_Transform extends TestCase{
             char[] animalXSL = new char[1024];
             int length = reader.read(animalXSL);
             transform = new Transform(XMLUnit.buildControlDocument(FLEABALL),
-                new String(animalXSL, 0, length));
+                                      new String(animalXSL, 0, length));
             assertEquals(DOG, stripLineFeeds(transform.getResultString()));
         } finally {
             reader.close();

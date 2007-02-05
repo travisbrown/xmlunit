@@ -7,16 +7,16 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 
-	* Redistributions of source code must retain the above copyright
-	  notice, this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above
-	  copyright notice, this list of conditions and the following
-	  disclaimer in the documentation and/or other materials provided
-	  with the distribution.
-	* Neither the name of the xmlunit.sourceforge.net nor the names
-	  of its contributors may be used to endorse or promote products
-	  derived from this software without specific prior written
-	  permission.
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above
+          copyright notice, this list of conditions and the following
+          disclaimer in the documentation and/or other materials provided
+          with the distribution.
+        * Neither the name of the xmlunit.sourceforge.net nor the names
+          of its contributors may be used to endorse or promote products
+          derived from this software without specific prior written
+          permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -50,53 +50,53 @@ import org.w3c.dom.Text;
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 public class ElementNameAndTextQualifier extends ElementNameQualifier {
-	/**
-	 * Determine whether two elements qualify for further Difference comparison.
-	 * @param control
-	 * @param test
-	 * @return true if the two elements qualify for further comparison based on
-	 * both the superclass qualification (namespace URI and non- namespaced tag
-	 * name), and the qualification of the text nodes contained within the
-	 * elements; false otherwise
-	 */
-	public boolean qualifyForComparison(Element control, Element test) {
-		if (super.qualifyForComparison(control, test)) {
-			return similar(extractText(control), extractText(test));
-		}
-		return false; 
-	}
-	
-	/**
-	 * Determine whether the text nodes contain similar values
-	 * @param control
-	 * @param test
-	 * @return true if text nodes are similar, false otherwise
-	*/
-	protected boolean similar(Text control, Text test) {		
-		if (control == null) {
-			return test == null;
-		} else if (test == null) {
-			return false;
-		}
-		return control.getNodeValue().equals(test.getNodeValue());
-	}
+    /**
+     * Determine whether two elements qualify for further Difference comparison.
+     * @param control
+     * @param test
+     * @return true if the two elements qualify for further comparison based on
+     * both the superclass qualification (namespace URI and non- namespaced tag
+     * name), and the qualification of the text nodes contained within the
+     * elements; false otherwise
+     */
+    public boolean qualifyForComparison(Element control, Element test) {
+        if (super.qualifyForComparison(control, test)) {
+            return similar(extractText(control), extractText(test));
+        }
+        return false; 
+    }
+        
+    /**
+     * Determine whether the text nodes contain similar values
+     * @param control
+     * @param test
+     * @return true if text nodes are similar, false otherwise
+     */
+    protected boolean similar(Text control, Text test) {                
+        if (control == null) {
+            return test == null;
+        } else if (test == null) {
+            return false;
+        }
+        return control.getNodeValue().equals(test.getNodeValue());
+    }
 
-	/**
-	 * Extract the normalized text from within an element
-	 * @param fromElement
-	 * @return extracted Text node (could be null)
-	 */	
-	protected Text extractText(Element fromElement) {
-		fromElement.normalize();
-		NodeList fromNodeList = fromElement.getChildNodes(); 
-		Node currentNode;
-		for (int i=0; i < fromNodeList.getLength(); ++i) {
-			currentNode = fromNodeList.item(i);
-			if (currentNode.getNodeType() == Node.TEXT_NODE) {
-				return (Text) currentNode;
-			}
-		}
-		return null;
-	}			
+    /**
+     * Extract the normalized text from within an element
+     * @param fromElement
+     * @return extracted Text node (could be null)
+     */ 
+    protected Text extractText(Element fromElement) {
+        fromElement.normalize();
+        NodeList fromNodeList = fromElement.getChildNodes(); 
+        Node currentNode;
+        for (int i=0; i < fromNodeList.getLength(); ++i) {
+            currentNode = fromNodeList.item(i);
+            if (currentNode.getNodeType() == Node.TEXT_NODE) {
+                return (Text) currentNode;
+            }
+        }
+        return null;
+    }                   
 
 }

@@ -72,7 +72,7 @@ public class DoctypeReader extends Reader {
      * @param systemID
      */
     public DoctypeReader(Reader originalSource, String doctypeName,
-    String systemID) {
+                         String systemID) {
         this.originalSource = originalSource;
         this.doctypeName = doctypeName;
         this.systemId = systemID;
@@ -132,13 +132,13 @@ public class DoctypeReader extends Reader {
             curChar = withinContent.charAt(i);
             if (curChar == '<') {
                 switch (withinContent.charAt(i + 1)) {
-                    case '?':
-                    case '!':
-                    case '-':
-                        canInsert = false;
-                        break;
-                    default:
-                        startAt = i;
+                case '?':
+                case '!':
+                case '-':
+                    canInsert = false;
+                    break;
+                default:
+                    startAt = i;
                 }
             } else if (curChar == '>') {
                 canInsert = true;
@@ -157,7 +157,7 @@ public class DoctypeReader extends Reader {
      * @return the content, after DOCTYPE amendment / addition
      */
     public String replaceDoctype(StringBuffer withinContent,
-    String doctypeName, String systemId) {
+                                 String doctypeName, String systemId) {
         String content = withinContent.toString();
         int startDoctype = content.indexOf(DOCTYPE);
         boolean noCurrentDoctype = false;
@@ -206,7 +206,7 @@ public class DoctypeReader extends Reader {
     private Reader getReplacementReader() throws IOException {
         StringBuffer originalContent = getContent(originalSource);
         String replacedContent = replaceDoctype(originalContent,
-            doctypeName, systemId);
+                                                doctypeName, systemId);
         return new StringReader(replacedContent);
     }
 

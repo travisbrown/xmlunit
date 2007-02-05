@@ -123,7 +123,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     public Validator(Document document, String systemID, String doctype)
         throws SAXException, ConfigurationException {
         this(new InputStreamReader(new NodeInputStream(document)),
-            systemID, doctype);
+             systemID, doctype);
     }
 
     /**
@@ -138,7 +138,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     public Validator(Reader readerForValidation)
         throws SAXException, ConfigurationException {
         this(new InputSource(readerForValidation),
-            (readerForValidation instanceof DoctypeReader));
+             (readerForValidation instanceof DoctypeReader));
     }
 
     /**
@@ -209,8 +209,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
         }
 
         if (tryXercesProperties) {
-        parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/schema", use);
-        parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/dynamic", use);
+            parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/schema", use);
+            parser.getXMLReader().setFeature("http://apache.org/xml/features/validation/dynamic", use);
         }
     }
 
@@ -276,7 +276,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
         } else if (usingDoctypeReader) {
             try {
                 messages.append("\nContent was: ").append(((DoctypeReader)
-                    validationInputSource.getCharacterStream()).getContent());
+                                                           validationInputSource.getCharacterStream()).getContent());
             } catch (IOException e) {
                 // silent but deadly?
             }
@@ -383,6 +383,6 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      */
     public void setJAXP12SchemaSource(Object schemaSource) throws SAXException {
         parser.setProperty(JAXPConstants.Properties.SCHEMA_SOURCE,
-                        schemaSource);
+                           schemaSource);
     }
 }

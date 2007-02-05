@@ -45,9 +45,9 @@ import org.w3c.dom.Document;
  */
 public class test_HTMLDocumentBuilder extends XMLTestCase {
     private static final String xHtml =
-            "<html><head><title>test</title></head>" +
-            "<body><h1>hello</h1><p>world</p><hr/><div><img src=\"foo.bar\"/>" +
-            "<ul><li>one</li><li>two</li></ul></div></body></html>";
+        "<html><head><title>test</title></head>" +
+        "<body><h1>hello</h1><p>world</p><hr/><div><img src=\"foo.bar\"/>" +
+        "<ul><li>one</li><li>two</li></ul></div></body></html>";
     private Document xHtmlDocument;
     private HTMLDocumentBuilder parser;
     private TolerantSaxDocumentBuilder builder;
@@ -76,7 +76,7 @@ public class test_HTMLDocumentBuilder extends XMLTestCase {
     }
 
     private void assertParsedDocumentEqual(Document control, String test)
-    throws Exception {
+        throws Exception {
         assertXMLEqual(control, parser.parse(test));
     }
 

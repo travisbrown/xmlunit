@@ -94,7 +94,7 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
             .append("<xsl:template match=\"/\">")
             .append("<xpathResult>")
             .append("<xsl:apply-templates select=\"").append(select)
-                .append("\" mode=\"result\"/>")
+            .append("\" mode=\"result\"/>")
             .append("</xpathResult>")
             .append("</xsl:template>")
             .append("<xsl:template match=\"*\" mode=\"result\">")

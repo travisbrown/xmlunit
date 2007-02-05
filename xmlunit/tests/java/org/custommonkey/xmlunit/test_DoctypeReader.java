@@ -72,7 +72,7 @@ public class test_DoctypeReader extends TestCase {
             + NEWLINE + " plIng! ";
         sourceReader = new StringReader(source);
         doctypeReader = new DoctypeReader(sourceReader,
-            "nonsense", "words");
+                                          "nonsense", "words");
         assertEquals(source, doctypeReader.getContent());
         // can get content indefinitely from this reader
         assertEquals(source, doctypeReader.getContent());
@@ -81,38 +81,38 @@ public class test_DoctypeReader extends TestCase {
     private void initDummyDoctypeReader() {
         sourceReader = new StringReader("yabba");
         doctypeReader = new DoctypeReader(sourceReader,
-            "yabba", "don\'t");
+                                          "yabba", "don\'t");
     }
 
     public void testReplaceDoctypeInternalDTD() {
         initDummyDoctypeReader();
         StringBuffer buf = new StringBuffer(test_Constants.CHUCK_JONES_RIP_DTD_DECL);
         assertEquals("<!DOCTYPE ni SYSTEM \"shrubbery\">",
-            doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
+                     doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
     }
 
     public void testReplaceDoctypeExternalDTD() {
         initDummyDoctypeReader();
         StringBuffer buf = new StringBuffer(
-            "<! DOCTYPE PUBLIC \"yak\" SYSTEM \"llama\">");
+                                            "<! DOCTYPE PUBLIC \"yak\" SYSTEM \"llama\">");
         assertEquals("<! DOCTYPE ni SYSTEM \"shrubbery\">",
-            doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
+                     doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
     }
 
     public void testReplaceDoctypeNoDTD() {
         initDummyDoctypeReader();
         StringBuffer buf = new StringBuffer(NO_DTD);
         assertEquals("<!DOCTYPE ni SYSTEM \"shrubbery\">" + NO_DTD,
-            doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
+                     doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
     }
 
     public void testReplaceDoctypeNoDTDButXMLDecl() {
         initDummyDoctypeReader();
         StringBuffer buf = new StringBuffer(test_Constants.XML_DECLARATION
-             + NO_DTD);
+                                            + NO_DTD);
         assertEquals(test_Constants.XML_DECLARATION +
-            "<!DOCTYPE ni SYSTEM \"shrubbery\">" + NO_DTD,
-            doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
+                     "<!DOCTYPE ni SYSTEM \"shrubbery\">" + NO_DTD,
+                     doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
     }
 
     public test_DoctypeReader(String name) {

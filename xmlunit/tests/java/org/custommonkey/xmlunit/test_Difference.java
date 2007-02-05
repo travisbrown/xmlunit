@@ -1,3 +1,39 @@
+/*
+******************************************************************
+Copyright (c) 200, Jeff Martin, Tim Bacon
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+    * Neither the name of the xmlunit.sourceforge.net nor the names
+      of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written
+      permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+******************************************************************
+*/
+
 package org.custommonkey.xmlunit;
 
 import junit.framework.TestCase;
@@ -16,14 +52,14 @@ public class test_Difference extends TestCase {
         Difference copy = new Difference(ORIGINAL, null, null);
         assertEquals("id", ORIGINAL.getId(), copy.getId());
         assertEquals("description", 
-            ORIGINAL.getDescription(), copy.getDescription());
+                     ORIGINAL.getDescription(), copy.getDescription());
         assertEquals("recoverable", 
-            ORIGINAL.isRecoverable(), copy.isRecoverable());
+                     ORIGINAL.isRecoverable(), copy.isRecoverable());
         
         assertEquals("precondition", false, ORIGINAL.isRecoverable());
         copy.setRecoverable(true);
         assertEquals("recoverable again", 
-            !ORIGINAL.isRecoverable(), copy.isRecoverable());
+                     !ORIGINAL.isRecoverable(), copy.isRecoverable());
     }
     
     public void testEquals() {
@@ -36,29 +72,29 @@ public class test_Difference extends TestCase {
     }
     
     public void testToString() throws Exception {
-    	String originalAsString = "Difference (#" + ORIGINAL.getId()
-    		+ ") " + ORIGINAL.getDescription();
-    	assertEquals("Original", originalAsString, ORIGINAL.toString());
-    	
-    	Document document = XMLUnit.newControlParser().newDocument();
-    	
-    	Node controlNode = document.createComment("control");
-    	NodeDetail controlNodeDetail = new NodeDetail(controlNode.getNodeValue(),
-    		controlNode, "/testToString/comment()");
-    		
-    	Node testNode = document.createComment("test");
-    	NodeDetail testNodeDetail = new NodeDetail(testNode.getNodeValue(),
-    		testNode, "/testToString/comment()");
-    		
-    	Difference difference = new Difference(DifferenceConstants.COMMENT_VALUE, 
-    		controlNodeDetail, testNodeDetail);
-    	StringBuffer buf = new StringBuffer("Expected ")
-			.append(DifferenceConstants.COMMENT_VALUE.getDescription())
-    		.append(" 'control' but was 'test' - comparing ");
-    	NodeDescriptor.appendNodeDetail(buf, controlNodeDetail);
-    	buf.append(" to ");
-    	NodeDescriptor.appendNodeDetail(buf, testNodeDetail);
-    	assertEquals("detail", buf.toString(), difference.toString());
+        String originalAsString = "Difference (#" + ORIGINAL.getId()
+            + ") " + ORIGINAL.getDescription();
+        assertEquals("Original", originalAsString, ORIGINAL.toString());
+        
+        Document document = XMLUnit.newControlParser().newDocument();
+        
+        Node controlNode = document.createComment("control");
+        NodeDetail controlNodeDetail = new NodeDetail(controlNode.getNodeValue(),
+                                                      controlNode, "/testToString/comment()");
+                
+        Node testNode = document.createComment("test");
+        NodeDetail testNodeDetail = new NodeDetail(testNode.getNodeValue(),
+                                                   testNode, "/testToString/comment()");
+                
+        Difference difference = new Difference(DifferenceConstants.COMMENT_VALUE, 
+                                               controlNodeDetail, testNodeDetail);
+        StringBuffer buf = new StringBuffer("Expected ")
+            .append(DifferenceConstants.COMMENT_VALUE.getDescription())
+            .append(" 'control' but was 'test' - comparing ");
+        NodeDescriptor.appendNodeDetail(buf, controlNodeDetail);
+        buf.append(" to ");
+        NodeDescriptor.appendNodeDetail(buf, testNodeDetail);
+        assertEquals("detail", buf.toString(), difference.toString());
     }
     
     /**

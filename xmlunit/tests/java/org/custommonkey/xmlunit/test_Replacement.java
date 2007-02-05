@@ -77,9 +77,9 @@ public class test_Replacement extends TestCase {
 
     public void testComplexString() {
         replacement = new Replacement(" a whole bunch of words",
-            "some other words altogether");
+                                      "some other words altogether");
         assertEquals("Here aresome other words altogether...",
-            replacement.replace("Here are a whole bunch of words..."));
+                     replacement.replace("Here are a whole bunch of words..."));
         
         replacement = new Replacement("pp", "p");
         assertEquals("hapy", replacement.replace("happy"));
@@ -92,21 +92,21 @@ public class test_Replacement extends TestCase {
         replacement = new Replacement(" ", null);
         assertEquals("hasReplaceBy", false, replacement.hasReplaceBy());
         assertEquals("wedon'twantnowhitespace",
-            replacement.replace("we don't want no whitespace"));
+                     replacement.replace("we don't want no whitespace"));
     }
 
     public void testNullReplacebyChars() {
         replacement = new Replacement(new char[] {'a'}, null);
         assertEquals("hasReplaceBy", false, replacement.hasReplaceBy());
         assertEquals("ntidisestblishmentrinism",
-            replacement.replace("antidisestablishmentarianism"));
+                     replacement.replace("antidisestablishmentarianism"));
     }
 
     public void testEmptyReplaceby() {
         replacement = new Replacement(new char[] {'w'}, new char[0]);
         assertEquals("hasReplaceBy", false, replacement.hasReplaceBy());
         assertEquals("ibbleobble",
-            replacement.replace("wibblewobble"));
+                     replacement.replace("wibblewobble"));
     }
 
     public test_Replacement(String name) {

@@ -83,7 +83,7 @@ public class NodeTest {
      */
     public NodeTest(Document document) {
         this(getDocumentTraversal(document),
-            document.getDocumentElement());
+             document.getDocumentElement());
     }
 
     /**
@@ -96,8 +96,8 @@ public class NodeTest {
             return (DocumentTraversal) document;
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("DOM Traversal not supported by "
-                + document.getImplementation().getClass().getName()
-                + ". To use this class you will need to switch to a DOM implementation that supports Traversal.");
+                                               + document.getImplementation().getClass().getName()
+                                               + ". To use this class you will need to switch to a DOM implementation that supports Traversal.");
         }
     }
 
@@ -121,7 +121,7 @@ public class NodeTest {
      * @exception NodeTestException if test fails
      */
     public void performTest(NodeTester tester, short singleNodeType)
-    throws NodeTestException {
+        throws NodeTestException {
         performTest(tester, new short[] {singleNodeType});
     }
 
@@ -136,12 +136,12 @@ public class NodeTest {
      * @exception NodeTestException if test fails
      */
     public void performTest(NodeTester tester, short[] nodeTypes)
-    throws NodeTestException {
+        throws NodeTestException {
         NodeIterator iter = documentTraversal.createNodeIterator(rootNode,
-            NodeFilter.SHOW_ALL, new NodeTypeNodeFilter(nodeTypes), true);
+                                                                 NodeFilter.SHOW_ALL, new NodeTypeNodeFilter(nodeTypes), true);
 
         for (Node nextNode = iter.nextNode(); nextNode != null;
-        nextNode = iter.nextNode()) {
+             nextNode = iter.nextNode()) {
             tester.testNode(nextNode, this);
         }
         tester.noMoreNodes(this);

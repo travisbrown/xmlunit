@@ -57,16 +57,16 @@ public class test_TolerantSaxDocumentBuilder extends XMLTestCase {
     public void testSimpleDocument() throws Exception {
         String simpleXML = XML_DECLARATION + SIMPLEST_XML;
         Document simpleXMLDocument = XMLUnit.buildControlDocument(
-            simpleXML);
+                                                                  simpleXML);
         assertParsedDocumentEqual(simpleXMLDocument, simpleXML);
         assertTrue(builder.getTrace(), builder.getTrace().indexOf("WARNING") == -1);
     }
 
     private void assertParsedDocumentEqual(Document control, String test)
-    throws Exception {
+        throws Exception {
         InputSource parseSource = new InputSource(new StringReader(test));
         parser.setProperty("http://xml.org/sax/properties/lexical-handler",
-            builder);
+                           builder);
         parser.parse(parseSource, builder);
         assertXMLEqual(control, builder.getDocument());
     }
@@ -75,7 +75,7 @@ public class test_TolerantSaxDocumentBuilder extends XMLTestCase {
         String xmlWithComments = XML_DECLARATION + "<more>" + SIMPLEST_XML
             + "<!--this is a comment -->" + SIMPLEST_XML + "</more>";
         Document documentWithComments = XMLUnit.buildControlDocument(
-            xmlWithComments);
+                                                                     xmlWithComments);
         assertParsedDocumentEqual(documentWithComments, xmlWithComments);
         assertTrue(builder.getTrace(), builder.getTrace().indexOf("WARNING") == -1);
     }
@@ -84,9 +84,9 @@ public class test_TolerantSaxDocumentBuilder extends XMLTestCase {
         String xmlWithProcInstruction = XML_DECLARATION + "<more>" + SIMPLEST_XML
             + "<?processing instruction?>" + SIMPLEST_XML + "</more>";
         Document documentWithProcInstruction = XMLUnit.buildControlDocument(
-            xmlWithProcInstruction);
+                                                                            xmlWithProcInstruction);
         assertParsedDocumentEqual(documentWithProcInstruction,
-            xmlWithProcInstruction);
+                                  xmlWithProcInstruction);
         assertTrue(builder.getTrace(), builder.getTrace().indexOf("WARNING") == -1);
     }
 

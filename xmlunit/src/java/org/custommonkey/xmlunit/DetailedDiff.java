@@ -75,13 +75,13 @@ public class DetailedDiff extends Diff {
         final int returnValue = super.differenceFound(difference);
         Difference localDifference = null;
         switch (returnValue) {
-        	case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
-        		return returnValue;
-            case RETURN_ACCEPT_DIFFERENCE:
-                break;
-            case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
-            	difference.setRecoverable(true);
-                break;
+        case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
+            return returnValue;
+        case RETURN_ACCEPT_DIFFERENCE:
+            break;
+        case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
+            difference.setRecoverable(true);
+            break;
         }
         allDifferences.add(difference);
         return returnValue;

@@ -51,12 +51,12 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingStringURI() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
         assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                   xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR 
-                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 
@@ -69,12 +69,12 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingInputStream() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
         assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                   xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR 
-                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 
@@ -87,12 +87,12 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingInputSource() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
         assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                   xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR
-                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 
@@ -106,12 +106,12 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingAFile() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
         assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                   xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR
-                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 
@@ -124,19 +124,19 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingObjectArrayContainingStringURI() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
         assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                   xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR 
-                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 
         validator.useXMLSchema(true);
         validator.setJAXP12SchemaSource(new Object[] {
-                xsdFile.getAbsolutePath()
-                });
+                                            xsdFile.getAbsolutePath()
+                                        });
 
         validator.assertIsValid();
     }
@@ -144,12 +144,12 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingNonExistentFile() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/BookDoesNotExist.xsd");
         assertFalse("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                    xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR
-                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/BookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 
@@ -162,12 +162,12 @@ public class test_JAXP_1_2_Schema_Validation extends TestCase {
     public void testUsingInvalidXML() throws Exception {
         File xsdFile = new File(test_Constants.BASEDIR + "/tests/etc/Book.xsd");
         assertTrue("xsdFile " + xsdFile.getAbsolutePath() + " exists", 
-                xsdFile.exists());
+                   xsdFile.exists());
 
         File xmlFile = new File(test_Constants.BASEDIR
-                + "/tests/etc/InvalidBookXsdGeneratedNoSchema.xml");
+                                + "/tests/etc/InvalidBookXsdGeneratedNoSchema.xml");
         assertTrue("xmlFile " + xmlFile.getAbsolutePath() + " exists", 
-                xmlFile.exists());
+                   xmlFile.exists());
 
         validator = new Validator(new FileReader(xmlFile));
 

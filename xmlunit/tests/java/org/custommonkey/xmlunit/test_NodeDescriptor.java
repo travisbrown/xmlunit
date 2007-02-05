@@ -50,118 +50,118 @@ import org.w3c.dom.Text;
  * JUnit test for NodeDescriptor
  */
 public class test_NodeDescriptor extends TestCase {
-	private StringBuffer stringBuffer;
-	private Document aDocument;
-	private NodeDetail nodeDetail;
-	
-	public void testAppendDocumentDetail() throws Exception {
-		nodeDetail = new NodeDetail("", aDocument, "/");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<" + NodeDescriptor.DOCUMENT_NODE_DESCRIPTION
-			+ "<...>> at /", stringBuffer.toString());
-	}
+    private StringBuffer stringBuffer;
+    private Document aDocument;
+    private NodeDetail nodeDetail;
+        
+    public void testAppendDocumentDetail() throws Exception {
+        nodeDetail = new NodeDetail("", aDocument, "/");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<" + NodeDescriptor.DOCUMENT_NODE_DESCRIPTION
+                     + "<...>> at /", stringBuffer.toString());
+    }
 
-	public void testAppendAttributeDetail() throws Exception {
-		String attrName = "attrName";
-		String attrValue = "attrValue";
-		Attr attr = aDocument.createAttribute(attrName);
-		attr.setValue(attrValue);
-		String tagName = "elemTag";
-		Element element = aDocument.createElement(tagName);
-		element.setAttributeNode(attr);
-		nodeDetail = new NodeDetail("", attr, "/elemTag");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<" + tagName + " " 
-			+ attrName + "=\"" + attrValue + "\"...> at /elemTag", stringBuffer.toString());
-	}
+    public void testAppendAttributeDetail() throws Exception {
+        String attrName = "attrName";
+        String attrValue = "attrValue";
+        Attr attr = aDocument.createAttribute(attrName);
+        attr.setValue(attrValue);
+        String tagName = "elemTag";
+        Element element = aDocument.createElement(tagName);
+        element.setAttributeNode(attr);
+        nodeDetail = new NodeDetail("", attr, "/elemTag");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<" + tagName + " " 
+                     + attrName + "=\"" + attrValue + "\"...> at /elemTag", stringBuffer.toString());
+    }
 
-	public void testAppendElementDetail() throws Exception {
-		String tagName = "elemTag";
-		Element element = aDocument.createElement(tagName);
-		nodeDetail = new NodeDetail("", element, "/elemTag");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<" + tagName + "...> at /elemTag", stringBuffer.toString());
-	}
+    public void testAppendElementDetail() throws Exception {
+        String tagName = "elemTag";
+        Element element = aDocument.createElement(tagName);
+        nodeDetail = new NodeDetail("", element, "/elemTag");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<" + tagName + "...> at /elemTag", stringBuffer.toString());
+    }
 
-	public void testAppendTextDetail() throws Exception {
-		String textString = "some text";
-		Text text = aDocument.createTextNode(textString);
-		String tagName = "elemTag";
-		Element element = aDocument.createElement(tagName);
-		element.appendChild(text);
-		nodeDetail = new NodeDetail("", text, "/elemTag/text()");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<" + tagName + " ...>" + textString 
-			+ "</" + tagName + "> at /elemTag/text()", stringBuffer.toString());
-	}
+    public void testAppendTextDetail() throws Exception {
+        String textString = "some text";
+        Text text = aDocument.createTextNode(textString);
+        String tagName = "elemTag";
+        Element element = aDocument.createElement(tagName);
+        element.appendChild(text);
+        nodeDetail = new NodeDetail("", text, "/elemTag/text()");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<" + tagName + " ...>" + textString 
+                     + "</" + tagName + "> at /elemTag/text()", stringBuffer.toString());
+    }
 
-	public void testAppendProcessingInstructionDetail() throws Exception {
-		String target = "PItarget";
-		String data = "PIdata";
-		Node processingInstruction = aDocument.createProcessingInstruction(target, data);
-		nodeDetail = new NodeDetail("", processingInstruction, "/processing-instruction()");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<?" + target + " " + data + "?> at /processing-instruction()", 
-			stringBuffer.toString());
-	}
-	
-	public void testAppendCommentDetail() throws Exception {
-		String comments = "This is a comment";
-		Node comment = aDocument.createComment(comments);
-		nodeDetail = new NodeDetail("", comment, "/comment()");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<!--" + comments + "--> at /comment()", stringBuffer.toString());
-	}
+    public void testAppendProcessingInstructionDetail() throws Exception {
+        String target = "PItarget";
+        String data = "PIdata";
+        Node processingInstruction = aDocument.createProcessingInstruction(target, data);
+        nodeDetail = new NodeDetail("", processingInstruction, "/processing-instruction()");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<?" + target + " " + data + "?> at /processing-instruction()", 
+                     stringBuffer.toString());
+    }
+        
+    public void testAppendCommentDetail() throws Exception {
+        String comments = "This is a comment";
+        Node comment = aDocument.createComment(comments);
+        nodeDetail = new NodeDetail("", comment, "/comment()");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<!--" + comments + "--> at /comment()", stringBuffer.toString());
+    }
 
-	public void testAppendCDataDetail() throws Exception {
-		String cData = "<>& etc";
-		Node cDataNote = aDocument.createCDATASection(cData);
-		nodeDetail = new NodeDetail("", cDataNote, "/text()");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals("<![CDATA[" + cData + "]]> at /text()", stringBuffer.toString());
-	}
+    public void testAppendCDataDetail() throws Exception {
+        String cData = "<>& etc";
+        Node cDataNote = aDocument.createCDATASection(cData);
+        nodeDetail = new NodeDetail("", cDataNote, "/text()");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals("<![CDATA[" + cData + "]]> at /text()", stringBuffer.toString());
+    }
 
-	public void testAppendDocTypeDetail() throws Exception {
-		File dtdA = File.createTempFile(getName() + "A", "dtd");
-		dtdA.deleteOnExit();
-		String systemOnlyDTD = "<!DOCTYPE blah SYSTEM \"" + dtdA.toURL().toExternalForm() + "\">";
-		String someContent = "<blah>ignored</blah>";
-		String xmlWithExternalDTD = systemOnlyDTD + someContent;
+    public void testAppendDocTypeDetail() throws Exception {
+        File dtdA = File.createTempFile(getName() + "A", "dtd");
+        dtdA.deleteOnExit();
+        String systemOnlyDTD = "<!DOCTYPE blah SYSTEM \"" + dtdA.toURL().toExternalForm() + "\">";
+        String someContent = "<blah>ignored</blah>";
+        String xmlWithExternalDTD = systemOnlyDTD + someContent;
             
-		aDocument = XMLUnit.buildControlDocument(xmlWithExternalDTD);
-		Node doctypeA = aDocument.getDoctype();
-		nodeDetail = new NodeDetail("", doctypeA, "/");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals(systemOnlyDTD + " at /", stringBuffer.toString());
+        aDocument = XMLUnit.buildControlDocument(xmlWithExternalDTD);
+        Node doctypeA = aDocument.getDoctype();
+        nodeDetail = new NodeDetail("", doctypeA, "/");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals(systemOnlyDTD + " at /", stringBuffer.toString());
 
-		stringBuffer = new StringBuffer();
-		File dtdB = File.createTempFile(getName() + "B", "dtd");
-		dtdB.deleteOnExit();
-		String publicDTD = "<!DOCTYPE web-app "
-			+ "PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" "
-			+ "\"" + dtdB.toURL().toExternalForm() + "\">";
-		String someOtherContent = "<web-app><!--ignore me--></web-app>";
-		String xmlWithPublicDTD = publicDTD + someOtherContent;
+        stringBuffer = new StringBuffer();
+        File dtdB = File.createTempFile(getName() + "B", "dtd");
+        dtdB.deleteOnExit();
+        String publicDTD = "<!DOCTYPE web-app "
+            + "PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" "
+            + "\"" + dtdB.toURL().toExternalForm() + "\">";
+        String someOtherContent = "<web-app><!--ignore me--></web-app>";
+        String xmlWithPublicDTD = publicDTD + someOtherContent;
             
-		Document bDocument = XMLUnit.buildControlDocument(xmlWithPublicDTD);
-		Node doctypeB = bDocument.getDoctype();
-		nodeDetail = new NodeDetail("", doctypeB, "/");
-		NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
-		assertEquals(publicDTD + " at /", stringBuffer.toString());
-	}
+        Document bDocument = XMLUnit.buildControlDocument(xmlWithPublicDTD);
+        Node doctypeB = bDocument.getDoctype();
+        nodeDetail = new NodeDetail("", doctypeB, "/");
+        NodeDescriptor.appendNodeDetail(stringBuffer, nodeDetail);
+        assertEquals(publicDTD + " at /", stringBuffer.toString());
+    }
 
-	public void setUp() throws Exception {
-		aDocument = XMLUnit.newControlParser().newDocument();
-		stringBuffer = new StringBuffer();
-	}
-			
+    public void setUp() throws Exception {
+        aDocument = XMLUnit.newControlParser().newDocument();
+        stringBuffer = new StringBuffer();
+    }
+                        
 
-	/**
-	 * Constructor for test_NodeDescriptor.
-	 * @param name
-	 */
-	public test_NodeDescriptor(String name) {
-		super(name);
-	}
+    /**
+     * Constructor for test_NodeDescriptor.
+     * @param name
+     */
+    public test_NodeDescriptor(String name) {
+        super(name);
+    }
 
 }

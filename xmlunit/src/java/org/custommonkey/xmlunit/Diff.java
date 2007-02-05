@@ -72,7 +72,7 @@ import org.xml.sax.SAXException;
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class Diff 
-implements DifferenceListener, ComparisonController {
+    implements DifferenceListener, ComparisonController {
     private final Document controlDoc;
     private final Document testDoc;
     private boolean similar = true;
@@ -98,7 +98,7 @@ implements DifferenceListener, ComparisonController {
     public Diff(Reader control, Reader test)
         throws SAXException, IOException {
         this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
-            XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
+             XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
     }
 
     /**
@@ -115,17 +115,17 @@ implements DifferenceListener, ComparisonController {
     public Diff(String control, Transform testTransform)
         throws IOException, TransformerException, SAXException {
         this(XMLUnit.buildControlDocument(control),
-            testTransform.getResultDocument());
+             testTransform.getResultDocument());
     }
 
-	/**
-	 * Construct a Diff that compares the XML read from two JAXP InputSources
-	 */
+    /**
+     * Construct a Diff that compares the XML read from two JAXP InputSources
+     */
     public Diff(InputSource control, InputSource test)
         throws SAXException, IOException {
-		this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
-			XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
-	}
+        this(XMLUnit.buildDocument(XMLUnit.newControlParser(), control),
+             XMLUnit.buildDocument(XMLUnit.newTestParser(), test));
+    }
 
     /**
      * Construct a Diff that compares the XML in two JAXP DOMSources
@@ -155,9 +155,9 @@ implements DifferenceListener, ComparisonController {
         this.testDoc = getManipulatedDocument(testDoc);
         this.elementQualifierDelegate = elementQualifier;
         if (comparator == null) {
-	        this.differenceEngine = new DifferenceEngine(this);
+            this.differenceEngine = new DifferenceEngine(this);
         } else {
-	        this.differenceEngine = comparator;
+            this.differenceEngine = comparator;
         }
         this.messages = new StringBuffer();
     }
@@ -168,8 +168,8 @@ implements DifferenceListener, ComparisonController {
      * @param prototype a prototypical instance
      */
     protected Diff(Diff prototype) {
-    	this(prototype.controlDoc, prototype.testDoc, prototype.differenceEngine, 
-    		prototype.elementQualifierDelegate);
+        this(prototype.controlDoc, prototype.testDoc, prototype.differenceEngine, 
+             prototype.elementQualifierDelegate);
     }
 
     /**
@@ -186,7 +186,7 @@ implements DifferenceListener, ComparisonController {
         }
         try {
             Transform whitespaceStripper = XMLUnit.getStripWhitespaceTransform(
-                originalDoc);
+                                                                               originalDoc);
             return whitespaceStripper.getResultDocument();
         } catch (TransformerException e) {
             throw new XMLUnitRuntimeException(e.getMessage(), e.getCause());
@@ -301,24 +301,24 @@ implements DifferenceListener, ComparisonController {
         } 
 
         switch (returnValue) {
-            case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
-                return returnValue;
-            case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
-                identical = false;
+        case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
+            return returnValue;
+        case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
+            identical = false;
+            haltComparison = false;
+            break;
+        case RETURN_ACCEPT_DIFFERENCE:
+            identical = false;
+            if (difference.isRecoverable()) {
                 haltComparison = false;
-                break;
-            case RETURN_ACCEPT_DIFFERENCE:
-                identical = false;
-                if (difference.isRecoverable()) {
-                    haltComparison = false;
-                } else {
-                    similar = false;
-                    haltComparison = true;
-                }
-                break;
-            default:
-                throw new IllegalArgumentException(returnValue
-                    + " is not a defined DifferenceListener.RETURN_... value");
+            } else {
+                similar = false;
+                haltComparison = true;
+            }
+            break;
+        default:
+            throw new IllegalArgumentException(returnValue
+                                               + " is not a defined DifferenceListener.RETURN_... value");
         }
         if (haltComparison) {
             messages.append("\n[different]");
@@ -342,8 +342,8 @@ implements DifferenceListener, ComparisonController {
             differenceListenerDelegate.skippedComparison(control, test);
         } else {
             System.err.println("DifferenceListener.skippedComparison: "
-                + "unhandled control node type=" + control
-                + ", unhandled test node type=" + test);
+                               + "unhandled control node type=" + control
+                               + ", unhandled test node type=" + test);
         }
     }
 
@@ -392,13 +392,13 @@ implements DifferenceListener, ComparisonController {
         this.differenceListenerDelegate = delegate;
     }    
 
-	/**
-	 * Override the <code>ElementQualifier</code> used to determine which
-	 * control and test nodes are comparable for this difference comparison. 
-	 * @param delegate the ElementQualifier instance to delegate to.
-	 */
-	public void overrideElementQualifier(ElementQualifier delegate) {
-		this.elementQualifierDelegate = delegate;
-	}
+    /**
+     * Override the <code>ElementQualifier</code> used to determine which
+     * control and test nodes are comparable for this difference comparison. 
+     * @param delegate the ElementQualifier instance to delegate to.
+     */
+    public void overrideElementQualifier(ElementQualifier delegate) {
+        this.elementQualifierDelegate = delegate;
+    }
 
 }

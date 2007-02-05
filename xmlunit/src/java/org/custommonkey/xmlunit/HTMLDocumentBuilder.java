@@ -72,7 +72,7 @@ public class HTMLDocumentBuilder {
      *  calls generated as the HTML is parsed and build up a DOM Document
      */
     public HTMLDocumentBuilder(
-    TolerantSaxDocumentBuilder tolerantSaxDocumentBuilder) {
+                               TolerantSaxDocumentBuilder tolerantSaxDocumentBuilder) {
         this.tolerantSaxDocumentBuilder = tolerantSaxDocumentBuilder;
         this.swingEvent2SaxAdapter = new SwingEvent2SaxAdapter();
         this.traceBuffer = new StringBuffer();
@@ -140,7 +140,7 @@ public class HTMLDocumentBuilder {
          * Perform Swing-HTML-parse-event-to-Sax-event conversion
          */
         public void parse(Reader reader, ContentHandler saxContentHandler)
-        throws SAXException, IOException {
+            throws SAXException, IOException {
             this.saxContentHandler = saxContentHandler;
             preParse();
             delegator.parse(reader, this, IGNORE_HTML_CHAR_SET);
@@ -221,7 +221,7 @@ public class HTMLDocumentBuilder {
             if (saxContentHandler instanceof LexicalHandler) {
                 try {
                     ((LexicalHandler)saxContentHandler).comment(data,
-                        0, data.length);
+                                                                0, data.length);
                 } catch (SAXException e) {
                     handleSAXException(e);
                 }
@@ -234,10 +234,10 @@ public class HTMLDocumentBuilder {
          * Equivalent to Sax <code>startElement</code>
          */
         public void handleStartTag(javax.swing.text.html.HTML.Tag tag,
-        javax.swing.text.MutableAttributeSet attributeSet, int pos) {
+                                   javax.swing.text.MutableAttributeSet attributeSet, int pos) {
             try {
                 saxContentHandler.startElement("", "", tag.toString(),
-                    convertToSaxAttributes(attributeSet));
+                                               convertToSaxAttributes(attributeSet));
             } catch (SAXException e) {
                 handleSAXException(e);
             }
@@ -260,7 +260,7 @@ public class HTMLDocumentBuilder {
          * <code>endElement</code>
          */
         public void handleSimpleTag(javax.swing.text.html.HTML.Tag tag,
-        javax.swing.text.MutableAttributeSet attributeSet, int pos) {
+                                    javax.swing.text.MutableAttributeSet attributeSet, int pos) {
             handleStartTag(tag, attributeSet, pos);
             handleEndTag(tag, pos);
             lastTagWasSimpleTag = true;
@@ -280,7 +280,7 @@ public class HTMLDocumentBuilder {
          * @return Sax CDATA Attributes from the Swing MutableAttributeSet
          */
         private Attributes convertToSaxAttributes(
-        MutableAttributeSet attributeSet) {
+                                                  MutableAttributeSet attributeSet) {
             Object attrName, attrValue;
 
             attributes.clear();
@@ -289,7 +289,7 @@ public class HTMLDocumentBuilder {
                 attrName = en.nextElement();
                 attrValue = attributeSet.getAttribute(attrName);
                 attributes.addAttribute("", "", attrName.toString(),
-                    "CDATA", attrValue.toString());
+                                        "CDATA", attrValue.toString());
             }
 
             return attributes;

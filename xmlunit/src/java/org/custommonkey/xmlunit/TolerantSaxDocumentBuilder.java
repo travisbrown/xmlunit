@@ -65,7 +65,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @see HTMLDocumentBuilder#parse
  */
 public class TolerantSaxDocumentBuilder
-extends DefaultHandler implements LexicalHandler {
+    extends DefaultHandler implements LexicalHandler {
     private final DocumentBuilder documentBuilder;
     private final StringBuffer traceBuffer;
     private Document currentDocument;
@@ -78,7 +78,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws ParserConfigurationException
      */
     public TolerantSaxDocumentBuilder(DocumentBuilder documentBuilder)
-    throws ParserConfigurationException {
+        throws ParserConfigurationException {
         this.documentBuilder = documentBuilder;
         this.traceBuffer = new StringBuffer();
     }
@@ -139,7 +139,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void startElement(String namespaceURI, String localName,
-    String qName, Attributes atts) throws SAXException {
+                             String qName, Attributes atts) throws SAXException {
         trace("startElement:" + localName + "~" + qName);
         Element newElement = createElement(namespaceURI, qName, atts);
         appendNode(newElement);
@@ -151,7 +151,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void endElement(String namespaceURI, String localName,
-    String qName) throws SAXException {
+                           String qName) throws SAXException {
         trace("endElement:" + localName + "~" + qName);
         if (currentElement==null) {
             warn(qName + ": endElement before any startElement");
@@ -178,7 +178,7 @@ extends DefaultHandler implements LexicalHandler {
                 }
             } else {
                 throw new IllegalArgumentException("Closing element " + qName
-                     + ": expecting a parent ELEMENT_NODE but found " + parentNode);
+                                                   + ": expecting a parent ELEMENT_NODE but found " + parentNode);
             }
         }
         if (!foundTagToEnd) {
@@ -204,7 +204,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void ignorableWhitespace (char ch[], int start, int length)
-    throws SAXException {
+        throws SAXException {
         unhandled("ignorableWhitespace");
     }
 
@@ -213,7 +213,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void processingInstruction(String target, String data)
-    throws SAXException {
+        throws SAXException {
         trace("processingInstruction");
         ProcessingInstruction instruction =
             currentDocument.createProcessingInstruction(target, data);
@@ -240,7 +240,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void startPrefixMapping (String prefix, String uri)
-    throws SAXException {
+        throws SAXException {
         unhandled("startPrefixMapping");
     }
 
@@ -250,7 +250,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void startDTD (String name, String publicId,
-    String systemId) throws SAXException {
+                          String systemId) throws SAXException {
         unhandled("startDTD");
     }
 
@@ -259,7 +259,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void endDTD ()
-    throws SAXException {
+        throws SAXException {
         unhandled("endDTD");
     }
 
@@ -268,7 +268,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void startEntity (String name)
-    throws SAXException {
+        throws SAXException {
         unhandled("startEntity");
     }
 
@@ -277,7 +277,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void endEntity (String name)
-    throws SAXException {
+        throws SAXException {
         unhandled("endEntity");
     }
 
@@ -286,7 +286,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void startCDATA ()
-    throws SAXException {
+        throws SAXException {
         unhandled("startCDATA");
     }
 
@@ -295,7 +295,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void endCDATA ()
-    throws SAXException {
+        throws SAXException {
         unhandled("endCDATA");
     }
 
@@ -304,7 +304,7 @@ extends DefaultHandler implements LexicalHandler {
      * @throws SAXException
      */
     public void comment(char ch[], int start, int length)
-    throws SAXException	{
+        throws SAXException     {
         String commentText = new String(ch, start, length);
         trace("comment:" + commentText);
         Comment comment = currentDocument.createComment(commentText);
@@ -344,7 +344,7 @@ extends DefaultHandler implements LexicalHandler {
      * @return the created Element
      */
     private Element createElement(String namespaceURI, String qName,
-    Attributes attributes) {
+                                  Attributes attributes) {
         Element newElement = currentDocument.createElement(qName);
 
         if (namespaceURI != null && namespaceURI.length() > 0) {
@@ -353,7 +353,7 @@ extends DefaultHandler implements LexicalHandler {
 
         for(int i = 0; attributes != null && i < attributes.getLength(); ++i) {
             newElement.setAttribute(attributes.getQName(i),
-                attributes.getValue(i));
+                                    attributes.getValue(i));
         }
 
         return newElement;

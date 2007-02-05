@@ -48,7 +48,7 @@ public class Replacement {
 
     public Replacement(String ofString, String byString) {
         this(ofString.toCharArray(),
-            byString == null ? null : byString.toCharArray());
+             byString == null ? null : byString.toCharArray());
     }
 
     public Replacement(char[] ofChars, char[] byChars) {
@@ -58,14 +58,14 @@ public class Replacement {
 
     public final String replace(String inString) {
         StringBuffer buf =  replaceAndAppend(inString.toCharArray(),
-            new StringBuffer(inString.length()));
+                                             new StringBuffer(inString.length()));
 
         return buf.toString();
     }
 
     public final char[] replace(char[] inChars) {
         StringBuffer buf = replaceAndAppend(inChars,
-            new StringBuffer(inChars.length));
+                                            new StringBuffer(inChars.length));
 
         char[] replacement = new char[buf.length()];
         buf.getChars(0, buf.length(), replacement, 0);
@@ -74,7 +74,7 @@ public class Replacement {
     }
 
     public final StringBuffer replaceAndAppend(char[] inChars,
-    StringBuffer toBuffer) {
+                                               StringBuffer toBuffer) {
         int ofPos = 0;
         int falseStartPos = -1;
         for (int i=0; i < inChars.length; ++i) {

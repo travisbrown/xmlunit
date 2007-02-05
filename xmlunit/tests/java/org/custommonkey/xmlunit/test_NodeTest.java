@@ -64,7 +64,7 @@ public class test_NodeTest extends TestCase {
     private class RejectingNodeTester implements NodeTester {
         public boolean completed;
         public void testNode(Node aNode, NodeTest forTest)
-        throws NodeTestException {
+            throws NodeTestException {
             throw new NodeTestException("Reject all nodes", aNode);
         }
         public void noMoreNodes(NodeTest forTest) throws NodeTestException {
@@ -75,7 +75,7 @@ public class test_NodeTest extends TestCase {
 
     public void testFiltering() throws Exception {
         nodeTest = new NodeTest(
-            new StringReader("<message><hello>folks</hello></message>"));
+                                new StringReader("<message><hello>folks</hello></message>"));
         short nodeType = Node.ELEMENT_NODE;
         nodeTest.performTest(new NodeTypeTester(nodeType), nodeType);
 
@@ -91,7 +91,7 @@ public class test_NodeTest extends TestCase {
 
     public void testNodeTesting() throws Exception {
         nodeTest = new NodeTest(
-            new StringReader("<keyboard><qwerty>standard</qwerty></keyboard>"));
+                                new StringReader("<keyboard><qwerty>standard</qwerty></keyboard>"));
         RejectingNodeTester tester = new RejectingNodeTester();
 
         try {

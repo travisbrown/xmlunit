@@ -46,8 +46,8 @@ import org.w3c.dom.Node;
 /**
  * Adapter class to present the content of a DOM Node (e.g. a Document) as an
  * InputStream using a DOM to Stream transformation.
-  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
-*/
+ * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
+ */
 public class NodeInputStream extends InputStream {
     private final Node rootNode;
     private final ByteArrayOutputStream nodeContentBytes;
@@ -89,7 +89,7 @@ public class NodeInputStream extends InputStream {
             serializeTransform.transformTo(byteResult);
         } catch (Exception e) {
             throw new IOException("Unable to serialize document to outputstream: "
-                + e.toString());
+                                  + e.toString());
         }
     }
 

@@ -43,13 +43,13 @@ import junit.framework.TestSuite;
  * Not actually a test container, but conforms to the semantics
  */
 public class test_Constants extends TestCase
-implements XMLConstants, XSLTConstants {
-	static {
-		if (System.getProperty("basedir")==null) {
-			System.setProperty("basedir", "d:/projects/sourceforge/xmlunit");
-		}
-	}
-	
+    implements XMLConstants, XSLTConstants {
+    static {
+        if (System.getProperty("basedir")==null) {
+            System.setProperty("basedir", "d:/projects/sourceforge/xmlunit");
+        }
+    }
+        
     public static final String BASEDIR = System.getProperty("basedir");
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -76,7 +76,7 @@ implements XMLConstants, XSLTConstants {
         "<!DOCTYPE cartoons SYSTEM \"yak.dtd\">"
         + CHUCK_JONES_RIP_XML;
     public static final String DOCUMENT_WITH_NO_EXTERNAL_DTD =
-         CHUCK_JONES_RIP_XML;
+        CHUCK_JONES_RIP_XML;
 
     public static final String CHUCK_JONES_SPINNING_IN_HIS_GRAVE_XML =
         DOCUMENT_START + "<kidsTv><toon><name>Yo ho ahoy</name></toon></kidsTV>"

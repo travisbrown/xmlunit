@@ -7,16 +7,16 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
 
-	* Redistributions of source code must retain the above copyright
-	  notice, this list of conditions and the following disclaimer.
-	* Redistributions in binary form must reproduce the above
-	  copyright notice, this list of conditions and the following
-	  disclaimer in the documentation and/or other materials provided
-	  with the distribution.
-	* Neither the name of the xmlunit.sourceforge.net nor the names
-	  of its contributors may be used to endorse or promote products
-	  derived from this software without specific prior written
-	  permission.
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above
+          copyright notice, this list of conditions and the following
+          disclaimer in the documentation and/or other materials provided
+          with the distribution.
+        * Neither the name of the xmlunit.sourceforge.net nor the names
+          of its contributors may be used to endorse or promote products
+          derived from this software without specific prior written
+          permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -49,46 +49,46 @@ import org.w3c.dom.Node;
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 public class ElementNameQualifier implements ElementQualifier {
-	/**
-	 * Determine whether two elements qualify for further Difference comparison.
-	 * @param control
-	 * @param test
-	 * @return true if the two elements qualify for further comparison based on 
-	 *  their  similar namespace URI and non-namespaced tag name, 
-	 *  false otherwise
-	 */
-	public boolean qualifyForComparison(Element control, Element test) {
-		return control != null && test !=null 
-			&& equalsNamespace(control, test)
-			&& getNonNamespacedNodeName(control).equals(getNonNamespacedNodeName(test));
-	}
-	/**
-	 * Determine whether two nodes are defined by the same namespace URI 
-	 * @param control
-	 * @param test
-	 * @return true if the two nodes are both defined by the same namespace URI
-	 *  (including the default - empty - namespace), false otherwise
-	 */
-	protected boolean equalsNamespace(Node control, Node test) {
-		String controlNS = control.getNamespaceURI();
-		String testNS = test.getNamespaceURI();
-		if (controlNS == null) {
-			return testNS == null;
-		}
-		return controlNS.equals(testNS);
-	}
-	
-	/**
-	 * Strip any namespace information off a node name
-	 * @param node
-	 * @return the localName if the node is namespaced, or the name otherwise
-	 */
-	protected String getNonNamespacedNodeName(Node node) {
-		String name = node.getLocalName();
-		if (name == null) {
-			return node.getNodeName();
-		}
-		return name;
-	} 
+    /**
+     * Determine whether two elements qualify for further Difference comparison.
+     * @param control
+     * @param test
+     * @return true if the two elements qualify for further comparison based on 
+     *  their  similar namespace URI and non-namespaced tag name, 
+     *  false otherwise
+     */
+    public boolean qualifyForComparison(Element control, Element test) {
+        return control != null && test !=null 
+            && equalsNamespace(control, test)
+            && getNonNamespacedNodeName(control).equals(getNonNamespacedNodeName(test));
+    }
+    /**
+     * Determine whether two nodes are defined by the same namespace URI 
+     * @param control
+     * @param test
+     * @return true if the two nodes are both defined by the same namespace URI
+     *  (including the default - empty - namespace), false otherwise
+     */
+    protected boolean equalsNamespace(Node control, Node test) {
+        String controlNS = control.getNamespaceURI();
+        String testNS = test.getNamespaceURI();
+        if (controlNS == null) {
+            return testNS == null;
+        }
+        return controlNS.equals(testNS);
+    }
+        
+    /**
+     * Strip any namespace information off a node name
+     * @param node
+     * @return the localName if the node is namespaced, or the name otherwise
+     */
+    protected String getNonNamespacedNodeName(Node node) {
+        String name = node.getLocalName();
+        if (name == null) {
+            return node.getNodeName();
+        }
+        return name;
+    } 
 
 }

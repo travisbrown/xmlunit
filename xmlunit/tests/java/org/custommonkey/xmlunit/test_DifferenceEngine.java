@@ -64,10 +64,10 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     private Document document;
     
     private final ComparisonController PSEUDO_DIFF = new SimpleComparisonController();
-	private final ComparisonController PSEUDO_DETAILED_DIFF = new NeverHaltingComparisonController();
+    private final ComparisonController PSEUDO_DETAILED_DIFF = new NeverHaltingComparisonController();
 
-	private final static ElementQualifier
-		DEFAULT_ELEMENT_QUALIFIER = new ElementNameQualifier();
+    private final static ElementQualifier
+        DEFAULT_ELEMENT_QUALIFIER = new ElementNameQualifier();
     private final static String TEXT_A = "the pack on my back is aching";
     private final static String TEXT_B = "the straps seem to cut me like a knife";
     private final static String COMMENT_A = "Im no clown I wont back down";
@@ -80,7 +80,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     private final static String ATTR_B = "The marquis de sade never wore no boots like these";
 
     private void assertDifferentText(Text control, Text test,
-    Difference difference) {
+                                     Difference difference) {
         try {
             engine.compareText(control, test, listener);
         } catch (DifferenceEngine.DifferenceFoundException e) {
@@ -100,8 +100,8 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     private void assertDifferentProcessingInstructions (
-    ProcessingInstruction control, ProcessingInstruction test,
-    Difference difference) {
+                                                        ProcessingInstruction control, ProcessingInstruction test,
+                                                        Difference difference) {
         try {
             engine.compareProcessingInstruction(control, test, listener);
         } catch (DifferenceEngine.DifferenceFoundException e) {
@@ -115,23 +115,23 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         String[] expected = PROC_A;
         String[] actual = PROC_B;
         ProcessingInstruction control = document.createProcessingInstruction(
-            expected[0], expected[1]);
+                                                                             expected[0], expected[1]);
         ProcessingInstruction test = document.createProcessingInstruction(
-            actual[0], actual[1]);
+                                                                          actual[0], actual[1]);
 
         assertDifferentProcessingInstructions(control, test,
-            PROCESSING_INSTRUCTION_TARGET);
+                                              PROCESSING_INSTRUCTION_TARGET);
 
         ProcessingInstruction control2 = document.createProcessingInstruction(
-            expected[0], expected[1]);
+                                                                              expected[0], expected[1]);
         ProcessingInstruction test2 = document.createProcessingInstruction(
-            expected[0], actual[1]);
+                                                                           expected[0], actual[1]);
         assertDifferentProcessingInstructions(control2, test2,
-            PROCESSING_INSTRUCTION_DATA);
+                                              PROCESSING_INSTRUCTION_DATA);
     }
 
     private void assertDifferentComments(Comment control, Comment test,
-    Difference difference) {
+                                         Difference difference) {
         try {
             engine.compareComment(control, test, listener);
         } catch (DifferenceEngine.DifferenceFoundException e) {
@@ -151,7 +151,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     private void assertDifferentCDATA(CDATASection control, CDATASection test,
-    Difference difference) {
+                                      Difference difference) {
         try {
             engine.compareCDataSection(control, test, listener);
         } catch (DifferenceEngine.DifferenceFoundException e) {
@@ -171,7 +171,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     private void assertDifferentDocumentTypes(DocumentType control,
-    DocumentType test, Difference difference, boolean fatal) {
+                                              DocumentType test, Difference difference, boolean fatal) {
         try {
             engine.compareDocumentType(control, test, listener);
             if (fatal) {
@@ -200,11 +200,11 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         String theCrowsDTD = altTmpFile.toURL().toExternalForm();
 
         Document controlDoc = XMLUnit.buildControlDocument(
-            "<!DOCTYPE root PUBLIC 'Stone' '" + rosesDTD + "'>"
-            + "<root><leaf/></root>");
+                                                           "<!DOCTYPE root PUBLIC 'Stone' '" + rosesDTD + "'>"
+                                                           + "<root><leaf/></root>");
         Document testDoc = XMLUnit.buildTestDocument(
-            "<!DOCTYPE tree PUBLIC 'Stone' '" + rosesDTD + "'>"
-            + "<tree><leaf/></tree>");
+                                                     "<!DOCTYPE tree PUBLIC 'Stone' '" + rosesDTD + "'>"
+                                                     + "<tree><leaf/></tree>");
 
         DocumentType control = controlDoc.getDoctype();
         DocumentType test = testDoc.getDoctype();
@@ -212,28 +212,28 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         assertDifferentDocumentTypes(control, test, DOCTYPE_NAME, true);
 
         test = XMLUnit.buildTestDocument("<!DOCTYPE root PUBLIC 'id' '" + rosesDTD + "'>"
-            + "<root><leaf/></root>").getDoctype();
+                                         + "<root><leaf/></root>").getDoctype();
         assertDifferentDocumentTypes(control, test, DOCTYPE_PUBLIC_ID, true);
 
         test = XMLUnit.buildTestDocument("<!DOCTYPE root SYSTEM '" + rosesDTD + "'>"
-            + "<root><leaf/></root>").getDoctype();
+                                         + "<root><leaf/></root>").getDoctype();
         assertDifferentDocumentTypes(control, test, DOCTYPE_PUBLIC_ID, true);
 
         test = XMLUnit.buildTestDocument("<!DOCTYPE root PUBLIC 'Stone' '" + theCrowsDTD + "'>"
-            + "<root><leaf/></root>").getDoctype();
+                                         + "<root><leaf/></root>").getDoctype();
         assertDifferentDocumentTypes(control, test, DOCTYPE_SYSTEM_ID, false);
 
         test = XMLUnit.buildTestDocument("<!DOCTYPE root SYSTEM '" + theCrowsDTD + "'>"
-            + "<root><leaf/></root>").getDoctype();
+                                         + "<root><leaf/></root>").getDoctype();
         assertDifferentDocumentTypes(control, test, DOCTYPE_PUBLIC_ID, true);
 
         control = XMLUnit.buildTestDocument("<!DOCTYPE root SYSTEM '" + rosesDTD + "'>"
-            + "<root><leaf/></root>").getDoctype();
+                                            + "<root><leaf/></root>").getDoctype();
         assertDifferentDocumentTypes(control, test, DOCTYPE_SYSTEM_ID, false);
     }
 
     private void assertDifferentAttributes(Attr control, Attr test,
-    Difference difference, boolean fatal) {
+                                           Difference difference, boolean fatal) {
         try {
             engine.compareAttribute(control, test, listener);
             if (fatal) {
@@ -263,21 +263,21 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
             "<!ELEMENT sound EMPTY><!ATTLIST sound sorted (true|false) \"true\">" +
             "<!ELEMENT manchester (sound)>]>";
         Document controlDoc = XMLUnit.buildControlDocument(doctypeDeclaration +
-            "<manchester><sound sorted=\"true\"/></manchester>");
+                                                           "<manchester><sound sorted=\"true\"/></manchester>");
         control = (Attr) controlDoc.getDocumentElement().getFirstChild()
             .getAttributes().getNamedItem("sorted");
 
         Document testDoc = XMLUnit.buildTestDocument(doctypeDeclaration +
-            "<manchester><sound/></manchester>");
+                                                     "<manchester><sound/></manchester>");
         test = (Attr) testDoc.getDocumentElement().getFirstChild()
             .getAttributes().getNamedItem("sorted");
 
         assertDifferentAttributes(control, test,
-            ATTR_VALUE_EXPLICITLY_SPECIFIED, false);
+                                  ATTR_VALUE_EXPLICITLY_SPECIFIED, false);
     }
 
     private void assertDifferentElements(Element control, Element test,
-    Difference difference) {
+                                         Difference difference) {
         try {
             engine.compareElement(control, test, listener);
         } catch (DifferenceEngine.DifferenceFoundException e) {
@@ -289,8 +289,8 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 
     public void testCompareElements() throws Exception {
         Document document = XMLUnit.buildControlDocument(
-            "<down><im standing=\"alone\"/><im watching=\"you\" all=\"\"/>"
-            + "<im watching=\"you all\"/><im watching=\"you sinking\"/></down>");
+                                                         "<down><im standing=\"alone\"/><im watching=\"you\" all=\"\"/>"
+                                                         + "<im watching=\"you all\"/><im watching=\"you sinking\"/></down>");
         Element control = (Element) document.getDocumentElement();
         Element test = (Element) control.getFirstChild();
 
@@ -313,13 +313,13 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 
     public void testCompareNode() throws Exception {
         Document controlDocument = XMLUnit.buildControlDocument("<root>"
-            + "<!-- " + COMMENT_A + " -->"
-            + "<?" + PROC_A[0] + " "+ PROC_A[1] + " ?>"
-            + "<elem attr=\"" + ATTR_A + "\">" + TEXT_A + "</elem></root>");
+                                                                + "<!-- " + COMMENT_A + " -->"
+                                                                + "<?" + PROC_A[0] + " "+ PROC_A[1] + " ?>"
+                                                                + "<elem attr=\"" + ATTR_A + "\">" + TEXT_A + "</elem></root>");
         Document testDocument = XMLUnit.buildTestDocument("<root>"
-            + "<!-- " + COMMENT_B + " -->"
-            + "<?" + PROC_B[0] + " "+ PROC_B[1] + " ?>"
-            + "<elem attr=\"" + ATTR_B + "\">" + TEXT_B + "</elem></root>");
+                                                          + "<!-- " + COMMENT_B + " -->"
+                                                          + "<?" + PROC_B[0] + " "+ PROC_B[1] + " ?>"
+                                                          + "<elem attr=\"" + ATTR_B + "\">" + TEXT_B + "</elem></root>");
 
         engine.compare(controlDocument, testDocument, listener, null);
 
@@ -342,7 +342,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     private void assertDifferentNamespaceDetails(Node control, Node test,
-    Difference expectedDifference, boolean fatal) {
+                                                 Difference expectedDifference, boolean fatal) {
         try {
             engine.compareNodeBasics(control, test, listener);
             if (fatal) {
@@ -365,22 +365,22 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         String prefixB = "cd";
         String elemName = "nowPlaying";
         Element control = document.createElementNS(namespaceA,
-            prefixA + ':' + elemName);
+                                                   prefixA + ':' + elemName);
         engine.compareNodeBasics(control, control, listener);
 
         Element test = document.createElementNS(namespaceB,
-            prefixA + ':' + elemName);
+                                                prefixA + ':' + elemName);
         assertDifferentNamespaceDetails(control, test, NAMESPACE_URI,
-            true);
+                                        true);
 
         test = document.createElementNS(namespaceA,
-            prefixB + ':' + elemName);
+                                        prefixB + ':' + elemName);
         assertDifferentNamespaceDetails(control, test,
-            NAMESPACE_PREFIX, false);
+                                        NAMESPACE_PREFIX, false);
     }
 
     private void assertDifferentChildren(Node control, Node test,
-    Difference expectedDifference, boolean fatal) {
+                                         Difference expectedDifference, boolean fatal) {
         try {
             engine.compareHasChildNodes(control, test, listener);
             engine.compareNodeChildren(control, test, listener, DEFAULT_ELEMENT_QUALIFIER);
@@ -390,21 +390,21 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         } catch (DifferenceEngine.DifferenceFoundException e) {
             if (!fatal) {
                 fail("Not expecting fatal difference " +
-                    listener.comparingWhat
-                    + ": expected " + listener.expected
-                    + " but was " + listener.actual);
+                     listener.comparingWhat
+                     + ": expected " + listener.expected
+                     + " but was " + listener.actual);
             }
         }
         assertEquals(expectedDifference==null ? -1 : expectedDifference.getId(),
-            listener.comparingWhat);
+                     listener.comparingWhat);
         assertEquals(fatal, listener.different);
         resetListener();
     }
 
     public void testCompareNodeChildren() throws Exception {
         document = XMLUnit.buildControlDocument(
-            "<down><im standing=\"alone\"/><im><watching/>you all</im>"
-            + "<im watching=\"you\">sinking</im></down>");
+                                                "<down><im standing=\"alone\"/><im><watching/>you all</im>"
+                                                + "<im watching=\"you\">sinking</im></down>");
         // compare im #1 to itself
         Node control = document.getDocumentElement().getFirstChild();
         Node test = control;
@@ -418,14 +418,14 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         control = test;
         test = control.getNextSibling();
         assertDifferentChildren(control, test, CHILD_NODELIST_LENGTH,
-            true);
+                                true);
     }
 
     private void assertDifferentNodeLists(Node control, Node test,
-    Difference expectedDifference, boolean fatal) {
+                                          Difference expectedDifference, boolean fatal) {
         try {
             engine.compareNodeList(control.getChildNodes(), test.getChildNodes(),
-                control.getChildNodes().getLength(), listener, DEFAULT_ELEMENT_QUALIFIER);
+                                   control.getChildNodes().getLength(), listener, DEFAULT_ELEMENT_QUALIFIER);
             if (fatal) {
                 fail("Expected fatal difference");
             }
@@ -435,15 +435,15 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
             }
         }
         assertEquals(expectedDifference==null ? -1 : expectedDifference.getId(),
-            listener.comparingWhat);
+                     listener.comparingWhat);
         assertEquals(fatal, listener.different);
         resetListener();
     }
 
     public void testCompareNodeList() throws Exception {
         document = XMLUnit.buildControlDocument(
-            "<down><im><standing/>alone</im><im><watching/>you all</im>"
-            + "<im><watching/>you sinking</im></down>");
+                                                "<down><im><standing/>alone</im><im><watching/>you all</im>"
+                                                + "<im><watching/>you sinking</im></down>");
         // compare im #1 to itself
         Node control = document.getDocumentElement().getFirstChild();
         Node test = control;
@@ -488,7 +488,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     public void testBasicCompare() throws Exception {
         try {
             engine.compare("black", "white", null, null, listener,
-                ATTR_NAME_NOT_FOUND);
+                           ATTR_NAME_NOT_FOUND);
             fail("Expected difference found exception");
         } catch (DifferenceEngine.DifferenceFoundException e) {
             assertEquals(true, listener.different);
@@ -498,7 +498,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
 
         try {
             engine.compare("black", "white", null, null, listener,
-                NAMESPACE_PREFIX);
+                           NAMESPACE_PREFIX);
             assertEquals(false, listener.different);
             assertEquals(NAMESPACE_PREFIX.getId(), listener.comparingWhat);
         } catch (Exception e) {
@@ -507,138 +507,138 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
     
     public void testXpathLocation1() throws Exception {
-    	String control = "<dvorak><keyboard/><composer/></dvorak>";
-    	String test = "<qwerty><keyboard/></qwerty>";
-    	listenToDifferences(control, test);
-    	assertEquals("1st control xpath", "/dvorak[1]", listener.controlXpath);
-    	assertEquals("1st test xpath", "/qwerty[1]", listener.testXpath);
+        String control = "<dvorak><keyboard/><composer/></dvorak>";
+        String test = "<qwerty><keyboard/></qwerty>";
+        listenToDifferences(control, test);
+        assertEquals("1st control xpath", "/dvorak[1]", listener.controlXpath);
+        assertEquals("1st test xpath", "/qwerty[1]", listener.testXpath);
     }
     
-    public void testXpathLocation2() throws Exception {    	
-    	String control = "<dvorak><keyboard/><composer/></dvorak>";
-    	String test = "<qwerty><keyboard/></qwerty>";
-    	String start = "<a>", end = "</a>";
-    	listenToDifferences(start + control + end, start + test + end);
-    	assertEquals("2nd control xpath", "/a[1]/dvorak[1]", listener.controlXpath);
-    	assertEquals("2nd test xpath", "/a[1]/qwerty[1]", listener.testXpath);    	
+    public void testXpathLocation2() throws Exception {         
+        String control = "<dvorak><keyboard/><composer/></dvorak>";
+        String test = "<qwerty><keyboard/></qwerty>";
+        String start = "<a>", end = "</a>";
+        listenToDifferences(start + control + end, start + test + end);
+        assertEquals("2nd control xpath", "/a[1]/dvorak[1]", listener.controlXpath);
+        assertEquals("2nd test xpath", "/a[1]/qwerty[1]", listener.testXpath);          
     }
     
     public void testXpathLocation3() throws Exception {
-    	String control = "<stuff><wood type=\"rough\"/></stuff>";
-    	String test = "<stuff><wood type=\"smooth\"/></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("3rd control xpath", "/stuff[1]/wood[1]/@type", listener.controlXpath);
-    	assertEquals("3rd test xpath", "/stuff[1]/wood[1]/@type", listener.testXpath);    	
+        String control = "<stuff><wood type=\"rough\"/></stuff>";
+        String test = "<stuff><wood type=\"smooth\"/></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("3rd control xpath", "/stuff[1]/wood[1]/@type", listener.controlXpath);
+        assertEquals("3rd test xpath", "/stuff[1]/wood[1]/@type", listener.testXpath);          
     }
     
     public void testXpathLocation4() throws Exception {
-    	String control = "<stuff><glass colour=\"clear\"/><glass colour=\"green\"/></stuff>";
-    	String test = "<stuff><glass colour=\"clear\"/><glass colour=\"blue\"/></stuff>";;
-    	listenToDifferences(control, test);
-    	assertEquals("4th control xpath", "/stuff[1]/glass[2]/@colour", listener.controlXpath);
-    	assertEquals("4th test xpath", "/stuff[1]/glass[2]/@colour", listener.testXpath);    	    	
+        String control = "<stuff><glass colour=\"clear\"/><glass colour=\"green\"/></stuff>";
+        String test = "<stuff><glass colour=\"clear\"/><glass colour=\"blue\"/></stuff>";;
+        listenToDifferences(control, test);
+        assertEquals("4th control xpath", "/stuff[1]/glass[2]/@colour", listener.controlXpath);
+        assertEquals("4th test xpath", "/stuff[1]/glass[2]/@colour", listener.testXpath);               
     }
     
     public void testXpathLocation5() throws Exception {
-    	String control = "<stuff><wood>maple</wood><wood>oak</wood></stuff>";
-    	String test = "<stuff><wood>maple</wood><wood>ash</wood></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("5th control xpath", "/stuff[1]/wood[2]/text()[1]", listener.controlXpath);
-    	assertEquals("5th test xpath", "/stuff[1]/wood[2]/text()[1]", listener.testXpath);    	
+        String control = "<stuff><wood>maple</wood><wood>oak</wood></stuff>";
+        String test = "<stuff><wood>maple</wood><wood>ash</wood></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("5th control xpath", "/stuff[1]/wood[2]/text()[1]", listener.controlXpath);
+        assertEquals("5th test xpath", "/stuff[1]/wood[2]/text()[1]", listener.testXpath);      
     }
     
     public void testXpathLocation6() throws Exception {
-    	String control = "<stuff><list><wood/><glass/></list><item/></stuff>";
-    	String test = "<stuff><list><wood/><glass/></list><item>description</item></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("6th control xpath", "/stuff[1]/item[1]", listener.controlXpath);
-    	assertEquals("6th test xpath", "/stuff[1]/item[1]", listener.testXpath);    	
+        String control = "<stuff><list><wood/><glass/></list><item/></stuff>";
+        String test = "<stuff><list><wood/><glass/></list><item>description</item></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("6th control xpath", "/stuff[1]/item[1]", listener.controlXpath);
+        assertEquals("6th test xpath", "/stuff[1]/item[1]", listener.testXpath);        
     }
     
     public void testXpathLocation7() throws Exception {
-    	String control = "<stuff><list><wood/></list></stuff>";
-    	String test = "<stuff><list><glass/></list></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("7th control xpath", "/stuff[1]/list[1]/wood[1]", listener.controlXpath);
-    	assertEquals("7th test xpath", "/stuff[1]/list[1]/glass[1]", listener.testXpath);    	
+        String control = "<stuff><list><wood/></list></stuff>";
+        String test = "<stuff><list><glass/></list></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("7th control xpath", "/stuff[1]/list[1]/wood[1]", listener.controlXpath);
+        assertEquals("7th test xpath", "/stuff[1]/list[1]/glass[1]", listener.testXpath);       
     }
     
     public void testXpathLocation8() throws Exception {
-    	String control = "<stuff><list><!--wood--></list></stuff>";
-    	String test = "<stuff><list><!--glass--></list></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("8th control xpath", "/stuff[1]/list[1]/comment()[1]", listener.controlXpath);
-    	assertEquals("8th test xpath", "/stuff[1]/list[1]/comment()[1]", listener.testXpath);    	
+        String control = "<stuff><list><!--wood--></list></stuff>";
+        String test = "<stuff><list><!--glass--></list></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("8th control xpath", "/stuff[1]/list[1]/comment()[1]", listener.controlXpath);
+        assertEquals("8th test xpath", "/stuff[1]/list[1]/comment()[1]", listener.testXpath);           
     }
     
     public void testXpathLocation9() throws Exception {
-    	String control = "<stuff><list/><?wood rough?><list/></stuff>";
-    	String test = "<stuff><list/><?glass clear?><list/></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("9th control xpath", "/stuff[1]/processing-instruction()[1]", 
-    		listener.controlXpath);
-    	assertEquals("9th test xpath", "/stuff[1]/processing-instruction()[1]", 
-    		listener.testXpath);    	
+        String control = "<stuff><list/><?wood rough?><list/></stuff>";
+        String test = "<stuff><list/><?glass clear?><list/></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("9th control xpath", "/stuff[1]/processing-instruction()[1]", 
+                     listener.controlXpath);
+        assertEquals("9th test xpath", "/stuff[1]/processing-instruction()[1]", 
+                     listener.testXpath);       
     }
     
     public void testXpathLocation10() throws Exception {
-    	String control = "<stuff><list/>list<![CDATA[wood]]></stuff>";
-    	String test = "<stuff><list/>list<![CDATA[glass]]></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("10th control xpath", "/stuff[1]/text()[2]", 
-    		listener.controlXpath);
-    	assertEquals("10th test xpath", "/stuff[1]/text()[2]", 
-    		listener.testXpath);    	
+        String control = "<stuff><list/>list<![CDATA[wood]]></stuff>";
+        String test = "<stuff><list/>list<![CDATA[glass]]></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("10th control xpath", "/stuff[1]/text()[2]", 
+                     listener.controlXpath);
+        assertEquals("10th test xpath", "/stuff[1]/text()[2]", 
+                     listener.testXpath);       
     }
     
     public void testXpathLocation11() throws Exception {
-    	String control = "<stuff><list><item/></list></stuff>";
-    	String test = "<stuff><list>item text</list></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("11th control xpath", "/stuff[1]/list[1]/item[1]", 
-    		listener.controlXpath);
-    	assertEquals("11th test xpath", "/stuff[1]/list[1]/text()[1]", 
-    		listener.testXpath);    	
+        String control = "<stuff><list><item/></list></stuff>";
+        String test = "<stuff><list>item text</list></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("11th control xpath", "/stuff[1]/list[1]/item[1]", 
+                     listener.controlXpath);
+        assertEquals("11th test xpath", "/stuff[1]/list[1]/text()[1]", 
+                     listener.testXpath);       
     }
 
     public void testXpathLocation12() throws Exception {
         engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
-    	String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
-    	String test = "<stuff><item id=\"1\"/></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("12th control xpath", "/stuff[1]/item[2]", 
-    		listener.controlXpath);
-    	assertEquals("12th test xpath", "/stuff[1]/item[1]", 
-    		listener.testXpath);    	
+        String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
+        String test = "<stuff><item id=\"1\"/></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("12th control xpath", "/stuff[1]/item[2]", 
+                     listener.controlXpath);
+        assertEquals("12th test xpath", "/stuff[1]/item[1]", 
+                     listener.testXpath);       
     }
 
     public void testXpathLocation13() throws Exception {
-		engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
-    	String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
-    	String test = "<stuff><?item data?></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("13th control xpath", "/stuff[1]/item[2]", 
-    		listener.controlXpath);
-    	assertEquals("13th test xpath", "/stuff[1]/processing-instruction()[1]", 
-    		listener.testXpath);    	
+        engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
+        String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
+        String test = "<stuff><?item data?></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("13th control xpath", "/stuff[1]/item[2]", 
+                     listener.controlXpath);
+        assertEquals("13th test xpath", "/stuff[1]/processing-instruction()[1]", 
+                     listener.testXpath);       
     }
 
     public void testXpathLocation14() throws Exception {
-		engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
-    	String control = "<stuff><thing id=\"1\"/><item id=\"2\"/></stuff>";
-    	String test = "<stuff><item id=\"2\"/><item id=\"1\"/></stuff>";
-    	listenToDifferences(control, test);
-    	assertEquals("14th control xpath", "/stuff[1]/item[1]/@id", 
-    		listener.controlXpath);
-    	assertEquals("14th test xpath", "/stuff[1]/item[2]/@id", 
-    		listener.testXpath);    	
+        engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
+        String control = "<stuff><thing id=\"1\"/><item id=\"2\"/></stuff>";
+        String test = "<stuff><item id=\"2\"/><item id=\"1\"/></stuff>";
+        listenToDifferences(control, test);
+        assertEquals("14th control xpath", "/stuff[1]/item[1]/@id", 
+                     listener.controlXpath);
+        assertEquals("14th test xpath", "/stuff[1]/item[2]/@id", 
+                     listener.testXpath);       
     }
 
     public void testIssue1027863() throws Exception {
         engine = new DifferenceEngine(PSEUDO_DETAILED_DIFF);
-    	String control = "<stuff><item id=\"1\"><thing/></item></stuff>";
-    	String test = "<stuff><item id=\"2\"/></stuff>";
-    	listenToDifferences(control, test);
+        String control = "<stuff><item id=\"1\"><thing/></item></stuff>";
+        String test = "<stuff><item id=\"2\"/></stuff>";
+        listenToDifferences(control, test);
         assertEquals("15th difference type",
                      DifferenceEngine.HAS_CHILD_NODES_ID,
                      listener.comparingWhat);
@@ -646,10 +646,10 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
                      listener.expected);
         assertEquals("15th difference test value", "false",
                      listener.actual);
-    	assertEquals("15th control xpath", "/stuff[1]/item[1]", 
+        assertEquals("15th control xpath", "/stuff[1]/item[1]", 
                      listener.controlXpath);
-    	assertEquals("15th test xpath", "/stuff[1]/item[1]", 
-                     listener.testXpath);    	
+        assertEquals("15th test xpath", "/stuff[1]/item[1]", 
+                     listener.testXpath);       
     }
 
     public void testNormalizeWhitespace() {
@@ -660,13 +660,13 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
                      .normalizeWhitespace("a\rb c\nd\te\r\n   \tf"));
     }
 
-	private void listenToDifferences(String control, String test)
-		throws SAXException, IOException {
-		Document controlDoc = XMLUnit.buildControlDocument(control);
-		Document testDoc = XMLUnit.buildTestDocument(test);
-		engine.compare(controlDoc, testDoc, listener, DEFAULT_ELEMENT_QUALIFIER);
-	}
-    	
+    private void listenToDifferences(String control, String test)
+        throws SAXException, IOException {
+        Document controlDoc = XMLUnit.buildControlDocument(control);
+        Document testDoc = XMLUnit.buildTestDocument(test);
+        engine.compare(controlDoc, testDoc, listener, DEFAULT_ELEMENT_QUALIFIER);
+    }
+        
 
     private void resetListener() {
         listener = new CollectingDifferenceListener();
@@ -687,18 +687,18 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         return new TestSuite(test_DifferenceEngine.class);
     }
 
-	private class SimpleComparisonController implements ComparisonController {
-		public boolean haltComparison(Difference afterDifference) {
-			return !afterDifference.isRecoverable();
-		}
-	}
-	
-	private class NeverHaltingComparisonController implements ComparisonController {
-		public boolean haltComparison(Difference afterDifference) {
-			return false;
-		}
-	}
-	
+    private class SimpleComparisonController implements ComparisonController {
+        public boolean haltComparison(Difference afterDifference) {
+            return !afterDifference.isRecoverable();
+        }
+    }
+        
+    private class NeverHaltingComparisonController implements ComparisonController {
+        public boolean haltComparison(Difference afterDifference) {
+            return false;
+        }
+    }
+        
     private class CollectingDifferenceListener implements DifferenceListener {
         public String expected;
         public String actual;
@@ -711,12 +711,12 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         public String testXpath;
         private boolean tracing = false;
         public int differenceFound(Difference difference) {
-        	if (tracing) {
-        		System.out.println(difference.toString());
-        	}
-        	assertNotNull("difference not null", difference);
-        	assertNotNull("control node detail not null", difference.getControlNodeDetail());
-        	assertNotNull("test node detail not null", difference.getTestNodeDetail());
+            if (tracing) {
+                System.out.println(difference.toString());
+            }
+            assertNotNull("difference not null", difference);
+            assertNotNull("control node detail not null", difference.getControlNodeDetail());
+            assertNotNull("test node detail not null", difference.getTestNodeDetail());
             this.expected = difference.getControlNodeDetail().getValue();
             this.actual = difference.getTestNodeDetail().getValue();
             this.control = difference.getControlNodeDetail().getNode();
@@ -731,7 +731,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
             nodesSkipped = true;
         }
         public void setTrace(boolean active) {
-        	tracing = active;
+            tracing = active;
         }
     }
 }

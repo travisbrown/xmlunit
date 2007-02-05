@@ -89,7 +89,7 @@ public class SimpleSerializer {
      * @throws UnsupportedEncodingException
      */
     public String serialize(Node domNode)
-    throws IOException, UnsupportedEncodingException {
+        throws IOException, UnsupportedEncodingException {
         return serialize(domNode, null);
     }
 
@@ -101,9 +101,9 @@ public class SimpleSerializer {
      * @throws UnsupportedEncodingException
      */
     public String serialize(Node domNode, String encoding)
-    throws IOException, UnsupportedEncodingException {
+        throws IOException, UnsupportedEncodingException {
         NodeInputStream nodeStream = new NodeInputStream(domNode,
-            outputProperties);
+                                                         outputProperties);
 
         InputStreamReader reader;
         if (encoding == null) {

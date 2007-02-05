@@ -44,42 +44,42 @@ import org.w3c.dom.Node;
  * @see Difference#getTestNodeDetail
  */
 public class NodeDetail {
-	private final String value;
-	private final Node node; 
-	private final String xpathLocation;
-	
-	/**
-	 * Constructor for NodeDetail.
-	 */
-	public NodeDetail(String value, Node node, String xpathLocation) {
-		this.value = value;
-		this.node = node;
-		this.xpathLocation = xpathLocation;
-	}
-	
-	
-	/**
-	 * Returns the node.
-	 * @return Node
-	 */
-	public Node getNode() {
-		return node;
-	}
+    private final String value;
+    private final Node node; 
+    private final String xpathLocation;
+        
+    /**
+     * Constructor for NodeDetail.
+     */
+    public NodeDetail(String value, Node node, String xpathLocation) {
+        this.value = value;
+        this.node = node;
+        this.xpathLocation = xpathLocation;
+    }
+        
+        
+    /**
+     * Returns the node.
+     * @return Node
+     */
+    public Node getNode() {
+        return node;
+    }
 
-	/**
-	 * Returns the value.
-	 * @return String
-	 */
-	public String getValue() {
-		return value;
-	}
+    /**
+     * Returns the value.
+     * @return String
+     */
+    public String getValue() {
+        return value;
+    }
 
-	/**
-	 * Returns the xpathLocation.
-	 * @return String
-	 */
-	public String getXpathLocation() {
-		return xpathLocation;
-	}
+    /**
+     * Returns the xpathLocation.
+     * @return String
+     */
+    public String getXpathLocation() {
+        return xpathLocation;
+    }
 
 }

@@ -78,15 +78,15 @@ public class NodeTestException extends Exception {
         return node;
     }
 
-	/**
-	 * @return the exception message and node information if available
-	 */
-	public String getMessage() {
-		StringBuffer stringBuffer = new StringBuffer(super.getMessage());
-		if (hasNode()) {
-			stringBuffer.append(' ')
-				.append(getNode().toString());
-		}
-		return stringBuffer.toString();
-	}
+    /**
+     * @return the exception message and node information if available
+     */
+    public String getMessage() {
+        StringBuffer stringBuffer = new StringBuffer(super.getMessage());
+        if (hasNode()) {
+            stringBuffer.append(' ')
+                .append(getNode().toString());
+        }
+        return stringBuffer.toString();
+    }
 }

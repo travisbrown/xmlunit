@@ -99,7 +99,7 @@ import org.xml.sax.SAXException;
  */
 public class XMLAssert extends Assert implements XSLTConstants {
     
-	protected XMLAssert(){
+    protected XMLAssert(){
         super();
     }
 
@@ -109,9 +109,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param assertion true if asserting that result is similar
      */
     public static void assertXMLEqual(Diff diff, boolean assertion) {
-    	if (assertion != diff.similar()) {
-    		fail(diff.toString());
-    	}
+        if (assertion != diff.similar()) {
+            fail(diff.toString());
+        }
     }
     
     /**
@@ -120,10 +120,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param diff the result of an XML comparison
      * @param assertion true if asserting that result is similar
      */
-    public static void assertXMLEqual(String msg, Diff diff, boolean assertion) {    	
-    	if (assertion != diff.similar()) {
-    		fail(msg + ", " + diff.toString());
-    	}
+    public static void assertXMLEqual(String msg, Diff diff, boolean assertion) {       
+        if (assertion != diff.similar()) {
+            fail(msg + ", " + diff.toString());
+        }
     }
 
     /**
@@ -132,9 +132,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param assertion true if asserting that result is identical
      */
     public static void assertXMLIdentical(Diff diff, boolean assertion) {
-    	if (assertion != diff.identical()) {
-    		fail(diff.toString());
-    	}
+        if (assertion != diff.identical()) {
+            fail(diff.toString());
+        }
     }
 
     /**
@@ -155,9 +155,9 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @param assertion true if asserting that result is identical
      */
     public static void assertXMLIdentical(String msg, Diff diff, boolean assertion) {
-    	if (assertion != diff.identical()) {
-    		fail(msg + ", " + diff.toString());
-    	}
+        if (assertion != diff.identical()) {
+            fail(msg + ", " + diff.toString());
+        }
     }
 
     /**
@@ -357,8 +357,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws SAXException, IOException,
                XpathException {
         assertXpathsEqual(
-            controlXpath, XMLUnit.buildControlDocument(inControlXMLString),
-            testXpath, XMLUnit.buildTestDocument(inTestXMLString));
+                          controlXpath, XMLUnit.buildControlDocument(inControlXMLString),
+                          testXpath, XMLUnit.buildTestDocument(inTestXMLString));
     }
 
     /**
@@ -430,8 +430,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws SAXException, IOException,
                XpathException {
         assertXpathsNotEqual(
-            controlXpath, XMLUnit.buildControlDocument(inControlXMLString),
-            testXpath, XMLUnit.buildTestDocument(inTestXMLString));
+                             controlXpath, XMLUnit.buildControlDocument(inControlXMLString),
+                             testXpath, XMLUnit.buildTestDocument(inTestXMLString));
     }
 
     /**
@@ -504,7 +504,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws SAXException, IOException,
                XpathException {
         assertXpathValuesEqual(controlXpath,
-            XMLUnit.buildControlDocument(inControlXMLString),
+                               XMLUnit.buildControlDocument(inControlXMLString),
                                testXpath,
                                XMLUnit.buildTestDocument(inTestXMLString));
     }
@@ -576,7 +576,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws SAXException, IOException,
                XpathException {
         assertXpathValuesNotEqual(controlXpath,
-            XMLUnit.buildControlDocument(inControlXMLString),
+                                  XMLUnit.buildControlDocument(inControlXMLString),
                                   testXpath,
                                   XMLUnit.buildTestDocument(inTestXMLString));
     }
@@ -599,11 +599,11 @@ public class XMLAssert extends Assert implements XSLTConstants {
         if (control!=null) {
             if (control.equals(test)) {
                 fail("Expected test value NOT to be equal to control but both were "
-                    + test);
+                     + test);
             }
         } else if (test != null) {
             fail("control xPath evaluated to empty node set, "
-            	+ "but test xPath evaluated to " + test);
+                 + "but test xPath evaluated to " + test);
         }
     }
 
@@ -638,7 +638,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws XpathException {
         XpathEngine simpleXpathEngine = XMLUnit.newXpathEngine();
         assertEquals(expectedValue,
-            simpleXpathEngine.evaluate(xpathExpression, inDocument));
+                     simpleXpathEngine.evaluate(xpathExpression, inDocument));
     }
 
     /**
@@ -665,10 +665,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws XpathException {
         XpathEngine simpleXpathEngine = XMLUnit.newXpathEngine();
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-            xPathExpression, inDocument);
+                                                               xPathExpression, inDocument);
         int matches = nodeList.getLength();
         assertTrue("Expecting to find matches for Xpath " + 
-            xPathExpression, matches > 0);
+                   xPathExpression, matches > 0);
     }
 
     /**
@@ -695,10 +695,10 @@ public class XMLAssert extends Assert implements XSLTConstants {
         throws XpathException {
         XpathEngine simpleXpathEngine = XMLUnit.newXpathEngine();
         NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-            xPathExpression, inDocument);
+                                                               xPathExpression, inDocument);
         int matches = nodeList.getLength();
         assertEquals("Should be zero matches for Xpath " + 
-            xPathExpression, 0, matches);
+                     xPathExpression, 0, matches);
     }
     
     /**
@@ -725,7 +725,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @see Validator
      */
     public static void assertXMLValid(String xmlString, String systemId)
-    throws SAXException, ConfigurationException {
+        throws SAXException, ConfigurationException {
         assertXMLValid(new Validator(new StringReader(xmlString), systemId));
     }
 
@@ -741,7 +741,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @see Validator
      */
     public static void assertXMLValid(String xmlString, String systemId, String doctype)
-    throws SAXException, ConfigurationException {
+        throws SAXException, ConfigurationException {
         assertXMLValid(new Validator(new StringReader(xmlString), systemId, doctype));
     }
 
@@ -784,7 +784,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
      * @see CountingNodeTester
      */
     public static void assertNodeTestPasses(NodeTest test, NodeTester tester,
-    short[] nodeTypes, boolean assertion) {
+                                            short[] nodeTypes, boolean assertion) {
         try {
             test.performTest(tester, nodeTypes);
             if (!assertion) {
@@ -793,7 +793,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
         } catch (NodeTestException e) {
             if (assertion) {
                 fail("Expected node test to pass, but it failed! "
-                    + e.getMessage());
+                     + e.getMessage());
             }
         }
     }

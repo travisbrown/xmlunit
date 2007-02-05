@@ -77,9 +77,9 @@ public class DifferenceEngine implements DifferenceConstants {
      * @see ComparisonController#haltComparison(Difference)
      */
     public DifferenceEngine(ComparisonController controller) {
-    	this.controller = controller;
-    	this.controlTracker = new XpathNodeTracker();
-    	this.testTracker = new XpathNodeTracker();
+        this.controller = controller;
+        this.controlTracker = new XpathNodeTracker();
+        this.testTracker = new XpathNodeTracker();
     }
         
     /**
@@ -93,21 +93,21 @@ public class DifferenceEngine implements DifferenceConstants {
      * in any sequence and that sequence is not considered important. 
      */
     public void compare(Node control, Node test, DifferenceListener listener, 
-    ElementQualifier elementQualifier) {
-    	controlTracker.reset();
-    	testTracker.reset();
+                        ElementQualifier elementQualifier) {
+        controlTracker.reset();
+        testTracker.reset();
         try {
             compare(getNullOrNotNull(control), getNullOrNotNull(test),
-                control, test, listener, NODE_TYPE);
+                    control, test, listener, NODE_TYPE);
             if (control!=null) {
                 compareNode(control, test, listener, elementQualifier);
             }
         } catch (DifferenceFoundException e) {
             // thrown by the protected compare() method to terminate the
             // comparison and unwind the call stack back to here
-        }    	
+        }       
     }
-	
+        
     private String getNullOrNotNull(Node aNode) {
         return aNode==null ? NULL_NODE : NOT_NULL_NODE;
     }
@@ -122,41 +122,41 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareNode(Node control, Node test,
-    DifferenceListener listener, ElementQualifier elementQualifier) 
-    throws DifferenceFoundException {
+                               DifferenceListener listener, ElementQualifier elementQualifier) 
+        throws DifferenceFoundException {
         boolean comparable = compareNodeBasics(control, test, listener);
         boolean isDocumentNode = false;
 
-		if (comparable) {
-	        switch (control.getNodeType()) {
-	            case Node.ELEMENT_NODE:
-	                compareElement((Element)control, (Element)test, listener);
-	                break;
-	            case Node.CDATA_SECTION_NODE:
-	            case Node.TEXT_NODE:
-	                compareText((CharacterData) control,
-                                    (CharacterData) test, listener);
-	                break;
-	            case Node.COMMENT_NODE:
-	                compareComment((Comment)control, (Comment)test, listener);
-	                break;
-	            case Node.DOCUMENT_TYPE_NODE:
-	                compareDocumentType((DocumentType)control,
-	                    (DocumentType)test, listener);
-	                break;
-	            case Node.PROCESSING_INSTRUCTION_NODE:
-	                compareProcessingInstruction((ProcessingInstruction)control,
-	                    (ProcessingInstruction)test, listener);
-	                break;
-	            case Node.DOCUMENT_NODE:
-	                isDocumentNode = true;
-	                compareDocument((Document)control, (Document) test, 
-	                	listener, elementQualifier);
-	                break;
-	            default:
-	                listener.skippedComparison(control, test);
-	        }
-		} 
+        if (comparable) {
+            switch (control.getNodeType()) {
+            case Node.ELEMENT_NODE:
+                compareElement((Element)control, (Element)test, listener);
+                break;
+            case Node.CDATA_SECTION_NODE:
+            case Node.TEXT_NODE:
+                compareText((CharacterData) control,
+                            (CharacterData) test, listener);
+                break;
+            case Node.COMMENT_NODE:
+                compareComment((Comment)control, (Comment)test, listener);
+                break;
+            case Node.DOCUMENT_TYPE_NODE:
+                compareDocumentType((DocumentType)control,
+                                    (DocumentType)test, listener);
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                compareProcessingInstruction((ProcessingInstruction)control,
+                                             (ProcessingInstruction)test, listener);
+                break;
+            case Node.DOCUMENT_NODE:
+                isDocumentNode = true;
+                compareDocument((Document)control, (Document) test, 
+                                listener, elementQualifier);
+                break;
+            default:
+                listener.skippedComparison(control, test);
+            }
+        } 
 
         compareHasChildNodes(control, test, listener);
         if (isDocumentNode) {
@@ -166,8 +166,8 @@ public class DifferenceEngine implements DifferenceConstants {
                 compareNode(controlElement, testElement, listener, elementQualifier);
             }
         } else {
-        	controlTracker.indent();
-        	testTracker.indent();
+            controlTracker.indent();
+            testTracker.indent();
             compareNodeChildren(control, test, listener, elementQualifier);
             controlTracker.outdent();
             testTracker.outdent();
@@ -183,14 +183,14 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareDocument(Document control, Document test, 
-    DifferenceListener listener, ElementQualifier elementQualifier) 
-    throws DifferenceFoundException {
+                                   DifferenceListener listener, ElementQualifier elementQualifier) 
+        throws DifferenceFoundException {
         DocumentType controlDoctype = control.getDoctype();
         DocumentType testDoctype = test.getDoctype();
         compare(getNullOrNotNull(controlDoctype), 
-            getNullOrNotNull(testDoctype), 
-            controlDoctype, testDoctype, listener, 
-            HAS_DOCTYPE_DECLARATION);
+                getNullOrNotNull(testDoctype), 
+                controlDoctype, testDoctype, listener, 
+                HAS_DOCTYPE_DECLARATION);
         if (controlDoctype!=null && testDoctype!=null) {
             compareNode(controlDoctype, testDoctype, listener, elementQualifier);
         }
@@ -206,7 +206,7 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected boolean compareNodeBasics(Node control, Node test,
-    DifferenceListener listener) throws DifferenceFoundException {
+                                        DifferenceListener listener) throws DifferenceFoundException {
         controlTracker.visited(control);
         testTracker.visited(test);
 
@@ -220,9 +220,9 @@ public class DifferenceEngine implements DifferenceConstants {
                     NODE_TYPE);
         }
         compare(control.getNamespaceURI(), test.getNamespaceURI(),
-            control, test, listener, NAMESPACE_URI);
+                control, test, listener, NAMESPACE_URI);
         compare(control.getPrefix(), test.getPrefix(),
-            control, test, listener, NAMESPACE_PREFIX);
+                control, test, listener, NAMESPACE_PREFIX);
             
         return textAndCDATA || controlType.equals(testType);
     }
@@ -245,13 +245,13 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareHasChildNodes(Node control, Node test,
-    DifferenceListener listener) throws DifferenceFoundException {
+                                        DifferenceListener listener) throws DifferenceFoundException {
         Boolean controlHasChildren = control.hasChildNodes()
             ? Boolean.TRUE : Boolean.FALSE;
         Boolean testHasChildren = test.hasChildNodes()
             ? Boolean.TRUE : Boolean.FALSE;
         compare(controlHasChildren, testHasChildren, control, test,
-            listener, HAS_CHILD_NODES);
+                listener, HAS_CHILD_NODES);
     }
 
     /**
@@ -264,8 +264,8 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareNodeChildren(Node control, Node test,
-    DifferenceListener listener, ElementQualifier elementQualifier) 
-    throws DifferenceFoundException {
+                                       DifferenceListener listener, ElementQualifier elementQualifier) 
+        throws DifferenceFoundException {
         if (control.hasChildNodes() && test.hasChildNodes()) {
             NodeList controlChildren = control.getChildNodes();
             NodeList testChildren = test.getChildNodes();
@@ -273,9 +273,9 @@ public class DifferenceEngine implements DifferenceConstants {
             Integer controlLength = new Integer(controlChildren.getLength());
             Integer testLength = new Integer(testChildren.getLength());
             compare(controlLength, testLength, control, test, listener,
-                CHILD_NODELIST_LENGTH);
+                    CHILD_NODELIST_LENGTH);
             compareNodeList(controlChildren, testChildren,
-                controlLength.intValue(), listener, elementQualifier);
+                            controlLength.intValue(), listener, elementQualifier);
         }
     }
 
@@ -397,80 +397,80 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareElement(Element control, Element test,
-    DifferenceListener listener) throws DifferenceFoundException {
-    	compare(getUnNamespacedNodeName(control), getUnNamespacedNodeName(test), 
-    		control, test, listener, ELEMENT_TAG_NAME);
+                                  DifferenceListener listener) throws DifferenceFoundException {
+        compare(getUnNamespacedNodeName(control), getUnNamespacedNodeName(test), 
+                control, test, listener, ELEMENT_TAG_NAME);
 
         NamedNodeMap controlAttr = control.getAttributes();
-    	Integer controlNonXmlnsAttrLength = getNonXmlnsAttrLength(controlAttr);
+        Integer controlNonXmlnsAttrLength = getNonXmlnsAttrLength(controlAttr);
         NamedNodeMap testAttr = test.getAttributes();
         Integer testNonXmlnsAttrLength = getNonXmlnsAttrLength(testAttr);
         compare(controlNonXmlnsAttrLength, testNonXmlnsAttrLength,
-            control, test, listener, ELEMENT_NUM_ATTRIBUTES);
+                control, test, listener, ELEMENT_NUM_ATTRIBUTES);
 
         compareElementAttributes(control, test, controlAttr, testAttr,
-            listener);
+                                 listener);
     }
 
-	private Integer getNonXmlnsAttrLength(NamedNodeMap attributes) {
-		int length = 0, maxLength = attributes.getLength();
-		for (int i = 0; i < maxLength; ++i) {
-			if (!isXMLNSAttribute((Attr) attributes.item(i))) {
-				++length;
-			}
-		}
-		return new Integer(length);
-	}
+    private Integer getNonXmlnsAttrLength(NamedNodeMap attributes) {
+        int length = 0, maxLength = attributes.getLength();
+        for (int i = 0; i < maxLength; ++i) {
+            if (!isXMLNSAttribute((Attr) attributes.item(i))) {
+                ++length;
+            }
+        }
+        return new Integer(length);
+    }
 
     private void compareElementAttributes(Element control, Element test,
-    NamedNodeMap controlAttr, NamedNodeMap testAttr,
-    DifferenceListener listener) throws DifferenceFoundException {
+                                          NamedNodeMap controlAttr, NamedNodeMap testAttr,
+                                          DifferenceListener listener) throws DifferenceFoundException {
         for (int i=0; i < controlAttr.getLength(); ++i) {
             Attr nextAttr = (Attr) controlAttr.item(i);
-        	if (isXMLNSAttribute(nextAttr)) {
-        		// xml namespacing is handled in compareNodeBasics
-        	} else {
-            	boolean isNamespacedAttr = isNamespaced(nextAttr);
-            	String attrName = getUnNamespacedNodeName(nextAttr, isNamespacedAttr);
-            	Attr compareTo = null;
-            	
-            	if (isNamespacedAttr) {
-            		compareTo = (Attr) testAttr.getNamedItemNS(
-            			nextAttr.getNamespaceURI(), attrName);
-            	} else {
-            		compareTo = (Attr) testAttr.getNamedItem(attrName);
-            	}
-            	            
-	            if (compareTo != null) {
-	                compareAttribute(nextAttr, compareTo, listener);
-	                
-	                Attr attributeItem = (Attr) testAttr.item(i);
-	                String testAttrName = "[attribute absent]";
-	                if (attributeItem != null) {
-	                    testAttrName = getUnNamespacedNodeName(attributeItem);
-	                }
-	                compare(attrName, testAttrName,
-	                    nextAttr, compareTo, listener, ATTR_SEQUENCE);
-	            } else {
-	                compare(attrName, null, control, test, listener,
-	                    ATTR_NAME_NOT_FOUND);
-	            }
-        	}
+            if (isXMLNSAttribute(nextAttr)) {
+                // xml namespacing is handled in compareNodeBasics
+            } else {
+                boolean isNamespacedAttr = isNamespaced(nextAttr);
+                String attrName = getUnNamespacedNodeName(nextAttr, isNamespacedAttr);
+                Attr compareTo = null;
+                
+                if (isNamespacedAttr) {
+                    compareTo = (Attr) testAttr.getNamedItemNS(
+                                                               nextAttr.getNamespaceURI(), attrName);
+                } else {
+                    compareTo = (Attr) testAttr.getNamedItem(attrName);
+                }
+                            
+                if (compareTo != null) {
+                    compareAttribute(nextAttr, compareTo, listener);
+                        
+                    Attr attributeItem = (Attr) testAttr.item(i);
+                    String testAttrName = "[attribute absent]";
+                    if (attributeItem != null) {
+                        testAttrName = getUnNamespacedNodeName(attributeItem);
+                    }
+                    compare(attrName, testAttrName,
+                            nextAttr, compareTo, listener, ATTR_SEQUENCE);
+                } else {
+                    compare(attrName, null, control, test, listener,
+                            ATTR_NAME_NOT_FOUND);
+                }
+            }
         }
         controlTracker.clearTrackedAttribute();
         testTracker.clearTrackedAttribute();
     }
     
     private String getUnNamespacedNodeName(Node aNode) {
-    	return getUnNamespacedNodeName(aNode, isNamespaced(aNode));
+        return getUnNamespacedNodeName(aNode, isNamespaced(aNode));
     }
     
-	private String getUnNamespacedNodeName(Node aNode, boolean isNamespacedNode) {
-		if (isNamespacedNode) {
-			return aNode.getLocalName();
-		}
-		return aNode.getNodeName();
-	}
+    private String getUnNamespacedNodeName(Node aNode, boolean isNamespacedNode) {
+        if (isNamespacedNode) {
+            return aNode.getLocalName();
+        }
+        return aNode.getNodeName();
+    }
 
 
     /**
@@ -490,19 +490,19 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareAttribute(Attr control, Attr test,
-    DifferenceListener listener) throws DifferenceFoundException {
-    	controlTracker.visited(control);
-    	testTracker.visited(test);
-    	
-    	compare(control.getPrefix(), test.getPrefix(), control, test, 
-    		listener, NAMESPACE_PREFIX);
-    		
+                                    DifferenceListener listener) throws DifferenceFoundException {
+        controlTracker.visited(control);
+        testTracker.visited(test);
+        
+        compare(control.getPrefix(), test.getPrefix(), control, test, 
+                listener, NAMESPACE_PREFIX);
+                
         compare(control.getValue(), test.getValue(), control, test,
-            listener, ATTR_VALUE);
+                listener, ATTR_VALUE);
 
         compare(control.getSpecified() ? Boolean.TRUE : Boolean.FALSE,
-            test.getSpecified() ? Boolean.TRUE : Boolean.FALSE,
-            control, test, listener, ATTR_VALUE_EXPLICITLY_SPECIFIED);
+                test.getSpecified() ? Boolean.TRUE : Boolean.FALSE,
+                control, test, listener, ATTR_VALUE_EXPLICITLY_SPECIFIED);
     }
 
     /**
@@ -513,7 +513,7 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareCDataSection(CDATASection control, CDATASection test,
-    DifferenceListener listener) throws DifferenceFoundException {
+                                       DifferenceListener listener) throws DifferenceFoundException {
         compareText(control, test, listener);
     }
 
@@ -525,7 +525,7 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareComment(Comment control, Comment test,
-    DifferenceListener listener) throws DifferenceFoundException {
+                                  DifferenceListener listener) throws DifferenceFoundException {
         compareCharacterData(control, test, listener, COMMENT_VALUE);
     }
 
@@ -537,14 +537,14 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareDocumentType(DocumentType control, DocumentType test,
-    DifferenceListener listener) throws DifferenceFoundException {
+                                       DifferenceListener listener) throws DifferenceFoundException {
         compare(control.getName(), test.getName(), control, test, listener,
-            DOCTYPE_NAME);
+                DOCTYPE_NAME);
         compare(control.getPublicId(), test.getPublicId(), control, test, listener,
-            DOCTYPE_PUBLIC_ID);
+                DOCTYPE_PUBLIC_ID);
 
         compare(control.getSystemId(), test.getSystemId(),
-            control, test, listener, DOCTYPE_SYSTEM_ID);
+                control, test, listener, DOCTYPE_SYSTEM_ID);
     }
 
     /**
@@ -555,12 +555,12 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compareProcessingInstruction(ProcessingInstruction control,
-    ProcessingInstruction test, DifferenceListener listener)
-    throws DifferenceFoundException {
+                                                ProcessingInstruction test, DifferenceListener listener)
+        throws DifferenceFoundException {
         compare(control.getTarget(), test.getTarget(), control, test, listener,
-            PROCESSING_INSTRUCTION_TARGET);
+                PROCESSING_INSTRUCTION_TARGET);
         compare(control.getData(), test.getData(), control, test, listener,
-            PROCESSING_INSTRUCTION_DATA);
+                PROCESSING_INSTRUCTION_DATA);
     }
 
     /**
@@ -599,10 +599,10 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     private void compareCharacterData(CharacterData control, CharacterData test,
-    DifferenceListener listener, Difference difference)
-    throws DifferenceFoundException {
+                                      DifferenceListener listener, Difference difference)
+        throws DifferenceFoundException {
         compare(control.getData(), test.getData(), control, test, listener,
-            difference);
+                difference);
     }
 
     /**
@@ -617,15 +617,15 @@ public class DifferenceEngine implements DifferenceConstants {
      * @throws DifferenceFoundException
      */
     protected void compare(Object expected, Object actual,
-    Node control, Node test, DifferenceListener listener, Difference difference)
-    throws DifferenceFoundException {
+                           Node control, Node test, DifferenceListener listener, Difference difference)
+        throws DifferenceFoundException {
         if (unequal(expected, actual)) {
-        	NodeDetail controlDetail = new NodeDetail(String.valueOf(expected),
-        		control, controlTracker.toXpathString());
-        	NodeDetail testDetail = new NodeDetail(String.valueOf(actual),
-        		test, testTracker.toXpathString());
-        	Difference differenceInstance = new Difference(difference, 
-        		controlDetail, testDetail);
+            NodeDetail controlDetail = new NodeDetail(String.valueOf(expected),
+                                                      control, controlTracker.toXpathString());
+            NodeDetail testDetail = new NodeDetail(String.valueOf(actual),
+                                                   test, testTracker.toXpathString());
+            Difference differenceInstance = new Difference(difference, 
+                                                           controlDetail, testDetail);
             listener.differenceFound(differenceInstance);
             if (controller.haltComparison(differenceInstance)) {
                 throw flowControlException;

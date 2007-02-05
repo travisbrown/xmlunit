@@ -45,8 +45,8 @@ import org.w3c.dom.ProcessingInstruction;
  * Class for describing Nodes
  */
 public class NodeDescriptor implements XMLConstants {
-	protected static String DOCUMENT_NODE_DESCRIPTION = "Document Node ";
-	
+    protected static String DOCUMENT_NODE_DESCRIPTION = "Document Node ";
+        
     /**
      * Convert a Node into a simple String representation 
      * and append to StringBuffer
@@ -54,12 +54,12 @@ public class NodeDescriptor implements XMLConstants {
      * @param aNode
      */
     public static void appendNodeDetail(StringBuffer buf, NodeDetail nodeDetail) {
-    	appendNodeDetail(buf, nodeDetail.getNode(), true);
-    	buf.append(" at ").append(nodeDetail.getXpathLocation());
+        appendNodeDetail(buf, nodeDetail.getNode(), true);
+        buf.append(" at ").append(nodeDetail.getXpathLocation());
     }
     
     private static void appendNodeDetail(StringBuffer buf, Node aNode,  
-    boolean notRecursing) {
+                                         boolean notRecursing) {
         if (aNode==null) {
             return;
         }
@@ -67,35 +67,35 @@ public class NodeDescriptor implements XMLConstants {
             buf.append(XMLConstants.OPEN_START_NODE);
         }
         switch (aNode.getNodeType()) {
-            case Node.ATTRIBUTE_NODE:
-            	appendAttributeDetail(buf, aNode);
-                break;
-            case Node.ELEMENT_NODE:
-				appendElementDetail(buf, aNode, notRecursing);
-                break;
-            case Node.TEXT_NODE:
-            	appendTextDetail(buf, aNode);
-                break;
-            case Node.CDATA_SECTION_NODE:
-				appendCdataSectionDetail(buf, aNode);
-                break;
-            case Node.COMMENT_NODE:
-				appendCommentDetail(buf, aNode);
-                break;
-            case Node.PROCESSING_INSTRUCTION_NODE:
-				appendProcessingInstructionDetail(buf, aNode);
-                break;
-            case Node.DOCUMENT_TYPE_NODE:
-				appendDocumentTypeDetail(buf, aNode);
-                break;
-            case Node.DOCUMENT_NODE:
-				appendDocumentDetail(buf);
-                break;
-            default:
-                buf.append("!--NodeType ").append(aNode.getNodeType())
-                    .append(' ').append(aNode.getNodeName())
-                    .append('/').append(aNode.getNodeValue())
-                    .append("--");
+        case Node.ATTRIBUTE_NODE:
+            appendAttributeDetail(buf, aNode);
+            break;
+        case Node.ELEMENT_NODE:
+            appendElementDetail(buf, aNode, notRecursing);
+            break;
+        case Node.TEXT_NODE:
+            appendTextDetail(buf, aNode);
+            break;
+        case Node.CDATA_SECTION_NODE:
+            appendCdataSectionDetail(buf, aNode);
+            break;
+        case Node.COMMENT_NODE:
+            appendCommentDetail(buf, aNode);
+            break;
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            appendProcessingInstructionDetail(buf, aNode);
+            break;
+        case Node.DOCUMENT_TYPE_NODE:
+            appendDocumentTypeDetail(buf, aNode);
+            break;
+        case Node.DOCUMENT_NODE:
+            appendDocumentDetail(buf);
+            break;
+        default:
+            buf.append("!--NodeType ").append(aNode.getNodeType())
+                .append(' ').append(aNode.getNodeName())
+                .append('/').append(aNode.getNodeValue())
+                .append("--");
 
         }
         if (notRecursing) {
@@ -103,75 +103,75 @@ public class NodeDescriptor implements XMLConstants {
         }
     }
 
-	protected static void appendDocumentDetail(StringBuffer buf) {
-		buf.append(DOCUMENT_NODE_DESCRIPTION)
-			.append(XMLConstants.OPEN_START_NODE)
-			.append("...")
-			.append(XMLConstants.CLOSE_NODE);
-	}
+    protected static void appendDocumentDetail(StringBuffer buf) {
+        buf.append(DOCUMENT_NODE_DESCRIPTION)
+            .append(XMLConstants.OPEN_START_NODE)
+            .append("...")
+            .append(XMLConstants.CLOSE_NODE);
+    }
 
-	protected static void appendDocumentTypeDetail(StringBuffer buf, Node aNode) {
-		DocumentType type = (DocumentType) aNode;
-		buf.append(XMLConstants.START_DOCTYPE).append(type.getName());
-		boolean hasNoPublicId = true;
-		if (type.getPublicId()!=null
-		&& type.getPublicId().length() > 0) {
-		    buf.append(" PUBLIC \"").append(type.getPublicId())
-		        .append('"');
-		    hasNoPublicId = false;
-		}
-		if (type.getSystemId()!=null
-		&& type.getSystemId().length() > 0) {
-			if (hasNoPublicId) {
-				buf.append(" SYSTEM");
-			}
-		    buf.append(" \"").append(type.getSystemId())
-		        .append('"');
-		}
-	}
+    protected static void appendDocumentTypeDetail(StringBuffer buf, Node aNode) {
+        DocumentType type = (DocumentType) aNode;
+        buf.append(XMLConstants.START_DOCTYPE).append(type.getName());
+        boolean hasNoPublicId = true;
+        if (type.getPublicId()!=null
+            && type.getPublicId().length() > 0) {
+            buf.append(" PUBLIC \"").append(type.getPublicId())
+                .append('"');
+            hasNoPublicId = false;
+        }
+        if (type.getSystemId()!=null
+            && type.getSystemId().length() > 0) {
+            if (hasNoPublicId) {
+                buf.append(" SYSTEM");
+            }
+            buf.append(" \"").append(type.getSystemId())
+                .append('"');
+        }
+    }
 
-	protected static void appendProcessingInstructionDetail(
-		StringBuffer buf, Node aNode) {
-		ProcessingInstruction instr = (ProcessingInstruction) aNode;
-		buf.append(XMLConstants.START_PROCESSING_INSTRUCTION)
-		    .append(instr.getTarget())
-		    .append(' ').append(instr.getData())
-		    .append(XMLConstants.END_PROCESSING_INSTRUCTION);
-	}
+    protected static void appendProcessingInstructionDetail(
+                                                            StringBuffer buf, Node aNode) {
+        ProcessingInstruction instr = (ProcessingInstruction) aNode;
+        buf.append(XMLConstants.START_PROCESSING_INSTRUCTION)
+            .append(instr.getTarget())
+            .append(' ').append(instr.getData())
+            .append(XMLConstants.END_PROCESSING_INSTRUCTION);
+    }
 
-	protected static void appendCommentDetail(StringBuffer buf, Node aNode) {
-		buf.append(XMLConstants.START_COMMENT)
-		    .append(aNode.getNodeValue())
-		    .append(XMLConstants.END_COMMENT);
-	}
+    protected static void appendCommentDetail(StringBuffer buf, Node aNode) {
+        buf.append(XMLConstants.START_COMMENT)
+            .append(aNode.getNodeValue())
+            .append(XMLConstants.END_COMMENT);
+    }
 
-	protected static void appendCdataSectionDetail(StringBuffer buf, Node aNode) {
-		buf.append(XMLConstants.START_CDATA)
-		    .append(aNode.getNodeValue())
-		    .append(XMLConstants.END_CDATA);
-	}
+    protected static void appendCdataSectionDetail(StringBuffer buf, Node aNode) {
+        buf.append(XMLConstants.START_CDATA)
+            .append(aNode.getNodeValue())
+            .append(XMLConstants.END_CDATA);
+    }
 
-	protected static void appendTextDetail(StringBuffer buf, Node aNode) {
-		appendNodeDetail(buf, aNode.getParentNode(), false);
-		buf.append(" ...").append(XMLConstants.CLOSE_NODE)
-		    .append(aNode.getNodeValue())
-		    .append(XMLConstants.OPEN_END_NODE);
-		appendNodeDetail(buf, aNode.getParentNode(), false);
-	}
+    protected static void appendTextDetail(StringBuffer buf, Node aNode) {
+        appendNodeDetail(buf, aNode.getParentNode(), false);
+        buf.append(" ...").append(XMLConstants.CLOSE_NODE)
+            .append(aNode.getNodeValue())
+            .append(XMLConstants.OPEN_END_NODE);
+        appendNodeDetail(buf, aNode.getParentNode(), false);
+    }
 
-	protected static void appendElementDetail(StringBuffer buf, Node aNode,
-		boolean notRecursing) {
-		buf.append(aNode.getNodeName());
-		if (notRecursing) {
-		    buf.append("...");
-		}
-	}
+    protected static void appendElementDetail(StringBuffer buf, Node aNode,
+                                              boolean notRecursing) {
+        buf.append(aNode.getNodeName());
+        if (notRecursing) {
+            buf.append("...");
+        }
+    }
 
-	protected static void appendAttributeDetail(StringBuffer buf, Node aNode) {		
-		appendNodeDetail(buf,
-		    ((Attr)aNode).getOwnerElement(), false);
-		buf.append(' ')
-		    .append(aNode.getNodeName()).append("=\"")
-		    .append(aNode.getNodeValue()).append("\"...");
-	}
+    protected static void appendAttributeDetail(StringBuffer buf, Node aNode) {         
+        appendNodeDetail(buf,
+                         ((Attr)aNode).getOwnerElement(), false);
+        buf.append(' ')
+            .append(aNode.getNodeName()).append("=\"")
+            .append(aNode.getNodeValue()).append("\"...");
+    }
 }
