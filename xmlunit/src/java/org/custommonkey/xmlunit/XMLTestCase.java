@@ -60,7 +60,7 @@ import org.xml.sax.SAXException;
  * @see Diff#identical()
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
-public class XMLTestCase extends TestCase implements XSLTConstants {
+public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     /**
      * Construct a new XML test case.
      */
