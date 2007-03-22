@@ -165,6 +165,33 @@ public class test_DetailedDiff extends test_Diff {
         }
 
     }
+
+    public void testSeeAllDifferencesEvenIfDiffWouldSayHaltComparison() throws Exception {
+        String control = "<a><b/><c/></a>";
+        String test = "<a><c/></a>";
+
+        Diff d = new Diff(control, test);
+        DetailedDiff dd = new DetailedDiff(d);
+
+        List l = dd.getAllDifferences();
+        // number of children is different, didn't find <b/>, wrong
+        // sequence of nodes
+        assertEquals(3, l.size());
+    }
+
+    public void XtestSeeAllDifferencesEvenIfDiffSaysHaltComparison() throws Exception {
+        String control = "<a><b/><c/></a>";
+        String test = "<a><c/></a>";
+
+        Diff d = new Diff(control, test);
+        d.similar();
+        DetailedDiff dd = new DetailedDiff(d);
+
+        List l = dd.getAllDifferences();
+        // number of children is different, didn't find <b/>, wrong
+        // sequence of nodes
+        assertEquals(3, l.size());
+    }
         
     protected Diff buildDiff(Document control, Document test) {
         return new DetailedDiff(super.buildDiff(control, test));
