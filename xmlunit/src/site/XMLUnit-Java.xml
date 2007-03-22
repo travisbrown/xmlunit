@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.1b1//EN" "http://docbook.org/xml/simple/1.1b1/sdocbook.dtd">
+
+<article>
+  <title>A Tour of XMLUnit
+    <inlinemediaobject><imageobject>
+        <imagedata fileref="xmlunit.png" width="331" depth="100"
+          valign="middle" format="PNG"/>
+      </imageobject></inlinemediaobject>
+  </title>
+  <articleinfo>
+    <authorgroup>
+      <author>
+        <firstname>Tim</firstname>
+        <surname>Bacon</surname>
+      </author>
+    </authorgroup>
+    <revhistory>
+      <revision>
+        <revnumber>1.0</revnumber>
+        <date>January 2003</date>
+        <author>
+          <firstname>Tim</firstname>
+          <surname>Bacon</surname>
+        </author>
+        <revremark>Documentation for XMLUnit Java 1.0</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+
+  <section><title>What is XMLUnit?</title>
+
+    <para>XMLUnit enables JUnit-style assertions to be made about the
+    content and structure of XML<footnote id="more on JUnit"><para>For
+    more information on JUnit see <ulink
+    url="http://www.junit.org">http://www.junit.org</ulink></para></footnote>. It
+    is an open source project hosted at http://xmlunit.sourceforge.net
+    that grew out of a need to test a system that generated and
+    received custom XML messages. The problem that we faced was how to
+    verify that the system generated the correct message from a known
+    set of inputs. Obviously we could use a DTD or a schema to
+    validate the message output, but this approach wouldn't allow us
+    to distinguish between valid XML with correct content (e.g.
+    element <literal><![CDATA[<foo>bar</foo>]]></literal>) and valid
+    XML with incorrect content (e.g.  element
+    <literal><![CDATA[<foo>baz</foo>]]></literal>). What we really
+    wanted was an <literal>assertXMLEquals()</literal> method, so we
+    could compare the message that we expected the system to generate
+    and the message that the system actually generated. And that was
+    the beginning of XMLUnit.</para>
+  </section>
+  <section><title>Quick tour</title>
+
+    <para>XMLUnit provides a single JUnit extension class,
+    <literal>XMLTestCase</literal>, and a set of supporting classes
+    that allow assertions to be made about:</para>
+
+    <itemizedlist>
+      <listitem>The differences between two pieces of XML (via
+      <literal>Diff</literal> and <literal>DetailedDiff</literal>
+      classes)</listitem>
+
+      <listitem>The validity of a piece of XML (via
+      <literal>Validator</literal> class)</listitem>
+
+      <listitem> The outcome of transforming a piece of XML using XSLT
+      (via <literal>Transform</literal> class)</listitem>
+
+      <listitem>The evaluation of an XPath expression on a piece of
+      XML (via <literal>SimpleXpathEngine</literal> class)</listitem>
+
+      <listitem>Individual nodes in a piece of XML that are exposed by
+      DOM Traversal (via <literal>NodeTest</literal> class)</listitem>
+    </itemizedlist>
+
+    <para>XMLUnit can also treat HTML content, even badly-formed HTML,
+    as valid XML to allow these assertions to be made about web pages
+    (via the <literal>HTMLDocumentBuilder</literal> class).</para>
+  </section>
+
+  <section><title>Glossary</title>
+
+    <para>As with many projects some words in XMLUnit have particular
+    meanings so here is a quick overview. A <emphasis>piece</emphasis>
+    of XML is a DOM Document, a String containing marked-up content,
+    or a Source or Reader that allows access to marked-up content
+    within some resource. XMLUnit compares the expected
+    <emphasis>control</emphasis> XML to some actual
+    <emphasis>test</emphasis> XML. The comparison can reveal that two
+    pieces of XML are <emphasis>identical</emphasis>,
+    <emphasis>similar</emphasis> or
+    <emphasis>different</emphasis>. The unit of measurement used by
+    the comparison is a <emphasis>difference</emphasis>, and
+    differences can be either <emphasis>recoverable</emphasis> or
+    <emphasis>unrecoverable</emphasis>. Two pieces of XML are
+    <emphasis>identical</emphasis> if there are <emphasis>no
+    differences</emphasis> between them, <emphasis>similar</emphasis>
+    if there are <emphasis>only recoverable differences</emphasis>
+    between them, and <emphasis>different</emphasis> if there are
+    <emphasis>any unrecoverable differences</emphasis> between
+    them.</para>
+  </section>
+
+  <section><title>Configuring XMLUnit</title>
+
+    <para>There are many Java XML parsers available, and XMLUnit
+    should work with any JAXP compliant parser library, such as Xerces
+    from the Apache Jakarta project. To use the XSL and XPath features
+    of XMLUnit a Trax compliant transformation engine is required,
+    such as Xalan, from the Apache Jakarta project. To configure
+    XMLUnit to use your parser and transformation engine set three
+    System properties before any tests are run, e.g.</para>
+
+    <example><title>Configuring JAXP via System Properties</title>
+      <programlisting language="Java"><![CDATA[
+System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+    "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+System.setProperty("javax.xml.parsers.SAXParserFactory",
+    "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+System.setProperty("javax.xml.transform.TransformerFactory",
+    "org.apache.xalan.processor.TransformerFactoryImpl");
+]]></programlisting>
+    </example>
+
+    <para>Alternatively there are static methods on the XMLUnit class
+    that can be called directly. The advantage of this approach is
+    that you can specify a different parser class for control and test
+    XML and change the current parser class at any time in your tests,
+    should you need to make assertions about the compatibility of
+    different parsers.</para>
+
+<example><title>Configuring JAXP via XMLUnit class</title>
+      <programlisting language="Java"><![CDATA[
+XMLUnit.setControlParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+XMLUnit.setTestParser("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+XMLUnit.setSAXParserFactory("org.apache.xerces.jaxp.SAXParserFactoryImpl");
+XMLUnit.setTransformerFactory("org.apache.xalan.processor.TransformerFactoryImpl");
+]]></programlisting>
+    </example>
+  </section>
+
+  <section><title>Writing XML comparison tests</title>
+
+    <para>Let's say we have two pieces of XML that we wish to compare
+    and assert that they are equal. We could write a simple test class
+    like this:</para>
+
+    <example><title>A simple comparison test</title>
+      <programlisting language="Java"><![CDATA[
+public class MyXMLTestCase extends XMLTestCase {
+    public MyXMLTestCase(String name) {
+        super(name);
+    }
+
+    public void testForEquality() throws Exception {
+        String myControlXML = "<msg><uuid>0x00435A8C</uuid></msg>";
+        String myTestXML = "<msg><localId>2376</localId></msg>";
+        assertXMLEqual("Comparing test xml to control xml",
+        myControlXML, myTestXML);
+    }
+}]]></programlisting></example>
+
+    <para>The <literal>assertXMLEqual</literal> test will pass if the
+    control and test XML are either similar or identical. Obviously in
+    this case the pieces of XML are different and the test will
+    fail. The failure message indicates both what the difference is
+    and the Xpath locations of the nodes that were being
+    compared:</para>
+
+    <programlisting><![CDATA[
+Comparing test xml to control xml
+[different] Expected element tag name 'uuid' but was 'localId' - comparing <uuid...> at /msg[1]/uuid[1] to <localId...> at /msg[1]/localId[1]
+]]></programlisting>
+
+    <para>When comparing pieces of XML, the
+    <literal>XMLTestCase</literal> actually creates an instance of the
+    <literal>Diff</literal> class. The <literal>Diff</literal> class
+    stores the result of an XML comparison and makes it available
+    through the methods <literal>similar()</literal> and
+    <literal>identical()</literal>. The
+    <literal>assertXMLEquals()</literal> method tests the value of
+    <literal>Diff.similar()</literal> and the
+    <literal>assertXMLIdentical()</literal> method tests the value of
+    <literal>Diff.identical()</literal>.</para>
+
+    <para>It is easy to create a <literal>Diff</literal> instance
+    directly without using the <literal>XMLTestCase</literal> class as
+    below:</para>
+
+    <example><title>Creating a <literal>Diff</literal>
+        instance</title>
+      <programlisting language="Java"><![CDATA[
+public void testXMLIdentical()throws Exception {
+    String myControlXML =
+        "<struct><int>3</int><boolean>false</boolean></struct>";
+    String myTestXML =
+        "<struct><boolean>false</boolean><int>3</int></struct>";
+    Diff myDiff = new Diff(myControlXML, myTestXML);
+    assertTrue("XML similar " + myDiff.toString(),
+    myDiff.similar());
+    assertTrue("XML identical " + myDiff.toString(),
+    myDiff.identical());
+}]]></programlisting></example>
+
+    <para>This test fails as two pieces of XML are similar but not
+    identical if their nodes occur in a different sequence. The
+    failure message reported by JUnit from the call to
+    <literal>myDiff.toString()</literal> looks like this:</para>
+
+    <programlisting><![CDATA[
+[not identical] Expected sequence of child nodes '0' but was '1' - comparing <int...> at /struct[1]/int[1] to <int...> at /struct[1]/int[1]
+]]></programlisting>
+
+    <para>For efficiency reasons a <literal>Diff</literal> stops the
+    comparison process as soon as the first difference is found. To
+    get all the differences between two pieces of XML an instance of
+    the <literal>DetailedDiff</literal> class, a subclass of
+    <literal>Diff</literal>, is required. Note that a
+    <literal>DetailedDiff</literal> is constructed using an existing
+    <literal>Diff</literal> instance.</para>
+
+    <para>Consider this test that uses a DetailedDiff:</para>
+
+    <example><title>Using <literal>DetailedDiff</literal></title>
+      <programlisting language="Java"><![CDATA[
+public void testAllDifferences() throws Exception {
+    String myControlXML = "<news><item id=\"1\">War</item>"
+        + "<item id=\"2\">Plague</item>"
+        + "<item id=\"3\">Famine</item></news>";
+    String myTestXML = "<news><item id=\"1\">Peace</item>"
+        + "<item id=\"2\">Health</item>"
+        + "<item id=\"3\">Plenty</item></news>";
+    DetailedDiff myDiff = new DetailedDiff(new Diff(myControlXML, myTestXML));
+    List allDifferences = myDiff.getAllDifferences();
+    assertEquals(myDiff.toString(), 2, allDifferences.size());
+}]]></programlisting></example>
+
+    <para>This test fails with the message below as each of the 3 news
+    items differs between the control and test XML:</para>
+
+    <programlisting><![CDATA[
+[different] Expected text value 'War' but was 'Peace' - comparing <item...>War</item> at /news[1]/item[1]/text()[1] to <item...>Peace</item> at /news[1]/item[1]/text()[1]
+[different] Expected text value 'Plague' but was 'Health' - comparing <item...>Plague</item> at /news[1]/item[2]/text()[1] to <item...>Health</item> at /news[1]/item[2]/text()[1]
+[different] Expected text value 'Famine' but was 'Plenty' - comparing <item...>Famine</item> at /news[1]/item[3]/text()[1] to <item...>Plenty</item> at /news[1]/item[3]/text()[1]
+expected <2> but was <3>
+]]></programlisting>
+
+    <para>The List returned from the
+    <literal>getAllDifferences()</literal> method contains
+    <literal>Difference</literal> instances. These instances describe
+    both the type<footnote id="DifferenceConstants"><para>A full set
+    of prototype <literal>Difference</literal> instances - one for
+    each type of difference - is defined using final static fields in
+    the <literal>DifferenceConstants</literal>
+    class.</para></footnote> of difference found between a control
+    node and test node and the <literal>NodeDetail</literal> of those
+    nodes (including the XPath location of each
+    node). <literal>Difference</literal> instances are passed at
+    runtime in notification events to a registered
+    <literal>DifferenceListener</literal>, an interface whose default
+    implementation is provided by the <literal>Diff</literal>
+    class.</para>
+
+    <para>However it is possible to override this default behaviour by
+    implementing the interface in your own class.  The
+    <literal>IgnoreTextAndAttributeValuesDifferenceListener</literal>
+    class is an example of how to implement a custom
+    <literal>DifferenceListener</literal>. It allows an XML comparison
+    to be made that ignores differences in the values of text and
+    attribute nodes, for example when comparing a skeleton or outline
+    piece of XML to some generated XML.</para>
+
+    <para>The following test illustrates the use of a custom
+    <literal>DifferenceListener</literal>:</para>
+
+    <example><title>Using a custom
+        <literal>DifferenceListener</literal></title>
+      <programlisting language="Java"><![CDATA[
+public void testCompareToSkeletonXML() throws Exception {
+    String myControlXML = "<location><street-address>22 any street</street-address><postcode>XY00 99Z</postcode></location>";
+    String myTestXML = "<location><street-address>20 east cheap</street-address><postcode>EC3M 1EB</postcode></location>";
+    DifferenceListener myDifferenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
+    Diff myDiff = new Diff(myControlXML, myTestXML);
+    myDiff.overrideDifferenceListener(myDifferenceListener);
+    assertTrue("test XML matches control skeleton XML",
+    myDiff.similar());
+}]]></programlisting></example>
+
+    <para>The <literal>DifferenceEngine</literal> class generates the
+    events that are passed to a <literal>DifferenceListener</literal>
+    implementation as two pieces of XML are compared. Using recursion
+    it navigates through the nodes in the control XML DOM, and
+    determines which node in the test XML DOM qualifies for comparison
+    to the current control node. The qualifying test node will match
+    the control node's node type, as well as the node name and
+    namespace (if defined for the control node).</para>
+
+    <para>However when the control node is an
+    <literal>Element</literal>, it is less straightforward to
+    determine which test <literal>Element</literal> qualifies for
+    comparison as the parent node may contain repeated child
+    <literal>Element</literal>s with the same name and namespace. So
+    for <literal>Element</literal> nodes, an instance of the
+    <literal>ElementQualifier</literal> interface is used determine
+    whether a given test <literal>Element</literal> node qualifies for
+    comparison with a control <literal>Element</literal> node. This
+    separates the decision about whether two
+    <literal>Elements</literal> should be compared from the decision
+    about whether those two <literal>Elements</literal> are considered
+    similar. By default an <literal>ElementNameQualifier</literal>
+    class is used that compares the nth child
+    <literal><![CDATA[<abc>]]></literal> test element to the nth child
+    <literal><![CDATA[<abc>]]></literal> control element, i.e. the
+    sequence of the child elements in the test XML is
+    important. However this default behaviour can be overridden using
+    an <literal>ElementNameAndTextQualifier</literal> or
+    <literal>ElementNameAndAttributesQualifier</literal>.</para>
+
+    <para>The test below demonstrates the use of a custom
+    <literal>ElementQualifier</literal>:</para>
+
+    <example><title>Using a custom <literal>ElementQualifier</literal></title>
+      <programlisting language="Java"><![CDATA[
+public void testRepeatedChildElements() throws Exception {
+    String myControlXML = "<suite>"
+        + "<test status=\"pass\">FirstTestCase</test>"
+        + "<test status=\"pass\">SecondTestCase</test></suite>";
+    String myTestXML = "<suite>"
+        + "<test status=\"pass\">SecondTestCase</test>"
+        + "<test status=\"pass\">FirstTestCase</test></suite>";
+    assertXMLNotEqual("Repeated child elements in different sequence order are not equal by default",
+                      myControlXML, myTestXML);
+    Diff myDiff = new Diff(myControlXML, myTestXML);
+    myDiff.overrideElementQualifier(new ElementNameAndTextQualifier());
+    assertXMLEqual("But they are equal when an ElementQualifier controls which test element is compared with each control element",
+                    myDiff, true);
+}]]></programlisting></example>
+
+  </section>
+
+  <section><title>Comparing XML Transformations</title>
+
+    <para>XMLUnit can test XSL transformations at a high level using
+    the <literal>Transform</literal> class that wraps an
+    <literal>javax.xml.transform.Transformer</literal>
+    instance. Knowing the input XML, input stylesheet and expected
+    output XML we can assert that the output of the transformation
+    matches the expected output as follows:</para>
+
+    <example><title>Testing the Result of a Transformation</title>
+      <programlisting language="Java"><![CDATA[
+public void testXSLTransformation() throws Exception {
+    String myInputXML = "...";
+    File myStylesheetFile = new File("...");
+    Transform myTransform = new Transform(myInputXML, myStylesheetFile);
+    String myExpectedOutputXML = "...";
+    Diff myDiff = new Diff(myExpectedOutputXML, myTransform);
+    assertTrue("XSL transformation worked as expected", myDiff.similar());
+}]]></programlisting></example>
+
+    <para>The <literal>getResultString()</literal> and
+    <literal>getResultDocument()</literal> methods of the
+    <literal>Transform</literal> class can be used to access the
+    result of the XSL transformation programmatically if required, for
+    example as below:</para>
+
+    <example><title>Using <literal>Transform</literal> programmatically</title>
+      <programlisting language="Java"><![CDATA[
+public void testAnotherXSLTransformation() throws Exception {
+    File myInputXMLFile = new File("...");
+    File myStylesheetFile = new File("...");
+    Transform myTransform = new Transform(
+        new StreamSource(myInputXMLFile),
+        new StreamSource(myStylesheetFile));
+    Document myExpectedOutputXML =
+       XMLUnit.buildDocument(XMLUnit.getControlParser(),
+                             new FileReader("..."));
+    Diff myDiff = new Diff(myExpectedOutputXML,
+    myTransform.getResultDocument());
+    assertTrue("XSL transformation worked as expected", myDiff.similar());
+}]]></programlisting></example>
+
+  </section>
+
+  <section><title>Validation Tests</title>
+
+    <para>XML parsers that validate a piece of XML against a DTD are
+    common, however they rely on a DTD reference being present in the
+    XML, and they can only validate against a single DTD. When writing
+    a system that exchanges XML messages with third parties there are
+    times when you would like to validate the XML against a DTD that
+    is not available to the recipient of the message and so cannot be
+    referenced in the message itself. XMLUnit provides a
+    <literal>Validator</literal> class for this purpose.</para>
+
+    <example><title>Validating Against a DTD</title>
+      <programlisting language="Java"><![CDATA[
+public void testValidation() throws Exception {
+    XMLUnit.getTestDocumentBuilderFactory().setValidating(true);
+    // As the document is parsed it is validated against its referenced DTD
+    Document myTestDocument = XMLUnit.buildTestDocument("...");
+    String mySystemId = "...";
+    String myDTDUrl = new File("...").toURL().toExternalForm();
+    Validator myValidator = new Validator(myTestDocument, mySystemId,
+                                          myDTDUrl);
+    assertTrue("test document validates against unreferenced DTD",
+               myValidator.isValid());
+}]]></programlisting></example>
+
+  </section>
+
+  <section><title>Xpath Tests</title>
+
+    <para>One of the strengths of XML is the ability to
+    programmatically extract specific parts of a document using XPath
+    expressions. The <literal>XMLTestCase</literal> class offers a
+    number of XPath related assertion methods, as demonstrated in this
+    test:</para>
+
+    <example><title>Using Xpath Tests</title>
+      <programlisting language="Java"><![CDATA[
+public void testXPaths() throws Exception {
+    String mySolarSystemXML = "<solar-system>"
+        + "<planet name='Earth' position='3' supportsLife='yes'/>"
+        + "<planet name='Venus' position='4'/></solar-system>";
+    assertXpathExists("//planet[@name='Earth']", mySolarSystemXML);
+    assertNotXpathExists("//star[@name='alpha centauri']",
+                         mySolarSystemXML);
+    assertXpathsEqual("//planet[@name='Earth']",
+                      "//planet[@position='3']", mySolarSystemXML);
+    assertXpathsNotEqual("//planet[@name='Venus']",
+                         "//planet[@supportsLife='yes']",
+                         mySolarSystemXML);
+}]]></programlisting></example>
+
+    <para>When an XPath expression is evaluated against a piece of XML
+    a <literal>NodeList</literal> is created that contains the
+    matching <literal>Node</literal>s. The methods in the previous
+    test <literal>assertXPathExists</literal>,
+    <literal>assertNotXPathExists</literal>,
+    <literal>assertXPathsEqual</literal>, and
+    <literal>assertXPathsNotEqual</literal> use these
+    <literal>NodeList</literal>s. However, the contents of a
+    <literal>NodeList</literal> can be flattened (or
+    <literal>String</literal>-ified) to a single value, and XMLUnit
+    also allows assertions to be made about this single value, as in
+    this test<footnote id="SimpleXpathEngine note"><para>Each of the
+    <literal>assertXpath...()</literal> methods uses the
+    <literal>SimpleXpathEngine</literal> class to evaluate an Xpath
+    expression.</para></footnote>:</para>
+
+    <example><title>Testing Xpath Values</title>
+      <programlisting language="Java"><![CDATA[
+public void testXPathValues() throws Exception {
+    String myJavaFlavours = "<java-flavours>"
+        + "<jvm current='some platforms'>1.1.x</jvm>"
+        + "<jvm current='no'>1.2.x</jvm>"
+        + "<jvm current='yes'>1.3.x</jvm>"
+        + "<jvm current='yes' latest='yes'>1.4.x</jvm></javaflavours>";
+    assertXpathEvaluatesTo("2", "count(//jvm[@current='yes'])",
+                           myJavaFlavours);
+    assertXpathValuesEqual("//jvm[4]/@latest", "//jvm[4]/@current",
+                           myJavaFlavours);
+    assertXpathValuesNotEqual("//jvm[2]/@current",
+                              "//jvm[3]/@current", myJavaFlavours);
+}]]></programlisting></example>
+
+    <para>Xpaths are especially useful where a document is made up
+    largely of known, unchanging content with only a small amount of
+    changing content created by the system. One of the main areas
+    where constant "boilerplate" markup is combined with system
+    generated markup is of course in web applications. The power of
+    XPath expressions can make testing web page output quite trivial,
+    and XMLUnit supplies a means of converting even very badly formed
+    HTML into XML to aid this approach to testing.</para>
+
+    <para>The <literal>HTMLDocumentBuilder</literal> class uses the
+    Swing HTML parser to convert marked-up content to Sax events. The
+    <literal>TolerantSaxDocumentBuilder</literal> class handles the
+    Sax events to build up a DOM document in a tolerant fashion
+    i.e. without mandating that opened elements are closed. (In a
+    purely XML world this class would have no purpose as there are
+    plenty of Sax event handlers that can build DOM documents from
+    well formed content). The test below illustrates how the use of
+    these classes:</para>
+
+    <example><title>Working with non well-formed HTML</title>
+      <programlisting language="Java"><![CDATA[
+public void testXpathsInHTML() throws Exception {
+    String someBadlyFormedHTML = "<html><title>Ugh</title>"
+        + "<body><h1>Heading<ul>"
+        + "<li id='1'>Item One<li id='2'>Item Two";
+    TolerantSaxDocumentBuilder tolerantSaxDocumentBuilder =
+        new TolerantSaxDocumentBuilder(XMLUnit.getTestParser());
+    HTMLDocumentBuilder htmlDocumentBuilder =
+        new HTMLDocumentBuilder(tolerantSaxDocumentBuilder);
+    Document wellFormedDocument =
+        htmlDocumentBuilder.parse(someBadlyFormedHTML);
+    assertXpathEvaluatesTo("Item One", "/html/body//li[@id='1']",
+                           wellFormedDocument);
+}]]></programlisting></example>
+
+    <para>One of the key points about using Xpaths with HTML content
+    is that extracting values in tests requires the values to be
+    identifiable. (This is just another way of saying that testing
+    HTML is easier when it is written to be testable.) In the previous
+    example id attributes were used to identify the list item values
+    that needed to be testable, however class attributes or span and
+    div tags can also be used to identify specific content for
+    testing.</para>
+
+  </section>
+
+  <section><title>Testing by Tree Walking</title>
+
+    <para>The DOM specification allows a <literal>Document</literal>
+    to optionally implement the <literal>DocumentTraversal</literal>
+    interface. This interface allows an application to iterate over
+    the <literal>Node</literal>s contained in a
+    <literal>Document</literal>, or to "walk the DOM tree". The
+    XMLUnit <literal>NodeTest</literal> class and
+    <literal>NodeTester</literal> interface make use of
+    <literal>DocumentTraversal</literal> to expose individual
+    <literal>Node</literal>s in tests: the former handles the
+    mechanics of iteration, and the latter allows custom test
+    strategies to be implemented. A sample test strategy is supplied
+    by the <literal>CountingNodeTester</literal> class that counts the
+    nodes presented to it and compares the actual count to an expected
+    count. The test below illustrates its use:</para>
+
+    <example><title>Using <literal>CountingNodeTester</literal></title>
+      <programlisting language="Java"><![CDATA[
+public void testCountingNodeTester() throws Exception {
+    String testXML = "<fibonacci><val>1</val><val>2</val><val>3</val>"
+        + "<val>5</val><val>9</val></fibonacci>";
+    CountingNodeTester countingNodeTester = new CountingNodeTester(4);
+    assertNodeTestPasses(testXML, countingNodeTester, Node.TEXT_NODE);
+}]]></programlisting></example>
+
+    <para>This test fails as there are 5 text nodes, and JUnit
+    supplies the following message:</para>
+
+    <programlisting>
+Expected node test to pass, but it failed! Counted 5 node(s) but
+expected 4
+    </programlisting>
+
+    <para>Note that if your DOM implementation does not support the
+    <literal>DocumentTraversal</literal> interface then XMLUnit will
+    throw an <literal>IllegalArgumentException</literal> informing you
+    that you cannot use the <literal>NodeTest</literal> or
+    <literal>NodeTester</literal> classes. Unfortunately even if your
+    DOM implementation does support
+    <literal>DocumentTraversal</literal>, attributes are not exposed
+    by iteration: however they can be examined from the
+    <literal>Element</literal> node that contains them.</para>
+
+    <para>While the previous test could have been easily performed
+    using XPath, there are times when <literal>Node</literal>
+    iteration is more powerful. In general, this is true when there
+    are programmatic relationships between nodes that can be more
+    easily tested iteratively. The following test uses a custom
+    <literal>NodeTester</literal> class to illustrate the
+    potential:</para>
+
+    <example><title>Using a Custom <literal>NodeTester</literal></title>
+      <programlisting language="Java"><![CDATA[
+public void testCustomNodeTester() throws Exception {
+    String testXML = "<fibonacci><val>1</val><val>2</val><val>3</val>"
+        + "<val>5</val><val>9</val></fibonacci>";
+    NodeTest nodeTest = new NodeTest(testXML);
+    assertNodeTestPasses(nodeTest, new FibonacciNodeTester(),
+                         new short[] {Node.TEXT_NODE,
+                                      Node.ELEMENT_NODE},
+                         true);
+}
+
+private class FibonacciNodeTester extends AbstractNodeTester {
+    private int nextVal = 1, lastVal = 1, priorVal = 0;
+
+    public void testText(Text text) throws NodeTestException {
+        int val = Integer.parseInt(text.getData());
+        if (nextVal != val) {
+            throw new NodeTestException("Incorrect value", text);
+        }
+        nextVal = val + lastVal;
+        priorVal = lastVal;
+        lastVal = val;
+    }
+
+    public void testElement(Element element) throws NodeTestException {
+        String name = element.getLocalName();
+        if ("fibonacci".equals(name) || "val".equals(name)) {
+            return;
+        }
+        throw new NodeTestException("Unexpected element", element);
+    }
+
+    public void noMoreNodes(NodeTest nodeTest) throws NodeTestException {
+    }
+}]]></programlisting></example>
+
+    <para>The test fails because the XML contains the wrong value for
+    the last number in the sequence:</para>
+
+    <programlisting>
+Expected node test to pass, but it failed! Incorrect value [#text: 9]
+    </programlisting>
+
+  </section>
+</article>
