@@ -756,16 +756,142 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
     <section id="changes-1.1">
       <title>Changes from XMLUnit 1.0 to 1.1</title>
 
+      <para>XMLUnit 1.1's main focus was to add two features that have
+        been asked for repeatedly:</para>
+
+      <itemizedlist>
+        <listitem>Support for XML namespaces in XPath
+          processing</listitem>
+
+        <listitem>Support for XML Schema validation.</listitem>
+      </itemizedlist>
+
+      <para>In addition some JAXP features that have been added after
+      the release of XMLUnit 1.0 are now supported - most notably
+      XPath support - and all reported bugs and feature requests have
+      been addressed.</para>
+
       <section id="breaking-changes-1.1">
         <title>Breaking Changes</title>
+
+        <itemizedlist>
+          <listitem>
+            <literal>XMLTestCase</literal> is now abstract.  There is
+            no reason why you should have created instances of this
+            class without subclassing it, but if you did, your code
+            will now break.  You will most likely want to look at the
+            <literal>XMLAssert</literal> class.
+          </listitem>
+
+          <listitem>
+            <para>All methods that have been declared to throw
+            <literal>TransformerConfigurationException</literal> or
+            <literal>ParserConfigurationException</literal> now no
+            longer declare it.  Exceptions of these types cannot be
+            recovered from anyway, so XMLUnit will now wrap them in a
+            <literal>org.custommonkey.xmlunit.exceptions.ConfigurationException</literal>
+            which is an unchecked exception.</para>
+
+            <para>This change doesn't have a big impact on your tests,
+            but if you tried to catch these exceptions they will now
+            bypass your catch blocks.</para>
+          </listitem>
+        </itemizedlist>
       </section>
 
       <section id="features-1.1">
         <title>New Features</title>
+
+        <itemizedlist>
+          <listitem>XMLUnit 1.0 shipped with rudimentary support for
+          XML Schema validation (it worked with Apache Xerces-J but no
+          other parsers).  XMLUnit 1.1 supports Schema validation for
+          any JAXP compliant XML parser (that supports Schema itself).
+          You can also tell XMLUnit where to look for the XML Schema
+          definitions.  See <xref linkend="validating-schema"/> for
+          details.</listitem>
+
+          <listitem>XPath support has undergone significant changes,
+          see <xref linkend="XPath"/> for more details.  In particular
+          XMLUnit will now use <literal>javax.xml.xpath</literal> if
+          it is available (which also helps to avoid the buggy XSLTC
+          version that is the default transformer engine in Java 5)
+          and supports XML namespaces.</listitem>
+
+          <listitem>Several new configuration options have been added,
+            see <xref linkend="comparing-config"/>.
+            <itemizedlist>
+              <listitem>Treat CDATA sections and Texts alike.  <ulink
+              url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1262148&amp;group_id=23187&amp;atid=377768">Issue
+              1262148</ulink>.</listitem>
+
+              <listitem>Ignore differences in Text whitespace.  <ulink
+              url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=754812&amp;group_id=23187&amp;atid=377771">Issue
+              754812</ulink>.</listitem>
+
+              <listitem>Ignore comments completely.  <ulink
+              url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=707255&amp;group_id=23187&amp;atid=377770">Issue
+              707255</ulink>.</listitem>
+            </itemizedlist>
+          </listitem>
+
+          <listitem>
+            <para>A new package
+              <literal>org.custommonkey.xmlunit.examples</literal> has
+              been added that showcases some of XMLUnit's abilities.
+              It currently contains two classes:</para>
+
+            <orderedlist>
+              <listitem>
+                <literal>MultiLevelElementNameAndTextQualifier</literal>
+                see <xref linkend="ElementQualifier"/> for a
+                description.</listitem>
+
+              <listitem><literal>XPathRegexAssert</literal> that
+              provides a JUnit 3.x like
+              <literal>assertXPathMatches</literal> method to verify
+              that the stringified value of an XPath match matches a
+              given regular expression (requires JDK 1.4 or
+              above).</listitem>
+            </orderedlist>
+          </listitem>
+        </itemizedlist>
       </section>
 
       <section id="bugfixes-1.1">
-        <title>Bug Fixes</title>
+        <title>Important Bug Fixes</title>
+
+        <itemizedlist>
+          <listitem><literal>ElementNameAndAttributeQualifier</literal>
+          would throw an <literal>NullPointerException</literal> if
+          the control piece of XML contained attributes that were
+          missing in the test piece of XML.  <ulink
+          url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=952920&amp;group_id=23187&amp;atid=377768">Issue
+          952920</ulink>.</listitem>
+
+          <listitem>
+            <literal>XMLTestCase.assertXMLNotEqual(String, Reader,
+            Reader)</literal> delegated to
+            <literal>assertXMLEqual</literal> instead of
+            <literal>assertXMLNotEqual</literal> internally, negating
+            the assertion's logic.  <ulink
+            url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=956372&amp;group_id=23187&amp;atid=377768">Issue
+            956372</ulink>.</listitem>
+
+          <listitem>Under certain circumstances the reported XPath
+          expressions for nodes that showed differences were wrong.
+          XMLUnit could lose the root element or errornously append an
+          extra attribute name.  Issues <ulink
+          url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1047364&amp;group_id=23187&amp;atid=377768">1047364</ulink>
+          and <ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1027863&amp;group_id=23187&amp;atid=377770">1027863</ulink>.</listitem>
+
+          <listitem>
+            <literal>TolerantSaxParser</literal>'s logic in
+            <literal>characters</literal> was broken and could cause
+            <literal>StringIndexOutOfBoundsException</literal>s.
+            <ulink
+            url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1150234&amp;group_id=23187&amp;atid=377768">Issue 1150234</ulink>.</listitem>
+        </itemizedlist>
       </section>
     </section>
   </appendix>
