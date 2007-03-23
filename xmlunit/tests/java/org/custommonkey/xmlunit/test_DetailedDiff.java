@@ -192,7 +192,35 @@ public class test_DetailedDiff extends test_Diff {
         // sequence of nodes
         assertEquals(3, l.size());
     }
+     
+    /**
+     * @see http://sourceforge.net/forum/forum.php?thread_id=1691528&forum_id=73274
+     */
+    public void testHelpForumThread1691528() throws Exception {
+        String control = "<table border=\"1\">" 
+            + "<tr>"
+            + "<th>News</th>"
+            + "</tr>"
+            + "<tr>"
+            + "<td>Newsitem 1</td>"
+            + "</tr>"
+            + "</table>";
+        String test = "<table border=\"1\">" 
+            + "<tr>"
+            + "<th>News</th>"
+            + "</tr>"
+            + "<tr>"
+            + "<td>Newsitem 2</td>"
+            + "<td>Newsitem 1</td>"
+            + "</tr>"
+            + "</table>";
         
+        DetailedDiff diff = new DetailedDiff(new Diff(control, test));
+        List changes = diff.getAllDifferences();
+        // number of children, text of first child
+        assertEquals(2, changes.size());
+    }
+
     protected Diff buildDiff(Document control, Document test) {
         return new DetailedDiff(super.buildDiff(control, test));
     }
