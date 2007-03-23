@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.1b1//EN" "http://docbook.org/xml/simple/1.1b1/sdocbook.dtd">
 
 <article>
-  <title>A Tour of XMLUnit
+  <title>XMLUnit Java User's Guide
     <inlinemediaobject><imageobject>
         <imagedata fileref="xmlunit.png" width="331" depth="100"
           valign="middle" format="PNG"/>
@@ -15,6 +15,12 @@
         <surname>Bacon</surname>
       </author>
     </authorgroup>
+    <authorgroup>
+      <author>
+        <firstname>Stefan</firstname>
+        <surname>Bodewig</surname>
+      </author>
+    </authorgroup>
     <revhistory>
       <revision>
         <revnumber>1.0</revnumber>
@@ -25,8 +31,23 @@
         </author>
         <revremark>Documentation for XMLUnit Java 1.0</revremark>
       </revision>
+      <revision>
+        <revnumber>1.1</revnumber>
+        <date>... 2007</date>
+        <revremark>Documentation for XMLUnit Java 1.1</revremark>
+      </revision>
     </revhistory>
   </articleinfo>
+
+  <section><title>A Tour of XMLUnit</title>
+
+    <para>This first section contains a tour through XMLUnit's
+    features, the next sections will cover them in more detail.</para>
+
+    <para>Note that it has a strong focus on using the
+    <literal>XMLTestCase</literal> class which is one option to use
+    XMLUnit, but not the only one.  XMLUnit's features can be fully
+    used without any dependency on JUnit at all.</para>
 
   <section><title>What is XMLUnit?</title>
 
@@ -34,7 +55,7 @@
     content and structure of XML<footnote id="more on JUnit"><para>For
     more information on JUnit see <ulink
     url="http://www.junit.org">http://www.junit.org</ulink></para></footnote>. It
-    is an open source project hosted at http://xmlunit.sourceforge.net
+    is an open source project hosted at <ulink url="http://xmlunit.sourceforge.net/">http://xmlunit.sourceforge.net/</ulink>
     that grew out of a need to test a system that generated and
     received custom XML messages. The problem that we faced was how to
     verify that the system generated the correct message from a known
@@ -67,7 +88,7 @@
       (via <literal>Transform</literal> class)</listitem>
 
       <listitem>The evaluation of an XPath expression on a piece of
-      XML (via <literal>SimpleXpathEngine</literal> class)</listitem>
+      XML (via classes implementing the <literal>XpathEngine</literal> interface)</listitem>
 
       <listitem>Individual nodes in a piece of XML that are exposed by
       DOM Traversal (via <literal>NodeTest</literal> class)</listitem>
@@ -104,11 +125,13 @@
   <section><title>Configuring XMLUnit</title>
 
     <para>There are many Java XML parsers available, and XMLUnit
-    should work with any JAXP compliant parser library, such as Xerces
-    from the Apache Jakarta project. To use the XSL and XPath features
-    of XMLUnit a Trax compliant transformation engine is required,
-    such as Xalan, from the Apache Jakarta project. To configure
-    XMLUnit to use your parser and transformation engine set three
+    should work with any JAXP compliant parser library, such as Xerces-J
+        <footnote id="xerces-link"><para><ulink url="http://xerces.apache.org/">http://xerces.apache.org/</ulink></para></footnote>
+    from the Apache Software Foundation. To use the XSL and XPath features
+    of XMLUnit a Trax (the XSLT portion of JAXP) compliant transformation engine is required,
+    such as Xalan-J<footnote id="xalan-link"><para><ulink url="http://xalan.apache.org/">http://xalan.apache.org/</ulink></para></footnote>,
+        from the Software Foundation.  To configure
+    XMLUnit to use a specific parser and transformation engine set three
     System properties before any tests are run, e.g.</para>
 
     <example><title>Configuring JAXP via System Properties</title>
@@ -121,6 +144,16 @@ System.setProperty("javax.xml.transform.TransformerFactory",
     "org.apache.xalan.processor.TransformerFactoryImpl");
 ]]></programlisting>
     </example>
+
+      <para>If you are using a JDK 1.4 or later, your Java class
+      library already contain the required XML parsers and XSLT
+      transformers.  Still you may want to use a different
+      parser/transformer than the one of your JDK - in particular
+      since the versions shipping with some JDKs are known to contain
+      serious bugs.  You may also want to review the <ulink
+      url="http://java.sun.com/j2se/1.4.2/docs/guide/standards/">Endorsed
+      Standards Override Mechanism</ulink> to use a different
+      parser/transformer than the one of your JDK.</para>
 
     <para>Alternatively there are static methods on the XMLUnit class
     that can be called directly. The advantage of this approach is
@@ -137,6 +170,11 @@ XMLUnit.setSAXParserFactory("org.apache.xerces.jaxp.SAXParserFactoryImpl");
 XMLUnit.setTransformerFactory("org.apache.xalan.processor.TransformerFactoryImpl");
 ]]></programlisting>
     </example>
+
+      <para>The later approach should also work for JDK 1.4 and above,
+      even if you don't override the endorsed standards
+      libraries</para>
+
   </section>
 
   <section><title>Writing XML comparison tests</title>
@@ -407,6 +445,11 @@ public void testValidation() throws Exception {
                myValidator.isValid());
 }]]></programlisting></example>
 
+      <para>Starting with XMLUnit 1.1, the
+      <literal>Validator</literal> class can also validate against one
+      or more XML Schema definitions.  See <xref
+      linkend="validating-schema"/> for details.</para>
+
   </section>
 
   <section><title>Xpath Tests</title>
@@ -444,9 +487,9 @@ public void testXPaths() throws Exception {
     <literal>NodeList</literal> can be flattened (or
     <literal>String</literal>-ified) to a single value, and XMLUnit
     also allows assertions to be made about this single value, as in
-    this test<footnote id="SimpleXpathEngine note"><para>Each of the
-    <literal>assertXpath...()</literal> methods uses the
-    <literal>SimpleXpathEngine</literal> class to evaluate an Xpath
+    this test<footnote id="XpathEngine note"><para>Each of the
+    <literal>assertXpath...()</literal> methods uses an implementation of the
+    <literal>XpathEngine</literal> interface to evaluate an Xpath
     expression.</para></footnote>:</para>
 
     <example><title>Testing Xpath Values</title>
@@ -607,5 +650,112 @@ private class FibonacciNodeTester extends AbstractNodeTester {
 Expected node test to pass, but it failed! Incorrect value [#text: 9]
     </programlisting>
 
+    </section>
   </section>
+
+  <section id="Using"><title>Using XMLUnit</title>
+
+    <section id="using-plain">
+      <title>Basic Usage</title>
+
+      <section id="input-choices">
+        <title>Providing Input to XMLUnit</title>
+      </section>
+    </section>
+
+    <section id="junit3">
+      <title>Using XMLUnit With JUnit 3.x</title>
+    </section>
+  </section>
+
+  <section id="Comparing"><title>Comparing XML documents</title>
+
+    <section id="comparing-basics">
+      <title>The Difference Engine</title>
+    </section>
+
+    <section id="comparing-junit3">
+      <title>JUnit 3.x Convenience Methods</title>
+    </section>
+
+    <section id="comparing-config">
+      <title>Configuration Options</title>
+    </section>
+
+    <section id="ElementQualifier">
+      <title><literal>ElementQualifier</literal></title>
+    </section>
+
+    <section id="DifferenceListener">
+      <title><literal>DifferenceListener</literal></title>
+    </section>
+
+    <section id="ComparisonController">
+      <title><literal>ComparisonController</literal></title>
+    </section>
+  </section>
+
+  <section id="Validating"><title>Validating XML documents</title>
+
+    <section id="validating-basics">
+      <title>The <literal>Validator</literal> class</title>
+
+      <section id="validating-dtd">
+        <title>DTD Validation</title>
+      </section>
+
+      <section id="validating-schema">
+        <title>XML Schema Validation</title>
+      </section>
+    </section>
+
+    <section id="validation-junit3">
+      <title>JUnit 3.x Convenience Methods</title>
+    </section>
+
+    <section id="validation-config">
+      <title>Configuration Options</title>
+    </section>
+  </section>
+
+  <section id="XPath">
+    <title>XPath Tests</title>
+
+    <section id="xpath-engines">
+      <title>XPath Engines</title>
+    </section>
+    
+    <section id="xpath-junit3">
+      <title>JUnit 3.x Convenience Methods</title>
+    </section>
+
+    <section id="xpath-config">
+      <title>Configuration Options</title>
+    </section>
+  </section>
+
+  <section id="NodeTest">
+    <title>DOM Tree Walking</title>
+  </section>
+
+  <appendix id="changes">
+    <title>Changes</title>
+
+    <section id="changes-1.1">
+      <title>Changes from XMLUnit 1.0 to 1.1</title>
+
+      <section id="breaking-changes-1.1">
+        <title>Breaking Changes</title>
+      </section>
+
+      <section id="features-1.1">
+        <title>New Features</title>
+      </section>
+
+      <section id="bugfixes-1.1">
+        <title>Bug Fixes</title>
+      </section>
+    </section>
+  </appendix>
+
 </article>
