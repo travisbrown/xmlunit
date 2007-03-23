@@ -154,11 +154,7 @@ public class Diff
         this.controlDoc = getManipulatedDocument(controlDoc);
         this.testDoc = getManipulatedDocument(testDoc);
         this.elementQualifierDelegate = elementQualifier;
-        if (comparator == null) {
-            this.differenceEngine = new DifferenceEngine(this);
-        } else {
-            this.differenceEngine = comparator;
-        }
+        this.differenceEngine = comparator;
         this.messages = new StringBuffer();
     }
 
@@ -247,7 +243,8 @@ public class Diff
         if (compared) {
             return;
         }
-        differenceEngine.compare(controlDoc, testDoc, this, elementQualifierDelegate);
+        getDifferenceEngine().compare(controlDoc, testDoc, this,
+                                      elementQualifierDelegate);
         compared = true;
     }
 
@@ -399,6 +396,15 @@ public class Diff
      */
     public void overrideElementQualifier(ElementQualifier delegate) {
         this.elementQualifierDelegate = delegate;
+    }
+
+    /**
+     * Lazily initializes the difference engine if it hasn't been set
+     * via a constructor.
+     */
+    private DifferenceEngine getDifferenceEngine() {
+        return differenceEngine == null
+            ? new DifferenceEngine(this) : differenceEngine;
     }
 
 }

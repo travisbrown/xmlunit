@@ -179,7 +179,7 @@ public class test_DetailedDiff extends test_Diff {
         assertEquals(3, l.size());
     }
 
-    public void XtestSeeAllDifferencesEvenIfDiffSaysHaltComparison() throws Exception {
+    public void testSeeAllDifferencesEvenIfDiffSaysHaltComparison() throws Exception {
         String control = "<a><b/><c/></a>";
         String test = "<a><c/></a>";
 
