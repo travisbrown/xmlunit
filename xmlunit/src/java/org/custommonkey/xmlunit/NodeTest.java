@@ -45,6 +45,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.traversal.DocumentTraversal;
 import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.NodeIterator;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -73,6 +74,14 @@ public class NodeTest {
     public NodeTest(Reader reader) throws SAXException,
                                           IOException {
         this(XMLUnit.buildDocument(XMLUnit.newControlParser(), reader));
+    }
+
+    /**
+     * Construct a NodeTest for the DOM built using the InputSource.
+     */
+    public NodeTest(InputSource src) throws SAXException,
+                                            IOException {
+        this(XMLUnit.buildDocument(XMLUnit.newControlParser(), src));
     }
 
     /**

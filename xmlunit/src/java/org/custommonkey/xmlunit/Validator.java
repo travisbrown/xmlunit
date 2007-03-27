@@ -41,6 +41,7 @@ import org.custommonkey.xmlunit.exceptions.ConfigurationException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
@@ -83,14 +84,27 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     private Boolean isValid;
 
     /**
+     * Kept for backwards compatibility.
+     * @deprecated Use the protected three arg constructor instead.
+     */
+    protected Validator(InputSource inputSource,
+                        boolean usingDoctypeReader)
+        throws SAXException, ConfigurationException {
+        this(inputSource, null, usingDoctypeReader);
+    }
+
+    /**
      * Baseline constructor: called by all others
      * 
      * @param inputSource
+     * @param systemId
      * @param usingDoctypeReader
      * @throws SAXException
      * @throws ConfigurationException if validation could not be turned on
      */
-    protected Validator(InputSource inputSource, boolean usingDoctypeReader)
+    protected Validator(InputSource inputSource,
+                        String systemId,
+                        boolean usingDoctypeReader)
         throws SAXException, ConfigurationException {
         isValid = null;
         messages = new StringBuffer();
@@ -103,6 +117,9 @@ public class Validator extends DefaultHandler implements ErrorHandler {
         }
 
         this.validationInputSource = inputSource;
+        if (systemId != null) {
+            validationInputSource.setSystemId(systemId);
+        }
         this.usingDoctypeReader = usingDoctypeReader;
     }
 
@@ -137,8 +154,35 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      */
     public Validator(Reader readerForValidation)
         throws SAXException, ConfigurationException {
-        this(new InputSource(readerForValidation),
-             (readerForValidation instanceof DoctypeReader));
+        this(readerForValidation, null);
+    }
+
+    /**
+     * Basic constructor.
+     * Validates the contents of the String using the DTD or schema referenced
+     *  by those contents.
+     *  
+     * @param stringForValidation
+     * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
+     */
+    public Validator(String stringForValidation)
+        throws SAXException, ConfigurationException {
+        this(new StringReader(stringForValidation));
+    }
+
+    /**
+     * Basic constructor.
+     * Validates the contents of the InputSource using the DTD or
+     * schema referenced by those contents.
+     *  
+     * @param readerForValidation
+     * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
+     */
+    public Validator(InputSource sourceForValidation)
+        throws SAXException, ConfigurationException {
+        this(sourceForValidation, null);
     }
 
     /**
@@ -155,8 +199,43 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      */
     public Validator(Reader readerForValidation, String systemID)
         throws SAXException, ConfigurationException {
-        this(readerForValidation);
-        validationInputSource.setSystemId(systemID);
+        this(new InputSource(readerForValidation), systemID,
+             (readerForValidation instanceof DoctypeReader));
+    }
+
+    /**
+     * Extended constructor.
+     * Validates the contents of the String using the DTD specified with the
+     *  systemID. There must be DOCTYPE instruction in the markup that
+     *  references the DTD or else the markup will be considered invalid: if
+     *  there is no DOCTYPE in the markup use the 3-argument constructor
+     *  
+     * @param stringForValidation
+     * @param systemID
+     * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
+     */
+    public Validator(String stringForValidation, String systemID)
+        throws SAXException, ConfigurationException {
+        this(new StringReader(stringForValidation), systemID);
+    }
+
+    /**
+     * Extended constructor.
+     * Validates the contents of the InputSource using the DTD
+     * specified with the systemID. There must be DOCTYPE instruction
+     * in the markup that references the DTD or else the markup will
+     * be considered invalid: if there is no DOCTYPE in the markup use
+     * the 3-argument constructor
+     *  
+     * @param sourceForValidation
+     * @param systemID
+     * @throws SAXException if unable to obtain new Sax parser via JAXP factory
+     * @throws ConfigurationException if validation could not be turned on
+     */
+    public Validator(InputSource sourceForValidation, String systemID)
+        throws SAXException, ConfigurationException {
+        this(sourceForValidation, systemID, false);
     }
 
     /**
@@ -172,8 +251,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      */
     public Validator(Reader readerForValidation, String systemID, String doctype)
         throws SAXException, ConfigurationException {
-        this(new DoctypeReader(readerForValidation, doctype, systemID));
-        validationInputSource.setSystemId(systemID);
+        this(new DoctypeReader(readerForValidation, doctype, systemID),
+             systemID);
     }
 
     /**

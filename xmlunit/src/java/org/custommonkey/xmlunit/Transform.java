@@ -53,8 +53,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -88,6 +90,26 @@ public class Transform {
     public Transform(String input, File stylesheet) {
         this(new StreamSource(new StringReader(input)),
              new StreamSource(stylesheet));
+    }
+
+    /**
+     * Create a transformation using InputSource input XML and
+     * InputSource stylesheet
+     * @param input
+     * @param stylesheet
+     */
+    public Transform(InputSource input, InputSource stylesheet) {
+        this(new SAXSource(input), new SAXSource(stylesheet));
+    }
+
+    /**
+     * Create a transformation using InputSource input XML and
+     * stylesheet in a File
+     * @param input
+     * @param stylesheet
+     */
+    public Transform(InputSource input, File stylesheet) {
+        this(new SAXSource(input), new StreamSource(stylesheet));
     }
 
     /**
