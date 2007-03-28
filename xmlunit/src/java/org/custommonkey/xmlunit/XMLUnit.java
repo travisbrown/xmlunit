@@ -43,6 +43,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -62,6 +63,7 @@ public final class XMLUnit {
     private static DocumentBuilderFactory testBuilderFactory;
     private static TransformerFactory transformerFactory;
     private static boolean ignoreWhitespace = false;
+    private static URIResolver uriResolver = null;
     private static EntityResolver testEntityResolver = null;
     private static EntityResolver controlEntityResolver = null;
     private static NamespaceContext namespaceContext = null;
@@ -443,6 +445,19 @@ public final class XMLUnit {
         return transformerFactory;
     }
 
+    /**
+     * Sets the URIResolver to use during transformations.
+     */
+    public static void setURIResolver(URIResolver resolver) {
+        uriResolver = resolver;
+    }
+
+    /**
+     * Gets the URIResolver used during Transformations.
+     */
+    public static URIResolver getURIResolver() {
+        return uriResolver;
+    }
 
     /**
      * Override the SAX parser to use in tests.

@@ -191,10 +191,13 @@ public class Transform {
         throws ConfigurationException {
         try {
             TransformerFactory factory = XMLUnit.getTransformerFactory();
-            if (stylesheetSource == null) {
-                return factory.newTransformer();
+            Transformer t = stylesheetSource == null
+                ? factory.newTransformer()
+                : factory.newTransformer(stylesheetSource);
+            if (XMLUnit.getURIResolver() != null) {
+                t.setURIResolver(XMLUnit.getURIResolver());
             }
-            return factory.newTransformer(stylesheetSource);
+            return t;
         } catch (javax.xml.transform.TransformerConfigurationException ex) {
             throw new ConfigurationException(ex);
         }
