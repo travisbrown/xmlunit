@@ -45,6 +45,7 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 
@@ -102,6 +103,19 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void setTestParser(String parser){
         XMLUnit.setTestParser(parser);
+    }
+
+    /**
+     * Compare XML documents provided by two InputSource classes
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     */
+    public Diff compareXML(InputSource control, InputSource test)
+        throws SAXException, IOException {
+        return XMLUnit.compareXML(control, test);
     }
 
     /**
@@ -233,6 +247,18 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * @throws SAXException
      * @throws IOException
      */
+    public void assertXMLEqual(InputSource control, InputSource test)
+        throws SAXException, IOException {
+        XMLAssert.assertXMLEqual(control, test);
+    }
+
+    /**
+     * Assert that two XML documents are similar
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     * @throws SAXException
+     * @throws IOException
+     */
     public void assertXMLEqual(String control, String test)
         throws SAXException, IOException {
         XMLAssert.assertXMLEqual(control, test);
@@ -277,6 +303,20 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * @param err Message to be displayed on assertion failure
      * @param control XML to be compared against
      * @param test XML to be tested
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXMLEqual(String err, InputSource control,
+                               InputSource test)
+        throws SAXException, IOException {
+        XMLAssert.assertXMLEqual(err, control, test);
+    }
+
+    /**
+     * Assert that two XML documents are similar
+     * @param err Message to be displayed on assertion failure
+     * @param control XML to be compared against
+     * @param test XML to be tested
      */
     public void assertXMLEqual(String err, Document control, Document test) {
         XMLAssert.assertXMLEqual(err, control, test);
@@ -302,22 +342,21 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * @throws SAXException
      * @throws IOException
      */
-    public void assertXMLNotEqual(String control, String test)
+    public void assertXMLNotEqual(InputSource control, InputSource test)
         throws SAXException, IOException {
         XMLAssert.assertXMLNotEqual(control, test);
     }
 
     /**
      * Assert that two XML documents are NOT similar
-     * @param err Message to be displayed on assertion failure
      * @param control XML to be compared against
      * @param test XML to be tested
      * @throws SAXException
      * @throws IOException
      */
-    public void assertXMLNotEqual(String err, String control, String test)
+    public void assertXMLNotEqual(String control, String test)
         throws SAXException, IOException {
-        XMLAssert.assertXMLNotEqual(err, control, test);
+        XMLAssert.assertXMLNotEqual(control, test);
     }
 
     /**
@@ -327,16 +366,6 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXMLNotEqual(Document control, Document test) {
         XMLAssert.assertXMLNotEqual(control, test);
-    }
-
-    /**
-     * Assert that two XML documents are NOT similar
-     * @param err Message to be displayed on assertion failure
-     * @param control XML to be compared against
-     * @param test XML to be tested
-     */
-    public void assertXMLNotEqual(String err, Document control, Document test) {
-        XMLAssert.assertXMLNotEqual(err, control, test);
     }
 
     /**
@@ -359,9 +388,59 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * @throws SAXException
      * @throws IOException
      */
+    public void assertXMLNotEqual(String err, InputSource control,
+                                  InputSource test)
+        throws SAXException, IOException {
+        XMLAssert.assertXMLNotEqual(err, control, test);
+    }
+
+    /**
+     * Assert that two XML documents are NOT similar
+     * @param err Message to be displayed on assertion failure
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXMLNotEqual(String err, String control, String test)
+        throws SAXException, IOException {
+        XMLAssert.assertXMLNotEqual(err, control, test);
+    }
+
+    /**
+     * Assert that two XML documents are NOT similar
+     * @param err Message to be displayed on assertion failure
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     */
+    public void assertXMLNotEqual(String err, Document control, Document test) {
+        XMLAssert.assertXMLNotEqual(err, control, test);
+    }
+
+    /**
+     * Assert that two XML documents are NOT similar
+     * @param err Message to be displayed on assertion failure
+     * @param control XML to be compared against
+     * @param test XML to be tested
+     * @throws SAXException
+     * @throws IOException
+     */
     public void assertXMLNotEqual(String err, Reader control, Reader test)
         throws SAXException, IOException {
         XMLAssert.assertXMLNotEqual(err, control, test);
+    }
+
+    /**
+     * Assert that the node lists of two Xpaths in the same document are equal
+     * @param xpathOne
+     * @param xpathTwo
+     * @param document
+     * @see XpathEngine
+     */
+    public void assertXpathsEqual(String controlXpath, String testXpath,
+                                  InputSource document)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathsEqual(controlXpath, testXpath, document);
     }
 
     /**
@@ -390,6 +469,22 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
                                   String inXMLString)
         throws SAXException, IOException, XpathException {
         XMLAssert.assertXpathsEqual(controlXpath, testXpath, inXMLString);
+    }
+
+    /**
+     * Assert that the node lists of two Xpaths in two XML pieces are equal
+     * @param xpathOne
+     * @param control
+     * @param xpathTwo
+     * @param test
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathsEqual(String controlXpath, InputSource control,
+                                  String testXpath, InputSource test)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathsEqual(controlXpath, control,
+                                    testXpath, test);
     }
 
     /**
@@ -439,6 +534,21 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     }
 
     /**
+     * Assert that the node lists of two Xpaths in the same XML are NOT
+     * equal
+     * @param xpathOne
+     * @param xpathTwo
+     * @param control
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathsNotEqual(String controlXpath, String testXpath,
+                                     InputSource control)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, control);
+    }
+
+    /**
      * Assert that the node lists of two Xpaths in the same XML string are NOT
      * equal
      * @param xpathOne
@@ -452,6 +562,22 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
         throws SAXException,
                IOException, XpathException {
         XMLAssert.assertXpathsNotEqual(controlXpath, testXpath, inXMLString);
+    }
+
+    /**
+     * Assert that the node lists of two Xpaths in two pieces of XML
+     * are NOT equal
+     * @param xpathOne
+     * @param control
+     * @param xpathTwo
+     * @param test
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathsNotEqual(String controlXpath, InputSource control,
+                                     String testXpath, InputSource test)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathsNotEqual(controlXpath, control, testXpath, test);
     }
 
     /**
@@ -501,6 +627,21 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     }
 
     /**
+     * Assert that the evaluation of two Xpaths in the same XML are
+     *  equal
+     * @param xpathOne
+     * @param xpathTwo
+     * @param control
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathValuesEqual(String controlXpath, String testXpath,
+                                       InputSource control)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, control);
+    }
+
+    /**
      * Assert that the evaluation of two Xpaths in the same XML string are
      *  equal
      * @param xpathOne
@@ -514,6 +655,24 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
         throws SAXException, IOException,
                XpathException {
         XMLAssert.assertXpathValuesEqual(controlXpath, testXpath, inXMLString);
+    }
+
+    /**
+     * Assert that the evaluation of two Xpaths in two XML strings are equal
+     * @param xpathOne
+     * @param control
+     * @param xpathTwo
+     * @param test
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathValuesEqual(String controlXpath,
+                                       InputSource control,
+                                       String testXpath,
+                                       InputSource test)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathValuesEqual(controlXpath, control,
+                                         testXpath, test);
     }
 
     /**
@@ -555,6 +714,23 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * NOT equal
      * @param xpathOne
      * @param xpathTwo
+     * @param control
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathValuesNotEqual(String controlXpath,
+                                          String testXpath,
+                                          InputSource control)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath,
+                                            control);
+    }
+
+    /**
+     * Assert that the evaluation of two Xpaths in the same XML string are
+     * NOT equal
+     * @param xpathOne
+     * @param xpathTwo
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
@@ -578,6 +754,25 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
                                           Document document)
         throws XpathException {
         XMLAssert.assertXpathValuesNotEqual(controlXpath, testXpath, document);
+    }
+
+    /**
+     * Assert that the evaluation of two Xpaths in two XML strings are
+     * NOT equal
+     * @param xpathOne
+     * @param control
+     * @param xpathTwo
+     * @param test
+     * @throws SAXException
+     * @throws IOException
+     */
+    public void assertXpathValuesNotEqual(String controlXpath,
+                                          InputSource control,
+                                          String testXpath,
+                                          InputSource test)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathValuesNotEqual(controlXpath, control,
+                                            testXpath, test);
     }
 
     /**
@@ -620,6 +815,23 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * Assert the value of an Xpath expression in an XML String
      * @param expectedValue
      * @param xpathExpression
+     * @param control
+     * @throws SAXException
+     * @throws IOException
+     * @see XpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertXpathEvaluatesTo(String expectedValue,
+                                       String xpathExpression,
+                                       InputSource control)
+        throws SAXException, IOException, XpathException {
+        XMLAssert.assertXpathEvaluatesTo(expectedValue, xpathExpression,
+                                         control);
+    }
+
+    /**
+     * Assert the value of an Xpath expression in an XML String
+     * @param expectedValue
+     * @param xpathExpression
      * @param inXMLString
      * @throws SAXException
      * @throws IOException
@@ -653,8 +865,19 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     /**
      * Assert that a specific XPath exists in some given XML
      * @param inXpathExpression
+     * @param xml
+     * @see XpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertXpathExists(String xPathExpression, 
+                                  InputSource xml)
+        throws IOException, SAXException, XpathException {
+        XMLAssert.assertXpathExists(xPathExpression, xml);
+    }
+    
+    /**
+     * Assert that a specific XPath exists in some given XML
+     * @param inXpathExpression
      * @param inXMLString
-     * @param ctx
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
     public void assertXpathExists(String xPathExpression, 
@@ -675,6 +898,18 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
         XMLAssert.assertXpathExists(xPathExpression, inDocument);
     }
 
+    /**
+     * Assert that a specific XPath does NOT exist in some given XML
+     * @param inXpathExpression
+     * @param xml
+     * @see XpathEngine which provides the underlying evaluation mechanism
+     */
+    public void assertXpathNotExists(String xPathExpression, 
+                                     InputSource xml)
+        throws IOException, SAXException, XpathException {
+        XMLAssert.assertXpathNotExists(xPathExpression, xml);
+    }
+    
     /**
      * Assert that a specific XPath does NOT exist in some given XML
      * @param inXpathExpression
@@ -724,6 +959,19 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     }
 
     /**
+     * Assert that a piece of XML contains valid XML: the input must
+     * contain a DOCTYPE declaration to be validated
+     * @param xml
+     * @throws SAXException
+     * @throws ConfigurationException if validation could not be turned on
+     * @see Validator
+     */
+    public void assertXMLValid(InputSource xml)
+        throws SAXException, ConfigurationException {
+        XMLAssert.assertXMLValid(xml);
+    }
+
+    /**
      * Assert that a String containing XML contains valid XML: the String must
      * contain a DOCTYPE declaration to be validated
      * @param xmlString
@@ -734,6 +982,21 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     public void assertXMLValid(String xmlString)
         throws SAXException, ConfigurationException {
         XMLAssert.assertXMLValid(xmlString);
+    }
+
+    /**
+     * Assert that a piece of XML contains valid XML: the document must
+     * contain a DOCTYPE to be validated, but the validation will use the
+     * systemId to obtain the DTD
+     * @param xml
+     * @param systemId
+     * @throws SAXException
+     * @throws ConfigurationException if validation could not be turned on
+     * @see Validator
+     */
+    public void assertXMLValid(InputSource xml, String systemId)
+        throws SAXException, ConfigurationException {
+        XMLAssert.assertXMLValid(xml, systemId);
     }
 
     /**
@@ -749,6 +1012,24 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     public void assertXMLValid(String xmlString, String systemId)
         throws SAXException, ConfigurationException {
         XMLAssert.assertXMLValid(xmlString, systemId);
+    }
+
+    /**
+     * Assert that a piece of XML contains valid XML: the document
+     * will be given a DOCTYPE to be validated with the name and
+     * systemId specified regardless of whether it already contains a
+     * doctype declaration.
+     * @param xml
+     * @param systemId
+     * @param doctype
+     * @throws SAXException
+     * @throws ConfigurationException if validation could not be turned on
+     * @see Validator
+     */
+    public void assertXMLValid(InputSource xml, String systemId,
+                               String doctype)
+        throws SAXException, ConfigurationException {
+        XMLAssert.assertXMLValid(xml, systemId, doctype);
     }
 
     /**
@@ -773,6 +1054,24 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXMLValid(Validator validator) {
         XMLAssert.assertXMLValid(validator);
+    }
+
+    /**
+     * Execute a <code>NodeTest<code> for a single node type
+     * and assert that it passes
+     * @param xml XML to be tested
+     * @param tester The test strategy
+     * @param nodeType The node type to be tested: constants defined
+     *  in {@link Node org.w3c.dom.Node} e.g. <code>Node.ELEMENT_NODE</code>
+     * @throws SAXException
+     * @throws IOException
+     * @see AbstractNodeTester
+     * @see CountingNodeTester
+     */
+    public void assertNodeTestPasses(InputSource xml, NodeTester tester,
+                                     short nodeType)
+        throws SAXException, IOException {
+        XMLAssert.assertNodeTestPasses(xml, tester, nodeType);
     }
 
     /**

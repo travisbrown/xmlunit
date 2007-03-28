@@ -38,6 +38,8 @@ package org.custommonkey.xmlunit;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -76,6 +78,32 @@ public class DoctypeReader extends Reader {
         this.originalSource = originalSource;
         this.doctypeName = doctypeName;
         this.systemId = systemID;
+    }
+
+    /**
+     * Create a Reader whose XML content is provided by the originalSource with
+     * the exception of the DOCTYPE which is provided by the doctypeName
+     * and systemID.
+     * @param originalSource
+     * @param doctypeName
+     * @param systemID
+     */
+    public DoctypeReader(InputStream originalSource, String encoding,
+                         String doctypeName, String systemID)
+        throws IOException {
+        this(encoding != null
+             ? new InputStreamReader(originalSource, encoding)
+             : xmlStreamToReader(originalSource),
+             doctypeName, systemID);
+    }
+
+    // XXX - we are cheating here, we should read into the source
+    // stream to see whether the XML decl (if any) specifies the
+    // encoding and then return an InputStreamReader using the proper
+    // encoding
+    private static Reader xmlStreamToReader(InputStream originalSource)
+        throws IOException {
+        return new InputStreamReader(originalSource);
     }
 
     /**

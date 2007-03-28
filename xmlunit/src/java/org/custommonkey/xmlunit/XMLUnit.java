@@ -507,6 +507,19 @@ public final class XMLUnit {
         return "1.1alpha"; 
     }
 
+   /**
+     * Compare XML documents provided by two InputSource classes
+     * @param control Control document
+     * @param test Document to test
+     * @return Diff object describing differences in documents
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Diff compareXML(InputSource control, InputSource test)
+        throws SAXException, IOException {
+        return new Diff(control, test);
+    }
+
     /**
      * Compare XML documents provided by two Reader classes
      * @param control Control document

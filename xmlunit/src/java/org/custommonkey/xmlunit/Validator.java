@@ -240,6 +240,29 @@ public class Validator extends DefaultHandler implements ErrorHandler {
 
     /**
      * Full constructor.
+     * Validates the contents of the InputSource using the DTD
+     * specified with the systemID and named with the doctype name.
+     *  
+     * @param sourceForValidation
+     * @param systemID
+     * @param doctype
+     * @throws SAXException
+     * @throws ConfigurationException if validation could not be turned on
+     */
+    public Validator(InputSource sourceForValidation, String systemID,
+                     String doctype)
+        throws SAXException, IOException, ConfigurationException {
+        this(sourceForValidation.getCharacterStream() != null
+             ? new DoctypeReader(sourceForValidation.getCharacterStream(),
+                                 doctype, systemID)
+             : new DoctypeReader(sourceForValidation.getByteStream(),
+                                 sourceForValidation.getEncoding(),
+                                 doctype, systemID),
+             systemID);
+    }
+
+    /**
+     * Full constructor.
      * Validates the contents of the Reader using the DTD specified with the
      *  systemID and named with the doctype name.
      *  
@@ -249,9 +272,12 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      * @throws SAXException
      * @throws ConfigurationException if validation could not be turned on
      */
-    public Validator(Reader readerForValidation, String systemID, String doctype)
+    public Validator(Reader readerForValidation, String systemID,
+                     String doctype)
         throws SAXException, ConfigurationException {
-        this(new DoctypeReader(readerForValidation, doctype, systemID),
+        this(readerForValidation instanceof DoctypeReader
+             ? readerForValidation
+             : new DoctypeReader(readerForValidation, doctype, systemID),
              systemID);
     }
 
