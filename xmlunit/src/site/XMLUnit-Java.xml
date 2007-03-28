@@ -752,6 +752,10 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         of XMLUnit's machinery.  Examples can be found in <xref
         linkend="transform-intro"/>.</para>
 
+        <para>It is possible to provide a custom
+        <literal>javax.xml.transform.URIResolver</literal> via the
+        <literal>XMLUnit.setURIResolver</literal> method.</para>
+
         <para>You can access the underlying XSLT transformer via
         <literal>XMLUnit.getTransformerFactory</literal>.</para>
       </section>
@@ -872,8 +876,11 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <literal>XMLUnit.getControlDocumentBuilderFactory</literal>,
         <literal>XMLUnit.getTestDocumentBuilderFactory</literal> and
         <literal>XMLUnit.getSAXParserFactory</literal> (used by
-        Validator).  The various <literal>build...</literal> methods
-        in <literal>XMLUnit</literal> provide convenience layers for
+        Validator).  Not that all these methods return factories or
+        parsers that are namespace aware.</para>
+
+        <para>The various <literal>build...</literal> methods in
+        <literal>XMLUnit</literal> provide convenience layers for
         building DOM <literal>Document</literal>s using the configured
         parsers.</para>
 
@@ -907,6 +914,15 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <para>Using <literal>XMLUnit.setIgnoreWhitespace</literal> it
         is possible to make the test and control parser ignore this
         kind of whitespace.</para>
+
+        <para>Note that setting this property to
+        <literal>true</literal> usually doesn't have any effect since
+        it only works on validating parsers and XMLUnit doesn't enable
+        validation by default.  It does have an effect when comparing
+        pieces of XML, though, since the same flag is used for a
+        different purpose as well in that case.  See <xref
+        linkend="comparing-config"/> for more details.</para>
+
       </section>
     </section>
 
@@ -927,12 +943,27 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
           <literal>Transform</literal> class.</para>
         </listitem>
 
+        <listitem>A SAX <literal>InputSource</literal>.
+
+          <para>This is the most generic way since
+          <literal>InputSource</literal> allows you to read from
+          arbitrary <literal>InputStream</literal>s or
+          <literal>Reader</literal>s.  Use an
+          <literal>InputStream</literal> wrapped into an
+          <literal>InputSource</literal> if you want the XML parser to
+          pick the proper encoding from the XML declaration.</para>
+        </listitem>
+
         <listitem>A <literal>String</literal>.
 
           <para>Here a DOM <literal>Document</literal> is built from
           the input <literal>String</literal> using the JAXP parser
           specified for control or test documents - depending on
           whether the input is a control or test piece of XML.</para>
+
+          <para>Note that using a <literal>String</literal> assumes
+          that you XML has already been converted from its XML
+          encoding to a Java <literal>String</literal> upfront.</para>
         </listitem>
 
         <listitem>A <literal>Reader</literal>.
@@ -1109,6 +1140,14 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
               707255</ulink>.</listitem>
             </itemizedlist>
           </listitem>
+
+          <listitem>It is now possible to provide a custom
+          <literal>javax.xml.transform.URIResolver</literal> for
+          transformations.</listitem>
+
+          <listitem>New overloads have been added that allow
+          <literal>org.xml.sax.InputSource</literal> to be used as a
+          "piece of XML" in many classes.</listitem>
 
           <listitem>
             <para>A new package
