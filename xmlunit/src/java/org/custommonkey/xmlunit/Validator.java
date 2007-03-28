@@ -251,14 +251,15 @@ public class Validator extends DefaultHandler implements ErrorHandler {
      */
     public Validator(InputSource sourceForValidation, String systemID,
                      String doctype)
-        throws SAXException, IOException, ConfigurationException {
+        throws SAXException, ConfigurationException {
         this(sourceForValidation.getCharacterStream() != null
-             ? new DoctypeReader(sourceForValidation.getCharacterStream(),
-                                 doctype, systemID)
-             : new DoctypeReader(sourceForValidation.getByteStream(),
-                                 sourceForValidation.getEncoding(),
-                                 doctype, systemID),
-             systemID);
+             ? new InputSource(new DoctypeReader(sourceForValidation
+                                                 .getCharacterStream(),
+                                                 doctype, systemID))
+             : new InputSource(new DoctypeInputStream(sourceForValidation
+                                                      .getByteStream(),
+                                                      doctype, systemID)),
+             systemID, true);
     }
 
     /**
@@ -380,8 +381,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
             isValid = Boolean.TRUE;
         } else if (usingDoctypeReader) {
             try {
-                messages.append("\nContent was: ").append(((DoctypeReader)
-                                                           validationInputSource.getCharacterStream()).getContent());
+                messages.append("\nContent was: ")
+                    .append(readFully(validationInputSource));
             } catch (IOException e) {
                 // silent but deadly?
             }
@@ -490,4 +491,31 @@ public class Validator extends DefaultHandler implements ErrorHandler {
         parser.setProperty(JAXPConstants.Properties.SCHEMA_SOURCE,
                            schemaSource);
     }
+
+    private static String readFully(InputSource s) throws IOException {
+        return s.getCharacterStream() != null
+            ? readFully(s.getCharacterStream()) : readFully(s.getByteStream());
+    }
+
+    private static String readFully(Reader r) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        char[] buffer = new char[4096];
+        int charsRead = -1;
+        while ((charsRead = r.read(buffer)) > -1) {
+            sb.append(buffer, 0, charsRead);
+        }
+        return sb.toString();
+    }
+
+    private static String readFully(java.io.InputStream is) throws IOException {
+        java.io.ByteArrayOutputStream baos =
+            new java.io.ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
+        int bytesRead = -1;
+        while ((bytesRead = is.read(buffer)) > -1) {
+            baos.write(buffer, 0, bytesRead);
+        }
+        return new String(baos.toByteArray());
+    }
+
 }
