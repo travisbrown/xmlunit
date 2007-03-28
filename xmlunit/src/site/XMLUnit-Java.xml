@@ -876,7 +876,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <literal>XMLUnit.getControlDocumentBuilderFactory</literal>,
         <literal>XMLUnit.getTestDocumentBuilderFactory</literal> and
         <literal>XMLUnit.getSAXParserFactory</literal> (used by
-        Validator).  Not that all these methods return factories or
+        Validator).  Note that all these methods return factories or
         parsers that are namespace aware.</para>
 
         <para>The various <literal>build...</literal> methods in
@@ -949,9 +949,9 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
           <literal>InputSource</literal> allows you to read from
           arbitrary <literal>InputStream</literal>s or
           <literal>Reader</literal>s.  Use an
-          <literal>InputStream</literal> wrapped into an
+          <literal>InputStream</literal> wrapped by an
           <literal>InputSource</literal> if you want the XML parser to
-          pick the proper encoding from the XML declaration.</para>
+          pick up the proper encoding from the XML declaration.</para>
         </listitem>
 
         <listitem>A <literal>String</literal>.
@@ -962,7 +962,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
           whether the input is a control or test piece of XML.</para>
 
           <para>Note that using a <literal>String</literal> assumes
-          that you XML has already been converted from its XML
+          that your XML has already been converted from its XML
           encoding to a Java <literal>String</literal> upfront.</para>
         </listitem>
 
