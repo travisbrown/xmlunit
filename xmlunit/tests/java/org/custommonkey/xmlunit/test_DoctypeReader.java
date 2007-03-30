@@ -36,7 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
-
+import java.io.IOException;
 import java.io.StringReader;
 
 import junit.framework.TestCase;
@@ -45,29 +45,12 @@ import junit.framework.TestSuite;
 /**
  * JUnit test for DoctypeReader
  */
-public class test_DoctypeReader extends TestCase {
+public class test_DoctypeReader extends AbstractDoctypeTests {
     private DoctypeReader doctypeReader;
     private StringReader sourceReader;
     private static final String NEWLINE = System.getProperty("line.separator");
-    private static final String NO_DTD = "<document><element>one</element></document>";
 
-    public void testRead() throws Exception {
-        String oz = "Surgical enhancement is cheap";
-        StringReader reader = new StringReader(oz);
-        doctypeReader = new DoctypeReader(reader, "Kylie", "bumJob");
-
-        StringBuffer buf = new StringBuffer();
-        String expected = "<!DOCTYPE Kylie SYSTEM \"bumJob\">" + oz;
-        char[] ch = new char[expected.length()];
-        int numChars;
-        while ((numChars = doctypeReader.read(ch))!=-1) {
-            buf.append(ch);
-        }
-
-        assertEquals(expected, buf.toString());
-    }
-
-    public void testGetContent() throws Exception {
+    public void testGetContent() throws IOException {
         String source = "WooPDeDoO!" + NEWLINE + "GooRanga!"
             + NEWLINE + " plIng! ";
         sourceReader = new StringReader(source);
@@ -115,12 +98,27 @@ public class test_DoctypeReader extends TestCase {
                      doctypeReader.replaceDoctype(buf, "ni", "shrubbery"));
     }
 
-    public test_DoctypeReader(String name) {
-        super(name);
+    private static String readFully(DoctypeReader reader)
+        throws IOException {
+        StringBuffer buf = new StringBuffer();
+        char[] ch = new char[1024];
+        int numChars;
+        while ((numChars = reader.read(ch))!=-1) {
+            buf.append(ch, 0, numChars);
+        }
+        return buf.toString();
     }
 
-    public static TestSuite suite() {
-        return new TestSuite(test_DoctypeReader.class);
+    protected void assertEquals(String expected, String input, String docType,
+                                String systemId) throws IOException {
+        DoctypeReader doctypeReader =
+            new DoctypeReader(new StringReader(expected), docType,
+                                   systemId);
+        assertEquals(expected, readFully(doctypeReader));
+    }
+
+    public test_DoctypeReader(String name) {
+        super(name);
     }
 }
 

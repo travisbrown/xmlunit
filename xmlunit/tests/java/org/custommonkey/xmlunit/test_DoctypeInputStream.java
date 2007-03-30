@@ -49,10 +49,8 @@ import junit.framework.TestSuite;
 /**
  * JUnit test for DoctypeInputStream
  */
-public class test_DoctypeInputStream extends TestCase {
+public class test_DoctypeInputStream extends AbstractDoctypeTests {
 
-    private static final String NEWLINE = System.getProperty("line.separator");
-    private static final String NO_DTD = "<document><element>one</element></document>";
     private File testFile;
 
     public void tearDown() {
@@ -85,13 +83,13 @@ public class test_DoctypeInputStream extends TestCase {
         return buf.toString();
     }
 
-    private void assertEquals(String expected, String input, String docType,
-                              String systemId) throws IOException {
+    protected void assertEquals(String expected, String input, String docType,
+                                String systemId) throws IOException {
         FileInputStream fis = null;
         try {
             fis = testDocument(input);
             DoctypeInputStream doctypeInputStream =
-                new DoctypeInputStream(fis, docType, systemId);
+                new DoctypeInputStream(fis, "ISO-8859-1", docType, systemId);
 
             assertEquals(expected, readFully(doctypeInputStream));
         } finally {
@@ -101,42 +99,18 @@ public class test_DoctypeInputStream extends TestCase {
         }
     }
 
-    public void testRead() throws IOException {
-        String oz = "Chirurgische Verbesserungen sind g\u00fcnstig";
-        assertEquals("<!DOCTYPE Kylie SYSTEM \"bumJob\">" + oz,
-                     oz, "Kylie", "bumJob");
-    }
-
-    public void testReplaceDoctypeInternalDTD() throws IOException {
-        assertEquals("<!DOCTYPE ni SYSTEM \"shrubbery\">",
-                     test_Constants.CHUCK_JONES_RIP_DTD_DECL, "ni",
-                     "shrubbery");
-    }
-
-    public void XtestReplaceDoctypeExternalDTD() throws IOException {
-        assertEquals("<!DOCTYPE ni SYSTEM \"shrubbery\">",
-                     "<! DOCTYPE PUBLIC \"yak\" SYSTEM \"llama\">", "ni",
-                     "shrubbery");
-    }
-
-    public void testReplaceDoctypeNoDTD() throws IOException {
-        assertEquals("<!DOCTYPE ni SYSTEM \"shrubbery\">" + NO_DTD,
-                     NO_DTD, "ni", "shrubbery");
-    }
-
-    public void testReplaceDoctypeNoDTDButXMLDecl() throws IOException {
-        assertEquals(test_Constants.XML_DECLARATION
-                     + "<!DOCTYPE ni SYSTEM \"shrubbery\">" + NO_DTD,
-                     test_Constants.XML_DECLARATION + NO_DTD,
-                     "ni", "shrubbery");
+    public void testGetContent() throws IOException {
+        String source = "WooPDeDoO!\nGooRanga!\n plIng! ";
+        DoctypeInputStream dis =
+            new DoctypeInputStream(new java.io.StringBufferInputStream(source),
+                                   null, "nonsense", "words");
+        assertEquals(source, dis.getContent(null));
+        // can get content indefinitely from this stream
+        assertEquals(source, dis.getContent("UTF-8"));
     }
 
     public test_DoctypeInputStream(String name) {
         super(name);
-    }
-
-    public static TestSuite suite() {
-        return new TestSuite(test_DoctypeInputStream.class);
     }
 }
 

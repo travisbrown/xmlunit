@@ -51,20 +51,10 @@ import java.io.IOException;
  * <br />Examples and more at <a href="http://xmlunit.sourceforge.net"/>xmlunit.sourceforge.net</a>
  */
 public class DoctypeInputStream extends InputStream {
+
+    private final ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
     private final InputStream wrappedStream;
-
-    private static final byte[] DOCTYPE_BYTES = {
-        'D', 'O', 'C', 'T', 'Y', 'P', 'E', ' '
-    };
-
-    private byte[] readAheadBeforeDeclBuffer = null;
-    private int readAheadBeforeDeclOffset = 0;
-    private byte[] readAheadAfterDeclBuffer = null;
-    private int readAheadAfterDeclOffset = 0;
-
-    private final DoctypeSupport docType;
-    private boolean writeDecl = false;
-
+    private final DoctypeSupport support;
 
     /**
      * Create an InputStream whose XML content is provided by the
@@ -74,143 +64,44 @@ public class DoctypeInputStream extends InputStream {
      * @param doctypeName
      * @param systemID
      */
-    public DoctypeInputStream(InputStream originalSource, String doctypeName,
-                              String systemID) {
+    public DoctypeInputStream(InputStream originalSource, String encoding,
+                              String doctypeName, String systemID) {
         wrappedStream = originalSource instanceof BufferedInputStream
             ? originalSource : new BufferedInputStream(originalSource);
-        docType = new DoctypeSupport(doctypeName, systemID);
+        support =
+            new DoctypeSupport(doctypeName, systemID,
+                               new DoctypeSupport.Readable() {
+                                   public int read() throws IOException {
+                                       return wrappedStream.read();
+                                   }
+                               },
+                               false, encoding);
     }
 
     /**
-     * Read DOCTYPE-replaced content from the wrapped Reader
+     * @return the content of the original source, without amendments or
+     *  substitutions. Safe to call multiple times.
+     * @throws IOException if thrown while reading from the original source
+     */
+    protected String getContent(String encoding) throws IOException {
+        if (baos.size() == 0) {
+            byte[] buffer = new byte[8192];
+            int bytesRead = -1;
+            while ((bytesRead = wrappedStream.read(buffer)) > -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+        }
+        return encoding == null ? baos.toString() : baos.toString(encoding);
+    }
+
+    /**
+     * Read DOCTYPE-replaced content from the wrapped InputStream
      */
     public int read() throws IOException {
-        int nextByte = -1;
-
-        if (writeDecl) {
-            // currently writing our own DOCTYPE declaration
-            nextByte = docType.read();
-            if (nextByte == -1) {
-                writeDecl = false;
-            } else {
-                return nextByte;
-            }
-        }
-
-        if (readAheadBeforeDeclBuffer != null) {
-            // in part of original document before our DOCTYPE - this
-            // has already been read
-            nextByte = readAheadBeforeDeclBuffer[readAheadBeforeDeclOffset++];
-            if (readAheadBeforeDeclOffset >= readAheadBeforeDeclBuffer.length) {
-                readAheadBeforeDeclBuffer = null;
-                writeDecl = true;
-            }
-        } else if (!docType.hasBeenRead()) {
-            // DOCTYPE not written, yet, need to see where it should go
-            
-            // read ahead until we find a good place to insert the doctype,
-            // store bytes in readAheadBuffers
-            ByteArrayOutputStream beforeDecl = new ByteArrayOutputStream();
-            ByteArrayOutputStream afterDecl = new ByteArrayOutputStream();
-            int current;
-            boolean ready = false;
-            while (!ready && (current = wrappedStream.read()) != -1) {
-                byte c = (byte) current;
-                if (c >= 0 && Character.isWhitespace((char) c)) {
-                    beforeDecl.write(c);
-                } else if (c == '<') {
-                    // could be XML declaration, comment, PI, DOCTYPE
-                    // or the first element
-                    byte[] elementOrDeclOr = readUntilCloseCharacterIsReached();
-                    if (elementOrDeclOr.length > 0) {
-                        if (elementOrDeclOr[0] == '?') {
-                            // XML declaration or PI
-                            beforeDecl.write('<');
-                            beforeDecl.write(elementOrDeclOr, 0,
-                                             elementOrDeclOr.length);
-                        } else if (elementOrDeclOr[0] != '!') {
-                            // first element
-                            afterDecl.write('<');
-                            afterDecl.write(elementOrDeclOr, 0,
-                                            elementOrDeclOr.length);
-                            ready = true;
-                        } else {
-                            // comment or doctype
-                            if (indexOfDoctype(elementOrDeclOr) == -1) {
-                                afterDecl.write('<');
-                                afterDecl.write(elementOrDeclOr, 0,
-                                                elementOrDeclOr.length);
-                            } // else swallow old declaration
-                            ready = true;
-                        }
-                    }
-                                
-                } else {
-                    afterDecl.write(c);
-                    ready = true;
-                }
-            }
-            readAheadBeforeDeclBuffer = beforeDecl.size() > 0
-                ? beforeDecl.toByteArray() : null;
-            readAheadAfterDeclBuffer = afterDecl.size() > 0
-                ? afterDecl.toByteArray() : null;
-            writeDecl = (readAheadBeforeDeclBuffer == null);
-            return read();
-        } else  if (readAheadAfterDeclBuffer != null) {
-            // in part of original document read ahead after our DOCTYPE
-            nextByte = readAheadAfterDeclBuffer[readAheadAfterDeclOffset++];
-            if (readAheadAfterDeclOffset >= readAheadAfterDeclBuffer.length) {
-                readAheadAfterDeclBuffer = null;
-            }
-        } else {
-            nextByte = wrappedStream.read();
-        }
-        return nextByte;
+        return support.read();
     }
 
-    private byte[] readUntilCloseCharacterIsReached() throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int byteRead = -1;
-        int openCount = 1;
-        while (openCount > 0 && (byteRead = wrappedStream.read()) != -1) {
-            byte c = (byte) byteRead;
-            baos.write(c);
-            if (c == '<') {
-                openCount++;
-            }
-            if (c == '>') {
-                openCount--;
-            }
-        }
-        return baos.toByteArray();
-    }
-    
     public void close() throws IOException {
         wrappedStream.close();
-    }
-    
-    /**
-     * Could be faster when searching from the other end, but should do.
-     */
-    private static int indexOfDoctype(byte[] b) {
-        int index = -1;
-        for (int i = 0; i < b.length - DOCTYPE_BYTES.length + 1; i++) {
-            if (b[i] == DOCTYPE_BYTES[0]) {
-                boolean found = false;
-                int j = 1;
-                for (; !found && j < DOCTYPE_BYTES.length; j++) {
-                    if (b[i + j] != DOCTYPE_BYTES[j]) {
-                        found = true;
-                    }
-                }
-                if (found) {
-                    index = i;
-                    break;
-                } else {
-                    i += j - 1;
-                }
-            }
-        }
-        return index;
     }
 }

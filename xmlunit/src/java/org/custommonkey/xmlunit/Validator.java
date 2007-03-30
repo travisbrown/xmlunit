@@ -258,6 +258,8 @@ public class Validator extends DefaultHandler implements ErrorHandler {
                                                  doctype, systemID))
              : new InputSource(new DoctypeInputStream(sourceForValidation
                                                       .getByteStream(),
+                                                      sourceForValidation
+                                                      .getEncoding(),
                                                       doctype, systemID)),
              systemID, true);
     }
@@ -382,7 +384,7 @@ public class Validator extends DefaultHandler implements ErrorHandler {
         } else if (usingDoctypeReader) {
             try {
                 messages.append("\nContent was: ")
-                    .append(readFully(validationInputSource));
+                    .append(getOriginalContent(validationInputSource));
             } catch (IOException e) {
                 // silent but deadly?
             }
@@ -492,30 +494,11 @@ public class Validator extends DefaultHandler implements ErrorHandler {
                            schemaSource);
     }
 
-    private static String readFully(InputSource s) throws IOException {
-        return s.getCharacterStream() != null
-            ? readFully(s.getCharacterStream()) : readFully(s.getByteStream());
+    private static String getOriginalContent(InputSource s)
+        throws IOException {
+        return s.getCharacterStream() instanceof DoctypeReader
+            ? ((DoctypeReader) s.getCharacterStream()).getContent()
+            : ((DoctypeInputStream) s.getByteStream())
+                  .getContent(s.getEncoding());
     }
-
-    private static String readFully(Reader r) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        char[] buffer = new char[4096];
-        int charsRead = -1;
-        while ((charsRead = r.read(buffer)) > -1) {
-            sb.append(buffer, 0, charsRead);
-        }
-        return sb.toString();
-    }
-
-    private static String readFully(java.io.InputStream is) throws IOException {
-        java.io.ByteArrayOutputStream baos =
-            new java.io.ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
-        int bytesRead = -1;
-        while ((bytesRead = is.read(buffer)) > -1) {
-            baos.write(buffer, 0, bytesRead);
-        }
-        return new String(baos.toByteArray());
-    }
-
 }
