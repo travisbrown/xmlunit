@@ -37,6 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XMLUnitRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -444,8 +445,28 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     public InputSource resolveEntity(String publicId, String systemId) {
         if (validationInputSource.getSystemId() != null) {
             return new InputSource(validationInputSource.getSystemId());
-        } else if (systemId != null) {
-            return new InputSource(systemId);
+        } else {
+            InputSource s = null;
+            try {
+                if (XMLUnit.getControlEntityResolver() != null) {
+                    s = XMLUnit.getControlEntityResolver()
+                        .resolveEntity(publicId, systemId);
+                }
+            } catch (SAXException e) {
+                throw new XMLUnitRuntimeException("failed to resolve entity: "
+                                                  + publicId, e);
+            } catch (IOException e) {
+                // even if we wanted to re-throw IOException (which we
+                // can't because of backwards compatibility) the mere
+                // fact that DefaultHandler has stripped IOException
+                // from EntityResolver's method's signature wouldn't
+                // let us.
+                throw new XMLUnitRuntimeException("failed to resolve entity: "
+                                                  + publicId, e);
+            }
+            if (s == null && systemId != null) {
+                return new InputSource(systemId);
+            }
         }
         return null;
     }
