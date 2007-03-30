@@ -886,7 +886,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
 
       </section>
 
-      <section>
+      <section id="entityresolver">
         <title><literal>EntityResolver</literal></title>
 
         <para>You can provide a custom
@@ -1018,6 +1018,22 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
     <section id="validating-basics">
       <title>The <literal>Validator</literal> class</title>
 
+      <para>The <literal>Validator</literal> class encapsulates
+      XMLUnit's validation support.  It will use the
+      <literal>SAXParser</literal> configured in XMLUnit (see <xref
+      linkend="JAXP"/>).</para>
+
+      <para>The piece of XML to validate is specified in the
+      constructor.  The constructors using more than a single argument
+      are only relevant if you want to validate against a DTD and need
+      to provide the location of the DTD itself - for details see the
+      next section.</para>
+
+      <para>By default, <literal>Validator</literal> will validate
+      against a DTD, but it is possible to validate against a (or
+      multiple) Schema(s) as well.  Schema validation requires an XML
+      parser that supports it, of course.</para>
+
       <section id="validating-dtd">
         <title>DTD Validation</title>
       </section>
@@ -1025,6 +1041,48 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
       <section id="validating-schema">
         <title>XML Schema Validation</title>
       </section>
+
+      <para>In order to validate against the XML Schema language
+      Schema validation has to be enabled via the
+      <literal>useXMLSchema</literal> method of
+      <literal>Validator</literal>.</para>
+
+      <para>By default the parser will try to resolve the location of
+      Schema definition files via a <literal>schemaLocation</literal>
+      attribute if it is present in the piece of XML or it will try to
+      open the Schema's URI as an URL and read from it.</para>
+
+      <para>The <literal>setJAXP12SchemaSource</literal> method of
+      <literal>Validator</literal> allows you to override this
+      behavior as long as the parser supports the
+      <literal>http://java.sun.com/xml/jaxp/properties/schemaSource</literal>
+      property in the way described in <link
+      linkend="http://java.sun.com/webservices/jaxp/change-requests-11.html">JAXP
+      1.2 Approved CHANGES</link>.</para>
+
+      <para><literal>setJAXP12SchemaSource</literal>'s argument can be
+      one of</para>
+
+      <itemizedlist>
+        <listitem>A <literal>String</literal> which contains an
+          URI.</listitem>
+        <listitem>An <literal>InputStream</literal> the Schema can be
+          read from.</listitem>
+        <listitem>An <literal>InputSource</literal> the Schema can be
+          read from.</listitem>
+        <listitem>A <literal>File</literal> the Schema can be
+          read from.</listitem>
+        <listitem>An array containing any of the above.</listitem>
+      </itemizedlist>
+
+      <para>If the property has been set using a
+      <literal>String</literal>, the <literal>Validator</literal>
+      class will provide its <literal>systemId</literal> as specified
+      in the constructor when asked to resolve it.  You must only use
+      the single argument constructors if you want to avoid this
+      behavior.  If no <literal>systemId</literal> has been specified,
+      the configured <literal>EntityResolver</literal> may still be
+      used.</para>
     </section>
 
     <section id="validation-junit3">
@@ -1148,6 +1206,11 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
           <listitem>New overloads have been added that allow
           <literal>org.xml.sax.InputSource</literal> to be used as a
           "piece of XML" in many classes.</listitem>
+
+          <listitem><literal>Validator</literal> will now use the
+          custom <literal>EntityResolver</literal> <link
+          linkend="entityresolver">configured</link> for the "control"
+          parser as a fallback.</listitem>
 
           <listitem>
             <para>A new package
