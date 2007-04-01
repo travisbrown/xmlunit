@@ -663,7 +663,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
 
       <para>XMLUnit requires a JAXP compliant XML parser virtually
       everywhere.  Several features of XMLUnit also require a JAXP
-      compliant XSLT transformer.  If it is avaliable, a JAXP
+      compliant XSLT transformer.  If it is available, a JAXP
       compliant XPath engine will be used for XPath tests.</para>
 
       <para>To build XMLUnit at least JAXP 1.2 is required, this is
@@ -746,7 +746,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <literal>Document</literal>.</para>
 
         <para>The output of <literal>Transform</literal> can be used
-        as input to comparisions, validations, XPath tests and so on.
+        as input to comparisons, validations, XPath tests and so on.
         There is no detailed sections on transformations since they
         are really only a different way to create input for the rest
         of XMLUnit's machinery.  Examples can be found in <xref
@@ -800,11 +800,11 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <title>DOM Tree Walking</title>
 
         <para>To test pieces of XML by traversing the DOM tree you use
-        the <literal>NodeTester</literal> class.  Each DOm
+        the <literal>NodeTester</literal> class.  Each DOM
         <literal>Node</literal> will be passed to a
         <literal>NodeTester</literal> implementation you provide.  The
         <literal>AbstractNodeTester</literal> class is provided as a
-        NullObject pattern base class for your implementations of your
+        NullObject Pattern base class for implementations of your
         own.</para>
 
         <para>More information is available in <xref
@@ -817,10 +817,11 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
 
       <para>Initially XMLUnit was tightly coupled to JUnit and the
       recommended approach was to write unit tests by inheriting from
-      <literal>XMLTestCase</literal>.  <literal>XMLTestCase</literal>
-      provides a pretty long list of <literal>assert...</literal>
-      methods that may simplify your interaction with XMLUnit's
-      internals in many common cases.</para>
+      the <literal>XMLTestCase</literal> class.
+      <literal>XMLTestCase</literal> provides a pretty long list of
+      <literal>assert...</literal> methods that may simplify your
+      interaction with XMLUnit's internals in many common
+      cases.</para>
 
       <para>The <literal>XMLAssert</literal> class provides the same
       set of <literal>assert...</literal>s as static methods.  Use
@@ -832,7 +833,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
       <para>All power of XMLUnit is available whether you use
       <literal>XMLTestCase</literal> and/or
       <literal>XMLAssert</literal> or the underlying API directly.  If
-      you are using JUnit 3.x then using the specifc classes may prove
+      you are using JUnit 3.x then using the specific classes may prove
       to be more convenient.</para>
 
     </section>
@@ -876,8 +877,8 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <literal>XMLUnit.getControlDocumentBuilderFactory</literal>,
         <literal>XMLUnit.getTestDocumentBuilderFactory</literal> and
         <literal>XMLUnit.getSAXParserFactory</literal> (used by
-        Validator).  Note that all these methods return factories or
-        parsers that are namespace aware.</para>
+        <literal>Validator</literal>).  Note that all these methods
+        return factories or parsers that are namespace aware.</para>
 
         <para>The various <literal>build...</literal> methods in
         <literal>XMLUnit</literal> provide convenience layers for
@@ -893,7 +894,9 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <literal>org.xml.sax.EntityResolver</literal> for the control
         and test parsers via
         <literal>XMLUnit.setControlEntityResolver</literal> and
-        <literal>XMLUnit.setTestEntityResolver</literal>.</para>
+        <literal>XMLUnit.setTestEntityResolver</literal>.
+        <literal>Validator</literal> uses the resolver set via
+        <literal>setControlEntityResolver</literal> as well.</para>
       </section>
 
       <section id="element-content-whitespace">
@@ -904,7 +907,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         model doesn't allow text content.  I.e. the newline and space
         characters between <literal><![CDATA[<foo>]]></literal> and
         <literal><![CDATA[<bar>]]></literal> in the following example
-        belongs into this category.</para>
+        could belong into this category.</para>
 
         <programlisting language="XML"><![CDATA[
 <foo>
@@ -1038,6 +1041,115 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         <title>DTD Validation</title>
       </section>
 
+      <para>Validating against a DTD is straight forward if the piece
+      of XML contains a <literal>DOCTYPE</literal> declaration with a
+      <literal>SYSTEM</literal> identifier that can be resolved at
+      validation time.  Simply create a <literal>Validator</literal>
+      object using one of the single argument constructors.</para>
+
+      <example>
+        <title>Validating against the DTD defined in
+          <literal>DOCTYPE</literal></title>
+        <programlisting language="Java"><![CDATA[
+InputSource is = new InputSource(new FileInputStream(myXmlDocument));
+Validator v = new Validator(is);
+bool isValid = v.isValid();
+]]></programlisting></example>
+
+      <para>If the piece of XML doesn't contain any
+      <literal>DOCTYPE</literal> declaration at all or it contains a
+      <literal>DOCTYPE</literal> but you want to validate against a
+      different DTD, you'd use one of the three argument versions of
+      <literal>Validator</literal>'s constructors.  In this case the
+      <literal>publicId</literal> argument becomes the
+      <literal>PUBLIC</literal> and <literal>systemId</literal> the
+      <literal>SYSTEM</literal> identifier of the
+      <literal>DOCTYPE</literal> that is implicitly added to the piece
+      of XML.  Any existing <literal>DOCTYPE</literal> will be
+      removed.  The <literal>systemId</literal> should be a URL that
+      can be resolved by your parser.</para>
+
+      <example>
+        <title>Validating a piece of XML that doesn't contain a
+        <literal>DOCTYPE</literal></title>
+        <programlisting language="Java"><![CDATA[
+InputSource is = new InputSource(new FileInputStream(myXmlDocument));
+Validator v = new Validator(is,
+                            (new File(myDTD)).toURI().toURL(),
+                            myPublicId);
+bool isValid = v.isValid();
+]]></programlisting></example>
+
+      <para>If the piece of XML already has the correct
+      <literal>DOCTYPE</literal> declaration but the declaration
+      either doesn't specify a <literal>SYSTEM</literal> identifier at
+      all or you want the <literal>SYSTEM</literal> identifier to
+      resolve to a different location you have two options:</para>
+
+      <itemizedlist>
+        <listitem>Use one of the two argument constructors and specify
+          the alternative URL as
+          <literal>systemId</literal>.
+
+      <example>
+        <title>Validating against a local DTD</title>
+        <programlisting language="Java"><![CDATA[
+InputSource is = new InputSource(new FileInputStream(myXmlDocument));
+Validator v = new Validator(is,
+                            (new File(myDTD)).toURI().toURL());
+bool isValid = v.isValid();
+]]></programlisting></example>
+        </listitem>
+
+        <listitem>Use a custom <literal>EntityResolver</literal> via
+          <literal>XMLUnit.setControlEntityResolver</literal> together
+          with one of the single argument constructor overloads of
+          Validator.
+
+          <para>This approach would allow you to use an OASIS
+          catalog<footnote><ulink
+          url="http://www.oasis-open.org/committees/download.php/14809/xml-catalogs.html">http://www.oasis-open.org/committees/download.php/14809/xml-catalogs.html</ulink></footnote>
+          in conjunction with the Apache XML Resolver
+          library<footnote><ulink
+          url="http://xml.apache.org/commons/components/resolver/index.html">http://xml.apache.org/commons/components/resolver/index.html</ulink></footnote>
+          to resolve the DTD location as well as the location of any
+          other entity in your piece of XML, for example.</para>
+
+      <example>
+        <title>Validating against DTD using Apache's XML Resolver and
+        a XML Catalog</title>
+        <programlisting language="Java"><![CDATA[
+InputSource is = new InputSource(new FileInputStream(myXmlDocument));
+XMLUnit.setControlEntityResolver(new CatalogResolver())
+Validator v = new Validator(is);
+bool isValid = v.isValid();
+]]></programlisting>
+
+        <programlisting><![CDATA[
+#CatalogManager.properties
+
+verbosity=1
+relative-catalogs=yes
+catalogs=/some/path/to/catalog
+prefer=public
+static-catalog=yes
+catalog-class-name=org.apache.xml.resolver.Resolver
+]]></programlisting>
+
+        <programlisting language="XML"><![CDATA[
+<!-- catalog file -->
+
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <public publicId="-//Some//DTD V 1.1//EN"
+          uri="mydtd.dtd"/>
+</catalog>
+]]></programlisting>
+
+</example>
+
+        </listitem>
+      </itemizedlist>
+
       <section id="validating-schema">
         <title>XML Schema Validation</title>
       </section>
@@ -1083,14 +1195,70 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
       behavior.  If no <literal>systemId</literal> has been specified,
       the configured <literal>EntityResolver</literal> may still be
       used.</para>
+
+      <example>
+        <title>Validating against a local XML Schema</title>
+        <programlisting language="Java"><![CDATA[
+InputSource is = new InputSource(new FileInputStream(myXmlDocument));
+Validator v = new Validator(is);
+v.useXMLSchema(true);
+v.setJAXP12SchemaSource(new File(myXmlSchemaFile));
+bool isValid = v.isValid();
+]]></programlisting></example>
+
     </section>
 
     <section id="validation-junit3">
       <title>JUnit 3.x Convenience Methods</title>
+
+      <para>Both <literal>XMLAssert</literal> and
+      <literal>XMLTestCase</literal> provide an
+      <literal>assertXMLValid(Validator)</literal> method that will
+      fail if <literal>Validator</literal>'s
+      <literal>isValid</literal> method returns
+      <literal>false</literal>.</para>
+
+      <para>In addition several overloads of the
+      <literal>assertXMLValid</literal> method are provided that
+      directly correspond to similar overloads of
+      <literal>Validator</literal>'s constructor.  These overloads
+      don't support XML Schema validation at all.</para>
+
+      <para><literal>Validator</literal> itself provides an
+      <literal>assertIsValid</literal> method that will throw an
+      <literal>AssertionFailedError</literal> if validation
+      fails.</para>
+
+      <para>Neither method provides any control over the message of
+      the <literal>AssertionFailedError</literal> in case of a
+      failure.</para>
     </section>
 
     <section id="validation-config">
       <title>Configuration Options</title>
+
+      <itemizedlist>
+        <listitem><literal>Validator</literal> uses a SAX parser
+        created by the configured SAX parser factory (see <xref
+        linkend="JAXP"/>).</listitem>
+
+        <listitem>It will use the "control"
+        <literal>EntityResolver</literal> if one has been specified
+        (see <xref linkend="entityresolver"/>).</listitem>
+
+        <listitem>The location of a DTD can be specified via
+        <literal>Validator</literal>'s <literal>systemId</literal>
+        constructor argument or a custom EntityResolver (see <xref
+        linkend="validating-dtd"/>).</listitem>
+
+        <listitem>XML Schema validation is enabled via
+        <literal>Validator.useXMLSchema(true)</literal>.</listitem>
+
+        <listitem>The location(s) of XML Schema document(s) can be
+        specified via
+        <literal>Validator.setJAXP12SchemaSource</literal> (see <xref
+        linkend="validating-schema"/>).</listitem>
+      </itemizedlist>
     </section>
   </section>
 
@@ -1124,7 +1292,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         been asked for repeatedly:</para>
 
       <itemizedlist>
-        <listitem>Support for XML namespaces in XPath
+        <listitem>Support for XML Namespaces in XPath
           processing</listitem>
 
         <listitem>Support for XML Schema validation.</listitem>
@@ -1140,15 +1308,15 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
 
         <itemizedlist>
           <listitem>
-            <literal>XMLTestCase</literal> is now abstract.  There is
-            no reason why you should have created instances of this
-            class without subclassing it, but if you did, your code
-            will now break.  You will most likely want to look at the
+            <literal>XMLTestCase</literal> is now abstract.  You
+            probably have never created instances of this class
+            without subclassing it, but if you did, your code will now
+            break.  You will most likely want to look at the
             <literal>XMLAssert</literal> class.
           </listitem>
 
           <listitem>
-            <para>All methods that have been declared to throw
+            <para>All methods that had been declared to throw
             <literal>TransformerConfigurationException</literal> or
             <literal>ParserConfigurationException</literal> now no
             longer declare it.  Exceptions of these types cannot be
@@ -1208,7 +1376,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
           "piece of XML" in many classes.</listitem>
 
           <listitem><literal>Validator</literal> will now use the
-          custom <literal>EntityResolver</literal> <link
+          custom <literal>EntityResolver</literal>  <link
           linkend="entityresolver">configured</link> for the "control"
           parser as a fallback.</listitem>
 
@@ -1257,7 +1425,7 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
 
           <listitem>Under certain circumstances the reported XPath
           expressions for nodes that showed differences were wrong.
-          XMLUnit could lose the root element or errornously append an
+          XMLUnit could lose the root element or erroneously append an
           extra attribute name.  Issues <ulink
           url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1047364&amp;group_id=23187&amp;atid=377768">1047364</ulink>
           and <ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1027863&amp;group_id=23187&amp;atid=377770">1027863</ulink>.</listitem>
