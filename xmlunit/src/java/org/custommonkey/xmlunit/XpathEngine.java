@@ -55,10 +55,9 @@ public interface XpathEngine {
      * @param select
      * @param document
      * @return list of matching nodes
-     * @throws TransformerException
      */
     NodeList getMatchingNodes(String select, Document document)
-        throws ConfigurationException, XpathException;
+        throws XpathException;
     
     /**
      * Evaluate the result of executing the specified xpath syntax
@@ -66,10 +65,9 @@ public interface XpathEngine {
      * @param select
      * @param document
      * @return evaluated result
-     * @throws TransformerException
      */
     String evaluate(String select, Document document)
-        throws ConfigurationException, XpathException;
+        throws XpathException;
 
     /**
      * Establish a namespace context.

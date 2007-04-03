@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,92 +36,16 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit.jaxp13;
 
-import javax.xml.transform.OutputKeys;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.custommonkey.xmlunit.XMLUnit;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.custommonkey.xmlunit.AbstractXpathEngineTests;
+import org.custommonkey.xmlunit.XpathEngine;
 
 /**
  * JUnit test for Jaxp13XpathEngine
  */
-public class test_Jaxp13XpathEngine extends TestCase {
-    private String[] testAttrNames = {"attrOne", "attrTwo"};
-    private String testString =
-        "<test><nodeWithoutAttributes>intellectual property rights </nodeWithoutAttributes>"
-        + "<nodeWithoutAttributes>make us all poorer </nodeWithoutAttributes>"
-        + "<nodeWithAttributes " + testAttrNames[0] + "=\"open source \" "
-        + testAttrNames[1] + "=\"is the answer \">free your code from its chains"
-        + "</nodeWithAttributes></test>";
-    private Document testDocument;
-    private Jaxp13XpathEngine simpleXpathEngine = new Jaxp13XpathEngine();
+public class test_Jaxp13XpathEngine extends AbstractXpathEngineTests {
 
-    public void testGetMatchingNodesNoMatches() throws Exception {
-        NodeList nodeList = simpleXpathEngine.getMatchingNodes("toast", testDocument);
-        assertEquals(0, nodeList.getLength());
-    }
-
-    public void testGetMatchingNodesMatchRootElement() throws Exception {
-        NodeList nodeList = simpleXpathEngine.getMatchingNodes("test", testDocument);
-        assertEquals(1, nodeList.getLength());
-        assertEquals(Node.ELEMENT_NODE, nodeList.item(0).getNodeType());
-    }
-
-    public void testGetMatchingNodesMatchElement() throws Exception {
-        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-                                                               "test/nodeWithoutAttributes", testDocument);
-        assertEquals(2, nodeList.getLength());
-        assertEquals(Node.ELEMENT_NODE, nodeList.item(0).getNodeType());
-    }
-
-    public void testGetMatchingNodesMatchText() throws Exception {
-        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-                                                               "test//text()", testDocument);
-        assertEquals(3, nodeList.getLength());
-        assertEquals(Node.TEXT_NODE, nodeList.item(0).getNodeType());
-    }
-
-    public void testGetMatchingNodesCheckSubNodes() throws Exception {
-        NodeList nodeList = simpleXpathEngine.getMatchingNodes(
-                                                               "test/nodeWithAttributes", testDocument);
-        assertEquals(1, nodeList.getLength());
-        Node aNode;
-
-        aNode = nodeList.item(0);
-        assertEquals(Node.ELEMENT_NODE, aNode.getNodeType());
-        assertEquals(true, aNode.hasAttributes());
-        assertEquals(true, aNode.hasChildNodes());
-
-        NodeList children = aNode.getChildNodes();
-        int length = children.getLength();
-        assertEquals(1, length);
-        for (int i=0; i < length; ++i) {
-            assertEquals(Node.TEXT_NODE, children.item(i).getNodeType());
-        }
-
-        NamedNodeMap attributes = aNode.getAttributes();
-        int numAttrs = attributes.getLength();
-        assertEquals(testAttrNames.length, numAttrs);
-        for (int i=0; i < testAttrNames.length; ++i) {
-            Node attrNode = attributes.getNamedItem(testAttrNames[i]);
-            assertNotNull(attrNode);
-            assertEquals(Node.ATTRIBUTE_NODE, attrNode.getNodeType());
-        }
-    }
-
-    public void testEvaluate() throws Exception {
-        String result = simpleXpathEngine.evaluate(
-                                                   "count(test//node())", testDocument);
-        assertEquals("3 elements and 3 text nodes", "6", result);
-    }
-
-    public void setUp() throws Exception {
-        testDocument = XMLUnit.buildControlDocument(testString);
+    protected XpathEngine newXpathEngine() {
+        return new Jaxp13XpathEngine();
     }
 
     public test_Jaxp13XpathEngine(String name) {
