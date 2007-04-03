@@ -93,6 +93,9 @@ in build.properties</fail>
   <target name="setDistVersion" depends="init">
     <replace dir="${src.dir}" token="@@version@@" value="${xmlunit.version}"
       includes="**/*.java"/>
+    <tstamp>
+      <format property="ivy.publication.datetime" pattern="yyyyMMddHHmmss"/>
+    </tstamp> 
   </target>
 
   <target name="docs" depends="init">
@@ -121,6 +124,24 @@ in build.properties</fail>
        basedir="${out.dir}"
        excludes="**/test_*.class"
     />
+
+    <copy todir="${lib.dir}">
+      <fileset dir="src/etc">
+        <include name="xmlunit.pom"/>
+        <include name="xmlunit-ivy.xml"/>
+      </fileset>
+      <mapper type="glob" from="xmlunit*" to="xmlunit-${xmlunit.version}*"/>
+      <filterset>
+        <filter token="VERSION" value="${xmlunit.version}"/>
+        <filter token="DATE" value="${ivy.publication.datetime}"/>
+        <filter token="DESCRIPTION" value="XMLUnit compares a control XML document to a test document or the result of a transformation, validates documents, and compares the results of XPath expressions."/>
+        <filter token="LICENSE" value="BSD License"/>
+        <filter token="LICENSE_URL" value="http://xmlunit.svn.sourceforge.net/viewvc/*checkout*/xmlunit/trunk/xmlunit/LICENSE.txt"/>
+        <filter token="GROUP" value="xmlunit"/>
+        <filter token="ARTIFACT" value="xmlunit"/>
+        <filter token="TYPE" value="jar"/>
+      </filterset>
+    </copy>
   </target>
 
   <target name="dist" depends="jar,test,docs">

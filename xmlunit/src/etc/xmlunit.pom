@@ -1,0 +1,16 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>@GROUP@</groupId>
+  <artifactId>@ARTIFACT@</artifactId>
+  <packaging>@TYPE@</packaging>
+  <version>@VERSION@</version>
+  <description>@DESCRIPTION@</description>
+  <url>http://xmlunit.sourceforge.net/</url>
+  <licenses>
+    <license>
+      <name>@LICENSE@</name>
+      <url>@LICENSE_URL@</url>
+    </license>
+  </licenses>
+  <dependencies/>
+</project>
