@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,12 +34,14 @@ POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************
 */
 
-package org.custommonkey.xmlunit;
+package org.custommonkey.xmlunit.examples;
 
 import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.custommonkey.xmlunit.NodeTest;
+import org.custommonkey.xmlunit.NodeTestException;
 import org.w3c.dom.Node;
 
 /**
