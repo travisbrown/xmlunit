@@ -39,6 +39,8 @@ package org.custommonkey.xmlunit;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import junit.framework.TestCase;
@@ -50,6 +52,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
@@ -660,6 +663,52 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
                      .normalizeWhitespace("a\rb c\nd\te\r\n   \tf"));
     }
 
+    public void testAttributeSequence() throws Exception {
+        Element control = document.createElement("foo");
+        Element test = document.createElement("foo");
+        OrderPreservingNamedNodeMap controlMap =
+            new OrderPreservingNamedNodeMap();
+        OrderPreservingNamedNodeMap testMap = new OrderPreservingNamedNodeMap();
+        for (int i = 0; i < 2; i++) {
+            int j = 1 - i;
+            Attr attrI = document.createAttribute("attr" + i);
+            attrI.setValue(String.valueOf(i));
+            Attr attrJ = document.createAttribute("attr" + j);
+            attrJ.setValue(String.valueOf(j));
+
+            control.setAttributeNode(attrI);
+            controlMap.add(attrI);
+            test.setAttributeNode(attrJ);
+            testMap.add(attrJ);
+        }
+        engine.compareElementAttributes(control, test, controlMap, testMap,
+                                        listener);
+        assertEquals(ATTR_SEQUENCE_ID, listener.comparingWhat);
+    }
+
+    public void testAttributeSequenceNS() throws Exception {
+        Element control = document.createElementNS("ns", "foo");
+        Element test = document.createElementNS("ns", "foo");
+        OrderPreservingNamedNodeMap controlMap =
+            new OrderPreservingNamedNodeMap();
+        OrderPreservingNamedNodeMap testMap = new OrderPreservingNamedNodeMap();
+        for (int i = 0; i < 2; i++) {
+            int j = 1 - i;
+            Attr attrI = document.createAttributeNS("ns", "attr" + i);
+            attrI.setValue(String.valueOf(i));
+            Attr attrJ = document.createAttributeNS("ns", "attr" + j);
+            attrJ.setValue(String.valueOf(j));
+
+            control.setAttributeNode(attrI);
+            controlMap.add(attrI);
+            test.setAttributeNode(attrJ);
+            testMap.add(attrJ);
+        }
+        engine.compareElementAttributes(control, test, controlMap, testMap,
+                                        listener);
+        assertEquals(ATTR_SEQUENCE_ID, listener.comparingWhat);
+    }
+
     private void listenToDifferences(String control, String test)
         throws SAXException, IOException {
         Document controlDoc = XMLUnit.buildControlDocument(control);
@@ -677,14 +726,6 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         engine = new DifferenceEngine(PSEUDO_DIFF);
         DocumentBuilder documentBuilder = XMLUnit.newControlParser();
         document = documentBuilder.newDocument();
-    }
-
-    public test_DifferenceEngine(String name) {
-        super(name);
-    }
-
-    public static TestSuite suite() {
-        return new TestSuite(test_DifferenceEngine.class);
     }
 
     private class SimpleComparisonController implements ComparisonController {
@@ -732,6 +773,55 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         }
         public void setTrace(boolean active) {
             tracing = active;
+        }
+    }
+
+    private class OrderPreservingNamedNodeMap implements NamedNodeMap {
+        private ArrayList/* Attr */ nodes = new ArrayList();
+
+        void add(Attr attr) {
+            nodes.add(attr);
+        }
+
+        public int getLength() { return nodes.size(); }
+        public Node item(int index) { return (Node) nodes.get(index); }
+
+        public Node getNamedItem(String name) {
+            for (Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                Attr a = (Attr) iter.next();
+                if (a.getName().equals(name)) {
+                    return a;
+                }
+            }
+            return null;
+        }
+
+        public Node getNamedItemNS(String ns, String localName) {
+            for (Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                Attr a = (Attr) iter.next();
+                if (a.getLocalName().equals(localName)
+                    && a.getNamespaceURI().equals(ns)) {
+                    return a;
+                }
+            }
+            return null;
+        }
+
+        // not implemented, not needed in our case
+        public Node removeNamedItem(String n) {
+            return fail();
+        }
+        public Node removeNamedItemNS(String n1, String n2) {
+            return fail();
+        }
+        public Node setNamedItem(Node n) {
+            return fail();
+        }
+        public Node setNamedItemNS(Node n) {
+            return fail();
+        }
+        private Node fail() {
+            throw new RuntimeException("not implemented");
         }
     }
 }

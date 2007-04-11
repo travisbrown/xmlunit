@@ -422,9 +422,11 @@ public class DifferenceEngine implements DifferenceConstants {
         return new Integer(length);
     }
 
-    private void compareElementAttributes(Element control, Element test,
-                                          NamedNodeMap controlAttr, NamedNodeMap testAttr,
-                                          DifferenceListener listener) throws DifferenceFoundException {
+    void compareElementAttributes(Element control, Element test,
+                                  NamedNodeMap controlAttr,
+                                  NamedNodeMap testAttr,
+                                  DifferenceListener listener)
+        throws DifferenceFoundException {
         for (int i=0; i < controlAttr.getLength(); ++i) {
             Attr nextAttr = (Attr) controlAttr.item(i);
             if (isXMLNSAttribute(nextAttr)) {
