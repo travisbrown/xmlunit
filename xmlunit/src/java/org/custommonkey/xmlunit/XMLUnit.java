@@ -71,6 +71,7 @@ public final class XMLUnit {
     private static boolean ignoreComments = false;
     private static boolean normalize = false;
     private static boolean normalizeWhitespace = false;
+    private static boolean ignoreAttributeOrder = false;
 
     private static final String STRIP_WHITESPACE_STYLESHEET
         = new StringBuffer(XMLConstants.XML_DECLARATION)
@@ -723,6 +724,36 @@ public final class XMLUnit {
      */
     public static boolean getNormalizeWhitespace() {
         return normalizeWhitespace;
+    }
+
+    /**
+     * Whether to ignore the order of attributes on an element.
+     *
+     * <p>The order of attributes has never been relevant for XML
+     * documents, still XMLUnit will consider two pieces of XML
+     * not-identical (but similar) if they differ in order of
+     * attributes.  Set this option to false to ignore the order.</p>
+     *
+     * <p>The default value is false for backwards compatibility
+     * reasons.</p>
+     */
+    public static void setIgnoreAttributeOrder(boolean b) {
+        ignoreAttributeOrder = b;
+    }
+
+    /**
+     * Whether to ignore the order of attributes on an element.
+     *
+     * <p>The order of attributes has never been relevant for XML
+     * documents, still XMLUnit will consider two pieces of XML
+     * not-identical (but similar) if they differ in order of
+     * attributes.  Set this option to false to ignore the order.</p>
+     *
+     * <p>The default value is false for backwards compatibility
+     * reasons.</p>
+     */
+    public static boolean getIgnoreAttributeOrder() {
+        return ignoreAttributeOrder;
     }
 }
 

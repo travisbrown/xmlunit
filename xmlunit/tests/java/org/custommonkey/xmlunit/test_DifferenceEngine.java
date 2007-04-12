@@ -664,6 +664,17 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
     }
 
     public void testAttributeSequence() throws Exception {
+        testAttributeSequence(ATTR_SEQUENCE_ID);
+        resetListener();
+        XMLUnit.setIgnoreAttributeOrder(true);
+        try {
+            testAttributeSequence(-1);
+        } finally {
+            XMLUnit.setIgnoreAttributeOrder(false);
+        }
+    }
+
+    private void testAttributeSequence(int expected) throws Exception {
         Element control = document.createElement("foo");
         Element test = document.createElement("foo");
         OrderPreservingNamedNodeMap controlMap =
@@ -683,10 +694,21 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         }
         engine.compareElementAttributes(control, test, controlMap, testMap,
                                         listener);
-        assertEquals(ATTR_SEQUENCE_ID, listener.comparingWhat);
+        assertEquals(expected, listener.comparingWhat);
     }
 
     public void testAttributeSequenceNS() throws Exception {
+        testAttributeSequenceNS(ATTR_SEQUENCE_ID);
+        resetListener();
+        XMLUnit.setIgnoreAttributeOrder(true);
+        try {
+            testAttributeSequenceNS(-1);
+        } finally {
+            XMLUnit.setIgnoreAttributeOrder(false);
+        }
+    }
+
+    private void testAttributeSequenceNS(int expected) throws Exception {
         Element control = document.createElementNS("ns", "foo");
         Element test = document.createElementNS("ns", "foo");
         OrderPreservingNamedNodeMap controlMap =
@@ -706,7 +728,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         }
         engine.compareElementAttributes(control, test, controlMap, testMap,
                                         listener);
-        assertEquals(ATTR_SEQUENCE_ID, listener.comparingWhat);
+        assertEquals(expected, listener.comparingWhat);
     }
 
     private void listenToDifferences(String control, String test)
