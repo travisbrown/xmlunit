@@ -447,13 +447,14 @@ public class DifferenceEngine implements DifferenceConstants {
                     compareAttribute(nextAttr, compareTo, listener);
 
                     if (!XMLUnit.getIgnoreAttributeOrder()) {
-                    Attr attributeItem = (Attr) testAttr.item(i);
-                    String testAttrName = "[attribute absent]";
-                    if (attributeItem != null) {
-                        testAttrName = getUnNamespacedNodeName(attributeItem);
-                    }
-                    compare(attrName, testAttrName,
-                            nextAttr, compareTo, listener, ATTR_SEQUENCE);
+                        Attr attributeItem = (Attr) testAttr.item(i);
+                        String testAttrName = "[attribute absent]";
+                        if (attributeItem != null) {
+                            testAttrName =
+                                getUnNamespacedNodeName(attributeItem);
+                        }
+                        compare(attrName, testAttrName,
+                                nextAttr, compareTo, listener, ATTR_SEQUENCE);
                     }
                 } else {
                     compare(attrName, null, control, test, listener,
