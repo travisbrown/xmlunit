@@ -994,14 +994,313 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
 
     <section id="comparing-basics">
       <title>The Difference Engine</title>
+
+      <para>At the center of XMLUnit's support for comparisons is the
+      <literal>DifferenceEngine</literal> class.  In practice you
+      rarely deal with it directly but rather use it via instances of
+      <literal>Diff</literal> or <literal>DetailedDiff</literal>
+      classes (see <xref linkend="Diff"/>).</para>
+
+      <para>The <literal>DifferenceEngine</literal> walks two trees of
+      DOM <literal>Node</literal>s, the control and the test tree and
+      compares the nodes.  Whenever it detects a difference, it sends
+      a message to a configured <literal>DifferenceListener</literal>
+      (see <xref linkend="DifferenceListener"/>) and asks a
+      <literal>ComparisonController</literal> (see <xref
+      linkend="ComparisonController"/>) whether the current comparison
+      should be halted.</para>
+
+      <para>In some cases the order of elements in two pieces of XML
+      may not be significant.  If this is true, the
+      <literal>DifferenceEngine</literal> needs help to determine
+      which <literal>Element</literal>s to compare.  This is the job
+      of an <literal>ElementQualifier</literal> (see <xref
+      linkend="ElementQualifier"/>).</para>
+
+      <para>The types of differences
+      <literal>DifferenceEngine</literal> can detect are enumerated in
+      the <literal>DifferenceConstants</literal> interface and
+      represented by instances of the <literal>Difference</literal>
+      class.</para>
+
+      <para>A <literal>Difference</literal> can be recoverable;
+      recoverable <literal>Difference</literal>s make the
+      <literal>Diff</literal> class consider the two pieces of XML
+      similar while non-recoverable <literal>Difference</literal>s
+      render the two pieces different.</para>
+
+      <para>The following types of <literal>Difference</literal>s are
+      currently detected (the first two columns refer to the
+      <literal>DifferenceConstants</literal> class):</para>
+
+      <table frame="all" rules="all" pgwide="1">
+        <title>Document level <literal>Difference</literal>s detected by
+        <literal>DifferenceEngine</literal></title>
+        <tgroup cols="4">
+          <colspec colname="id" align="center"/>
+          <colspec colname="constant" align="center"/>
+          <colspec colname="recoverable" align="center"/>
+          <colspec colname="description" align="left"/>
+
+          <thead>
+            <row>
+              <entry><literal>ID</literal></entry>
+              <entry><literal>Constant</literal></entry>
+              <entry><literal>revoverable</literal></entry>
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><literal>HAS_DOCTYPE_DECLARATION_ID</literal></entry>
+              <entry><literal>HAS_DOCTYPE_DECLARATION</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>One piece of XML has a DOCTYPE declaration while
+                the other one has not.</entry>
+            </row>
+            <row>
+              <entry><literal>DOCTYPE_NAME_ID</literal></entry>
+              <entry><literal>DOCTYPE_NAME</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>Both pieces of XML contain a DOCTYPE declaration
+                but the declarations specify different names for the
+                root element.</entry>
+            </row>
+            <row>
+              <entry><literal>DOCTYPE_PUBLIC_ID</literal></entry>
+              <entry><literal>DOCTYPE_PUBLIC_ID</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>Both pieces of XML contain a DOCTYPE declaration
+                but the declarations specify different PUBLIC
+                identifiers.</entry>
+            </row>
+            <row>
+              <entry><literal>DOCTYPE_SYSTEM_ID</literal></entry>
+              <entry><literal>DOCTYPE_SYSTEM_ID</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>Both pieces of XML contain a DOCTYPE declaration
+                but the declarations specify different SYSTEM
+                identifiers.</entry>
+            </row>
+            <row>
+              <entry><literal>NODE_TYPE_ID</literal></entry>
+              <entry><literal>NODE_TYPE</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The test piece of XML contains a different type
+                of node than was expected.</entry>
+            </row>
+            <row>
+              <entry><literal>NAMESPACE_PREFIX_ID</literal></entry>
+              <entry><literal>NAMESPACE_PREFIX</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>Two nodes use different prefixes for the same
+                XML Namespace URI in the two pieces of XML.</entry>
+            </row>
+            <row>
+              <entry><literal>NAMESPACE_URI_ID</literal></entry>
+              <entry><literal>NAMESPACE_URI</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>Two nodes in the two pieces of XML share the same
+              local name but use different XML Namespace URIs.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table frame="all" rules="all" pgwide="1">
+        <title>Element level <literal>Difference</literal>s detected by
+        <literal>DifferenceEngine</literal></title>
+        <tgroup cols="4">
+          <colspec colname="id" align="center"/>
+          <colspec colname="constant" align="center"/>
+          <colspec colname="recoverable" align="center"/>
+          <colspec colname="description" align="left"/>
+
+          <thead>
+            <row>
+              <entry><literal>ID</literal></entry>
+              <entry><literal>Constant</literal></entry>
+              <entry><literal>revoverable</literal></entry>
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><literal>ELEMENT_TAG_NAME_ID</literal></entry>
+              <entry><literal>ELEMENT_TAG_NAME</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The two pieces of XML contain elements with
+                different tag names.</entry>
+            </row>
+            <row>
+              <entry><literal>ELEMENT_NUM_ATTRIBUTES_ID</literal></entry>
+              <entry><literal>ELEMENT_NUM_ATTRIBUTES</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The two pieces of XML contain a common element,
+                but the number of attributes on the element is
+                different.</entry>
+            </row>
+            <row>
+              <entry><literal>HAS_CHILD_NODES_ID</literal></entry>
+              <entry><literal>HAS_CHILD_NODES</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>An element in one piece of XML has child nodes
+                while the corresponding one in the other has not.</entry>
+            </row>
+            <row>
+              <entry><literal>CHILD_NODELIST_LENGTH_ID</literal></entry>
+              <entry><literal>CHILD_NODELIST_LENGTH</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>Two elements in the two pieces of XML differ by
+                their number of child nodes.</entry>
+            </row>
+            <row>
+              <entry><literal>CHILD_NODELIST_SEQUENCE_ID</literal></entry>
+              <entry><literal>CHILD_NODELIST_SEQUENCE</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>Two elements in the two pieces of XML contain the
+                same child nodes but in a different order.</entry>
+            </row>
+            <row>
+              <entry><literal>ATTR_SEQUENCE_ID</literal></entry>
+              <entry><literal>ATTR_SEQUENCE</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>The attributes on an element appear in different
+                order in the two pieces of XML.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table frame="all" rules="all" pgwide="1">
+        <title>Attribute level <literal>Difference</literal>s detected by
+        <literal>DifferenceEngine</literal></title>
+
+        <tgroup cols="4">
+          <colspec colname="id" align="center"/>
+          <colspec colname="constant" align="center"/>
+          <colspec colname="recoverable" align="center"/>
+          <colspec colname="description" align="left"/>
+
+          <thead>
+            <row>
+              <entry><literal>ID</literal></entry>
+              <entry><literal>Constant</literal></entry>
+              <entry><literal>revoverable</literal></entry>
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><literal>ATTR_VALUE_EXPLICITLY_SPECIFIED_ID</literal></entry>
+              <entry><literal>ATTR_VALUE_EXPLICITLY_SPECIFIED</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>An attribute that is not required and has a
+              default value according to the content model of the
+              element in question has been specified explicitly in one
+              piece of XML but not in the other.</entry>
+            </row>
+            <row>
+              <entry><literal>ATTR_NAME_NOT_FOUND_ID</literal></entry>
+              <entry><literal>ATTR_NAME_NOT_FOUND</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>One piece of XML contains an attribute on an
+                element that is missing in the other.</entry>
+            </row>
+            <row>
+              <entry><literal>ATTR_VALUE_ID</literal></entry>
+              <entry><literal>ATTR_VALUE</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The value of an element's attribute is different
+                in the two pieces of XML.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table frame="all" rules="all" pgwide="1">
+        <title>Other <literal>Difference</literal>s detected by
+        <literal>DifferenceEngine</literal></title>
+
+        <tgroup cols="4">
+          <colspec colname="id" align="center"/>
+          <colspec colname="constant" align="center"/>
+          <colspec colname="recoverable" align="center"/>
+          <colspec colname="description" align="left"/>
+
+          <thead>
+            <row>
+              <entry><literal>ID</literal></entry>
+              <entry><literal>Constant</literal></entry>
+              <entry><literal>revoverable</literal></entry>
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><literal>COMMENT_VALUE_ID</literal></entry>
+              <entry><literal>COMMENT_VALUE</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The content of two comments is different in the
+                two pieces of XML.</entry>
+            </row>
+            <row>
+              <entry><literal>PROCESSING_INSTRUCTION_TARGET_ID</literal></entry>
+              <entry><literal>PROCESSING_INSTRUCTION_TARGET</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The target of two processing instructions is
+                different in the two pieces of XML.</entry>
+            </row>
+            <row>
+              <entry><literal>PROCESSING_INSTRUCTION_DATA_ID</literal></entry>
+              <entry><literal>PROCESSING_INSTRUCTION_DATA</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The data of two processing instructions is
+                different in the two pieces of XML.</entry>
+            </row>
+
+            <row>
+              <entry><literal>CDATA_VALUE_ID</literal></entry>
+              <entry><literal>CDATA_VALUE</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The content of two CDATA sections is different in
+                the two pieces of XML.</entry>
+            </row>
+            <row>
+              <entry><literal>TEXT_VALUE_ID</literal></entry>
+              <entry><literal>TEXT_VALUE</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>The value of two texts is different in the two
+                pieces of XML.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>Note that some of the listed differences may be ignored by
+      the <literal>DifferenceEngine</literal> if certain configuration
+      options have been specified.  See <xref
+      linkend="comparing-config"/> for details.</para>
     </section>
 
-    <section id="comparing-junit3">
-      <title>JUnit 3.x Convenience Methods</title>
-    </section>
+    <section id="Diff">
+      <title><literal>Diff</literal> and
+      <literal>DetailedDiff</literal></title>
 
-    <section id="comparing-config">
-      <title>Configuration Options</title>
+      <para><literal>Diff</literal> and
+      <literal>DetailedDiff</literal> provide simplified access to
+      <literal>DifferenceEngine</literal> by implementing the
+      <literal>ComparisonController</literal> and
+      <literal>DifferenceListener</literal> interfaces themselves.
+      They cover the two most common use cases for comparing two
+      pieces of XML: checking whether the pieces are different (this
+      is what <literal>Diff</literal> does) and finding all
+      differences between them (this is what
+      <literal>DetailedDiff</literal> does).</para>
     </section>
 
     <section id="ElementQualifier">
@@ -1015,6 +1314,15 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
     <section id="ComparisonController">
       <title><literal>ComparisonController</literal></title>
     </section>
+
+    <section id="comparing-junit3">
+      <title>JUnit 3.x Convenience Methods</title>
+    </section>
+
+    <section id="comparing-config">
+      <title>Configuration Options</title>
+    </section>
+
   </section>
 
   <section id="Validating"><title>Validating XML documents</title>
@@ -1472,7 +1780,9 @@ bool isValid = v.isValid();
       <literal>XMLAssert</literal> you have several options to specify
       the input; XMLUnit will use the control or test parser that has
       been configured (see <xref linkend="JAXP"/>) to create a DOM
-      document from the given piece of XML in that case.</para>
+      document from the given piece of XML in that case - using the
+      configured <literal>EntityResolver</literal>(s) (see <xref
+      linkend="entityresolver"/>) if any.</para>
 
       <para>If JAXP 1.3 is not available,
       <literal>SimpleXpathEngine</literal> will use the configured
@@ -1695,8 +2005,9 @@ public interface NodeTester {
         will have been replaced by their replacement text if it is
         available, which means <literal>testEntityReference</literal>
         will not be called for them either.  Instead the replacement
-        text will show up as (part of) a <literal>Text</literal>
-        node.</para>
+        text will show up as (part of) a <literal>Text</literal> node
+        or as <literal>Element</literal> node, depending on the
+        entity's definition.</para>
       </section>
 
       <section>
@@ -1746,6 +2057,10 @@ public interface NodeTester {
       <literal>NodeTest</literal> will use the "control" parser that
       has been configured - see <xref linkend="JAXP"/> for
       details.</para>
+
+      <para>It will also use the <literal>EntityResolver</literal>
+      configured for the control parser if one has been set - see
+      <xref linkend="entityresolver"/>.</para>
     </section>
 
   </section>
