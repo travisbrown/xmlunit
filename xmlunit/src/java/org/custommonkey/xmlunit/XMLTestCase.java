@@ -216,7 +216,7 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      * @param assertion true if asserting that result is identical
      */
     public void assertXMLIdentical(Diff diff, boolean assertion) {
-        XMLAssert.assertXMLEqual(diff.toString(), diff, assertion);
+        XMLAssert.assertXMLIdentical(diff.toString(), diff, assertion);
     }
 
     /**
