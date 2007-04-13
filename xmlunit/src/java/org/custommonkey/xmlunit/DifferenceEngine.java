@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,8 +36,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
@@ -246,12 +248,39 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareHasChildNodes(Node control, Node test,
                                         DifferenceListener listener) throws DifferenceFoundException {
-        Boolean controlHasChildren = control.hasChildNodes()
-            ? Boolean.TRUE : Boolean.FALSE;
-        Boolean testHasChildren = test.hasChildNodes()
-            ? Boolean.TRUE : Boolean.FALSE;
+        Boolean controlHasChildren = hasChildNodes(control);
+        Boolean testHasChildren = hasChildNodes(test);
         compare(controlHasChildren, testHasChildren, control, test,
                 listener, HAS_CHILD_NODES);
+    }
+
+    /**
+     * Tests whether a Node has children, taking ignoreComments
+     * setting into account.
+     */
+    private Boolean hasChildNodes(Node n) {
+        boolean flag = n.hasChildNodes();
+        if (flag && XMLUnit.getIgnoreComments()) {
+            List nl = nodeList2List(n.getChildNodes());
+            flag = nl.size() > 0;
+        }
+        return flag ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    /**
+     * Returns the NodeList's Nodes as List, taking ignoreComments
+     * into account.
+     */
+    static List nodeList2List(NodeList nl) {
+        int len = nl.getLength();
+        ArrayList l = new ArrayList(len);
+        for (int i = 0; i < len; i++) {
+            Node n = nl.item(i);
+            if (!XMLUnit.getIgnoreComments() || !(n instanceof Comment)) {
+                l.add(n);
+            }
+        }
+        return l;
     }
 
     /**
@@ -267,11 +296,11 @@ public class DifferenceEngine implements DifferenceConstants {
                                        DifferenceListener listener, ElementQualifier elementQualifier) 
         throws DifferenceFoundException {
         if (control.hasChildNodes() && test.hasChildNodes()) {
-            NodeList controlChildren = control.getChildNodes();
-            NodeList testChildren = test.getChildNodes();
+            List controlChildren = nodeList2List(control.getChildNodes());
+            List testChildren = nodeList2List(test.getChildNodes());
 
-            Integer controlLength = new Integer(controlChildren.getLength());
-            Integer testLength = new Integer(testChildren.getLength());
+            Integer controlLength = new Integer(controlChildren.size());
+            Integer testLength = new Integer(testChildren.size());
             compare(controlLength, testLength, control, test, listener,
                     CHILD_NODELIST_LENGTH);
             compareNodeList(controlChildren, testChildren,
@@ -292,23 +321,48 @@ public class DifferenceEngine implements DifferenceConstants {
      * the test NodeList should be compared to the current child element in the
      * control NodeList.
      * @throws DifferenceFoundException
+     * @deprecated Use the version with List arguments instead
      */
     protected void compareNodeList(final NodeList control, final NodeList test,
                                    final int numNodes,
                                    final DifferenceListener listener,
                                    final ElementQualifier elementQualifier) 
         throws DifferenceFoundException {
+        compareNodeList(nodeList2List(control), nodeList2List(test),
+                        numNodes, listener, elementQualifier);
+    }
+
+    /**
+     * Compare the contents of two node list one by one, assuming that order
+     * of children is NOT important: matching begins at same position in test
+     * list as control list.
+     * @param control
+     * @param test
+     * @param numNodes convenience parameter because the calling method should
+     *  know the value already
+     * @param listener
+     * @param elementQualifier used to determine which of the child elements in
+     * the test NodeList should be compared to the current child element in the
+     * control NodeList.
+     * @throws DifferenceFoundException
+     */
+    protected void compareNodeList(final List controlChildren,
+                                   final List testChildren,
+                                   final int numNodes,
+                                   final DifferenceListener listener,
+                                   final ElementQualifier elementQualifier) 
+        throws DifferenceFoundException {
 
         int j = 0;
-        final int lastTestNode = test.getLength() - 1;
-        testTracker.preloadNodeList(test);
+        final int lastTestNode = testChildren.size() - 1;
+        testTracker.preloadChildList(testChildren);
 
         HashMap/*<Node, Node>*/ matchingNodes = new HashMap();
         HashMap/*<Node, Integer>*/ matchingNodeIndexes = new HashMap();
 
         // first pass to find the matching nodes in control and test docs
         for (int i=0; i < numNodes; ++i) {
-            Node nextControl = control.item(i);
+            Node nextControl = (Node) controlChildren.get(i);
             boolean matchOnElement = nextControl instanceof Element;
             short findNodeType = nextControl.getNodeType();
             int startAt = ( i > lastTestNode ? lastTestNode : i);
@@ -317,12 +371,12 @@ public class DifferenceEngine implements DifferenceConstants {
             boolean matchFound = false;
 
             while (!matchFound) {
-                if (findNodeType == test.item(j).getNodeType()) {
+                if (findNodeType == ((Node)testChildren.get(j)).getNodeType()) {
                     matchFound = !matchOnElement
                         || elementQualifier == null
                         || elementQualifier
-                        .qualifyForComparison((Element)nextControl,
-                                              (Element)test.item(j));
+                        .qualifyForComparison((Element) nextControl,
+                                              (Element) testChildren.get(j));
                 }
                 if (!matchFound) {
                     ++j;
@@ -336,7 +390,7 @@ public class DifferenceEngine implements DifferenceConstants {
                 }
             }
             if (matchFound) {
-                matchingNodes.put(nextControl, test.item(j));
+                matchingNodes.put(nextControl, testChildren.get(j));
                 matchingNodeIndexes.put(nextControl, new Integer(j));
             }
         }
@@ -346,7 +400,7 @@ public class DifferenceEngine implements DifferenceConstants {
         // any other control nodes
         Collection matchingTestNodes = matchingNodes.values();
         for (int i=0; i < numNodes; ++i) {
-            Node nextControl = control.item(i);
+            Node nextControl = (Node) controlChildren.get(i);
             Node nextTest = (Node) matchingNodes.get(nextControl);
             Integer testIndex = (Integer) matchingNodeIndexes.get(nextControl);
             if (nextTest == null) {
@@ -357,8 +411,9 @@ public class DifferenceEngine implements DifferenceConstants {
                 boolean matchFound = false;
 
                 while (!matchFound) {
-                    if (test.item(j).getNodeType() == findNodeType
-                        && !matchingTestNodes.contains(test.item(j))) {
+                    if (((Node) testChildren.get(j))
+                        .getNodeType() == findNodeType
+                        && !matchingTestNodes.contains(testChildren.get(j))) {
                         matchFound = true;
                     } else {
                         ++j;
@@ -371,7 +426,7 @@ public class DifferenceEngine implements DifferenceConstants {
                         }
                     }
                 }
-                nextTest = test.item(j);
+                nextTest = (Node) testChildren.get(j);
                 testIndex = new Integer(j);
             }
             compareNode(nextControl, nextTest, listener, elementQualifier);
@@ -531,7 +586,9 @@ public class DifferenceEngine implements DifferenceConstants {
      */
     protected void compareComment(Comment control, Comment test,
                                   DifferenceListener listener) throws DifferenceFoundException {
-        compareCharacterData(control, test, listener, COMMENT_VALUE);
+        if (!XMLUnit.getIgnoreComments()) {
+            compareCharacterData(control, test, listener, COMMENT_VALUE);
+        }
     }
 
     /**

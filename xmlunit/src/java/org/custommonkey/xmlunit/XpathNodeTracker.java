@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.custommonkey.xmlunit;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Attr;
@@ -162,6 +162,21 @@ public class XpathNodeTracker implements XMLConstants {
         int length = nodeList.getLength();
         for (int i=0; i < length; ++i) {
             visited(nodeList.item(i));
+        }
+        currentEntry.trackNodesAsWellAsValues(false);
+    }
+                
+    /**
+     * Preload the items in a List by visiting each in turn
+     * Required for pieces of test XML whose node children can be visited
+     * out of sequence by a DifferenceEngine comparison
+     * @param nodeList the items to preload
+     */
+    public void preloadChildList(List nodeList) {
+        currentEntry.trackNodesAsWellAsValues(true);
+        int length = nodeList.size();
+        for (int i=0; i < length; ++i) {
+            visited((Node) nodeList.get(i));
         }
         currentEntry.trackNodesAsWellAsValues(false);
     }

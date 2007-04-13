@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -729,6 +729,55 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         engine.compareElementAttributes(control, test, controlMap, testMap,
                                         listener);
         assertEquals(expected, listener.comparingWhat);
+    }
+
+    public void testExtraComment() {
+        testExtraComment(true);
+        resetListener();
+        XMLUnit.setIgnoreComments(true);
+        try {
+            testExtraComment(false);
+        } finally {
+            XMLUnit.setIgnoreComments(false);
+        }
+    }
+
+    private void testExtraComment(boolean expectDifference) {
+        Element control = document.createElement("foo");
+        Element test = document.createElement("foo");
+        Comment c = document.createComment("bar");
+        control.appendChild(c);
+        Element cChild = document.createElement("baz");
+        control.appendChild(cChild);
+        Element tChild = document.createElement("baz");
+        test.appendChild(tChild);
+        engine.compare(control, test, listener, null);
+        assertEquals(expectDifference, listener.different);
+        resetListener();
+        engine.compare(test, control, listener, null);
+        assertEquals(expectDifference, listener.different);
+    }
+
+    public void testCommentContent() {
+        testCommentContent(true);
+        resetListener();
+        XMLUnit.setIgnoreComments(true);
+        try {
+            testCommentContent(false);
+        } finally {
+            XMLUnit.setIgnoreComments(false);
+        }
+    }
+
+    private void testCommentContent(boolean expectDifference) {
+        Element control = document.createElement("foo");
+        Element test = document.createElement("foo");
+        Comment c = document.createComment("bar");
+        control.appendChild(c);
+        Comment c2 = document.createComment("baz");
+        test.appendChild(c2);
+        engine.compare(control, test, listener, null);
+        assertEquals(expectDifference, listener.different);
     }
 
     private void listenToDifferences(String control, String test)
