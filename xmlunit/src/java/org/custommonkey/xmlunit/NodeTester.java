@@ -53,7 +53,7 @@ public interface NodeTester {
      * @param forTest
      * @exception NodeTestException if the node fails the test
      */
-    public void testNode(Node aNode, NodeTest forTest) throws NodeTestException ;
+    void testNode(Node aNode, NodeTest forTest) throws NodeTestException ;
 
     /**
      * Validate that the Nodes passed one-by-one to the <code>testNode</code>
@@ -61,5 +61,5 @@ public interface NodeTester {
      * @param forTest
      * @exception NodeTestException if this instance was expecting more nodes
      */
-    public void noMoreNodes(NodeTest forTest) throws NodeTestException ;
+    void noMoreNodes(NodeTest forTest) throws NodeTestException ;
 }

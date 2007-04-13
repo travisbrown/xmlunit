@@ -41,13 +41,13 @@ package org.custommonkey.xmlunit;
  */
 public interface ComparisonController {
     /**
-     * Determine whether a Difference that this listener has been notified of
+     * Determine whether a Difference that the listener has been notified of
      *  should halt further XML comparison. Default behaviour for a Diff
      *  instance is to halt if the Difference is not recoverable.
      * @see Difference#isRecoverable
      * @param afterDifference the last Difference passed to <code>differenceFound</code>
      * @return true to halt further comparison, false otherwise
      */
-    public boolean haltComparison(Difference afterDifference);
+    boolean haltComparison(Difference afterDifference);
 
 }
