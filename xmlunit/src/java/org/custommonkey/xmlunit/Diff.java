@@ -81,7 +81,7 @@ public class Diff
     private boolean haltComparison = false;
     private StringBuffer messages;
     private DifferenceEngine differenceEngine;
-    private DifferenceListener differenceListenerDelegate;
+    private DifferenceListener  differenceListenerDelegate;
     private ElementQualifier elementQualifierDelegate;
 
     /**
@@ -166,6 +166,7 @@ public class Diff
     protected Diff(Diff prototype) {
         this(prototype.controlDoc, prototype.testDoc, prototype.differenceEngine, 
              prototype.elementQualifierDelegate);
+        this.differenceListenerDelegate = prototype.differenceListenerDelegate;
     }
 
     /**

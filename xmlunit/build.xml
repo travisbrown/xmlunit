@@ -35,7 +35,7 @@ in build.properties</fail>
   </target>
 
   <target name="clean" depends="init">
-    <delete includeEmptyDirs="true" >
+    <delete includeEmptyDirs="true" quiet="true">
       <fileset dir="${out.dir}" includes="**/*.class"/>
       <fileset dir="${test.report.dir}" includes="**/TEST*.*"/>
       <fileset dir="${dist.dir}"/>
