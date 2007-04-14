@@ -8,6 +8,7 @@
     <property name="out.dir" value="classes"/>
     <property name="dist.dir" value="dist"/>
     <property name="docs.dir" value="doc"/>
+    <property name="build.user.guide" value="userguide"/>
     <property file="build.properties"/>
 
     <available property="jaxp13+" classname="javax.xml.xpath.XPath"/>
@@ -38,6 +39,7 @@ in build.properties</fail>
       <fileset dir="${out.dir}" includes="**/*.class"/>
       <fileset dir="${test.report.dir}" includes="**/TEST*.*"/>
       <fileset dir="${dist.dir}"/>
+      <fileset dir="${build.user.guide}"/>
     </delete> 
   </target>
 
@@ -180,4 +182,14 @@ in build.properties</fail>
     <delete file="${dist.name}-src.tar" />
   </target>
 
+  <target name="compile-userguide-examples" depends="compile">
+    <mkdir dir="${build.user.guide}"/>
+    <javac srcdir="src/user-guide" includes="org/"
+      destdir="${build.user.guide}" source="1.3" target="1.2">
+      <classpath>
+        <pathelement location="${junit.lib}"/>
+        <pathelement location="${out.dir}"/>
+      </classpath>
+    </javac>
+  </target>
 </project>
