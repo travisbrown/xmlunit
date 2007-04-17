@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,34 +41,40 @@ package org.custommonkey.xmlunit;
  */
 public interface XSLTConstants extends XMLConstants {
     /**
-     * &lt;xsl:stylesheet&gt;
+     * &lt;xsl:stylesheet
      */
-    public static final String XSLT_START =
-        "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">";
+    String XSLT_START_NO_VERSION =
+        "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"";
+
+    /**
+     * &lt;xsl:stylesheet ... version="1.0"&gt;
+     */
+    String XSLT_START =
+        XSLT_START_NO_VERSION + " version=\"1.0\">";
 
     /**
      * &lt;xsl:output&gt; for XML with no indentation
      */
-    public static final String XSLT_XML_OUTPUT_NOINDENT =
+    String XSLT_XML_OUTPUT_NOINDENT =
         "<xsl:output method=\"xml\" version=\"1.0\" indent=\"no\"/>";
 
     /**
      * &lt;xsl:strip-space&gt; for all elements
      */
-    public static final String XSLT_STRIP_WHITESPACE =
+    String XSLT_STRIP_WHITESPACE =
         "<xsl:strip-space elements=\"*\"/>";
 
     /**
      * &lt;xsl:template&gt; to copy the current nodeset into the output tree
      */
-    public static final String XSLT_IDENTITY_TEMPLATE =
+    String XSLT_IDENTITY_TEMPLATE =
         "<xsl:template match=\"/\"><xsl:copy-of select=\".\"/></xsl:template>";
 
     /**
      * &lt;xsl:template&gt; to copy the current nodeset into the
      * output tree while stripping comments.
      */
-    public static final String XSLT_STRIP_COMMENTS_TEMPLATE =
+    String XSLT_STRIP_COMMENTS_TEMPLATE =
         "<xsl:template match=\"node()[not(self::comment())]|@*\">"
         + "<xsl:copy><xsl:apply-templates select=\"node()[not(self::comment())]|@*\"/></xsl:copy>"
         + "</xsl:template>";
@@ -76,5 +82,5 @@ public interface XSLTConstants extends XMLConstants {
     /**
      * &lt;/xsl:stylesheet&gt;
      */
-    public static final String XSLT_END = "</xsl:stylesheet>";
+    String XSLT_END = "</xsl:stylesheet>";
 }

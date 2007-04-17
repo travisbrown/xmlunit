@@ -1,6 +1,6 @@
 /*
 *****************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,9 @@ import javax.xml.transform.URIResolver;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -72,19 +75,33 @@ public final class XMLUnit {
     private static boolean normalize = false;
     private static boolean normalizeWhitespace = false;
     private static boolean ignoreAttributeOrder = false;
+    private static String xsltVersion = "1.0";
 
-    private static final String STRIP_WHITESPACE_STYLESHEET
+    private static final String XSLT_VERSION_START = " version=\"";
+    private static final String XSLT_VERSION_END = "\">";
+
+    private static final String STRIP_WHITESPACE_STYLESHEET_START
         = new StringBuffer(XMLConstants.XML_DECLARATION)
-        .append(XSLTConstants.XSLT_START)
+        .append(XSLTConstants.XSLT_START_NO_VERSION)
+        .append(XSLT_VERSION_START)
+        .toString();
+
+    private static final String STRIP_WHITESPACE_STYLESHEET_END
+        = new StringBuffer(XSLT_VERSION_END)
         .append(XSLTConstants.XSLT_XML_OUTPUT_NOINDENT)
         .append(XSLTConstants.XSLT_STRIP_WHITESPACE)
         .append(XSLTConstants.XSLT_IDENTITY_TEMPLATE)
         .append(XSLTConstants.XSLT_END)
         .toString();
 
-    private static final String STRIP_COMMENTS_STYLESHEET
+    private static final String STRIP_COMMENTS_STYLESHEET_START
         = new StringBuffer(XMLConstants.XML_DECLARATION)
-        .append(XSLTConstants.XSLT_START)
+        .append(XSLTConstants.XSLT_START_NO_VERSION)
+        .append(XSLT_VERSION_START)
+        .toString();
+
+    private static final String STRIP_COMMENTS_STYLESHEET_END
+        = new StringBuffer(XSLT_VERSION_END)
         .append(XSLTConstants.XSLT_XML_OUTPUT_NOINDENT)
         .append(XSLTConstants.XSLT_STRIP_COMMENTS_TEMPLATE)
         .append(XSLTConstants.XSLT_END)
@@ -418,14 +435,24 @@ public final class XMLUnit {
         return newFactory;
     }
 
+    private static String getStripWhitespaceStylesheet() {
+        return STRIP_WHITESPACE_STYLESHEET_START + getXSLTVersion()
+            + STRIP_WHITESPACE_STYLESHEET_END;
+    }
+
     /**
-     * Obtain the transformation that will strip whitespace from a DOM containing
-     *  empty Text nodes
+     * Obtain the transformation that will strip whitespace from a DOM
+     * containing empty Text nodes
      * @param forDocument
      * @return a <code>Transform</code> to do the whitespace stripping
      */
     public static Transform getStripWhitespaceTransform(Document forDocument) {
-        return new Transform(forDocument, STRIP_WHITESPACE_STYLESHEET);
+        return new Transform(forDocument, getStripWhitespaceStylesheet());
+    }
+
+    private static String getStripCommentsStylesheet() {
+        return STRIP_COMMENTS_STYLESHEET_START + getXSLTVersion()
+            + STRIP_COMMENTS_STYLESHEET_END;
     }
 
     /**
@@ -434,7 +461,7 @@ public final class XMLUnit {
      * @return a <code>Transform</code> to do the whitespace stripping
      */
     public static Transform getStripCommentsTransform(Document forDocument) {
-        return new Transform(forDocument, STRIP_COMMENTS_STYLESHEET);
+        return new Transform(forDocument, getStripCommentsStylesheet());
     }
 
     /**
@@ -684,6 +711,44 @@ public final class XMLUnit {
      */
     public static boolean getIgnoreAttributeOrder() {
         return ignoreAttributeOrder;
+    }
+
+    /**
+     * Sets the XSLT version to set on stylesheets used internally.
+     *
+     * <p>Defaults to "1.0".</p>
+     *
+     * @throws ConfigurationException if the argument cannot be parsed
+     * as a positive number.
+     */
+    public static void setXSLTVersion(String s) {
+        try {
+            Number n = NumberFormat.getInstance(Locale.US).parse(s);
+            if (n.doubleValue() < 0) {
+                throw new ConfigurationException(s + " doesn't reperesent a"
+                                                 + " positive number.");
+            }
+        } catch (ParseException e) {
+            throw new ConfigurationException(e);
+        }
+        xsltVersion = s;
+    }
+
+    /**
+     * The XSLT version set on stylesheets used internally.
+     *
+     * <p>Defaults to "1.0".</p>
+     */
+    public static String getXSLTVersion() {
+        return xsltVersion;
+    }
+
+    /**
+     * XSLT stylesheet element using the configured XSLT version.
+     */
+    static String getXSLTStart() {
+        return XSLTConstants.XSLT_START_NO_VERSION
+            + XSLT_VERSION_START + getXSLTVersion() + XSLT_VERSION_END;
     }
 }
 

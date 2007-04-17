@@ -73,7 +73,7 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      */
     private StringBuffer getXSLTBase() {
         StringBuffer result = new StringBuffer(XML_DECLARATION)
-            .append(XSLT_START);
+            .append(XMLUnit.getXSLTStart());
         String tmp = result.toString();
         int close = tmp.lastIndexOf('>');
         if (close == -1) {

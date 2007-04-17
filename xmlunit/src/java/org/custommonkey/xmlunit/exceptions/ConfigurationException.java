@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,5 +43,8 @@ package org.custommonkey.xmlunit.exceptions;
 public class ConfigurationException extends XMLUnitRuntimeException {
     public ConfigurationException(Throwable t) {
         super(t != null ? t.getMessage() : null, t);
+    }
+    public ConfigurationException(String s) {
+        super(s, null);
     }
 }

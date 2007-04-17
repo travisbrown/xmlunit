@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.helpers.DefaultHandler;
@@ -112,10 +113,26 @@ public class test_XMLUnit extends TestCase{
         assertTrue(diff.similar());
     }
 
-    /**
-     * Returns a TestSuite containing this test case.
-     */
-    public static TestSuite suite(){
-        return new TestSuite(test_XMLUnit.class);
+    public void testXSLTVersion() {
+        try {
+            assertEquals("1.0", XMLUnit.getXSLTVersion());
+            assertEquals(XSLTConstants.XSLT_START, XMLUnit.getXSLTStart());
+            XMLUnit.setXSLTVersion("2.0");
+            assertTrue(XMLUnit.getXSLTStart()
+                       .startsWith(XSLTConstants.XSLT_START_NO_VERSION));
+            assertTrue(XMLUnit.getXSLTStart().endsWith("\"2.0\">"));
+            try {
+                XMLUnit.setXSLTVersion("foo");
+                fail("foo is not a number");
+            } catch (ConfigurationException expected) {
+            }
+            try {
+                XMLUnit.setXSLTVersion("-1.0");
+                fail("-1.0 is negative");
+            } catch (ConfigurationException expected) {
+            }
+        } finally {
+            XMLUnit.setXSLTVersion("1.0");
+        }
     }
 }
