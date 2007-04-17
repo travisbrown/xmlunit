@@ -78,34 +78,6 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     }
 
     /**
-     * Whether to ignore whitespace in attributes and elements
-     * @param ignore
-     * @deprecated this is a global setting and should be invoked on
-     *  {@link XMLUnit#setIgnoreWhitespace XMLUnit} instead
-     */
-    public void setIgnoreWhitespace(boolean ignore){
-        XMLUnit.setIgnoreWhitespace(ignore);
-    }
-
-    /**
-     * Overide default sax parser used to parser documents
-     * @deprecated this is a global setting and should be invoked on
-     *  {@link XMLUnit#setControlParser XMLUnit} instead
-     */
-    public void setControlParser(String parser){
-        XMLUnit.setControlParser(parser);
-    }
-
-    /**
-     * Overide default sax parser used to parse documents
-     * @deprecated this is a global setting and should be invoked on
-     *  {@link XMLUnit#setTestParser XMLUnit} instead
-     */
-    public void setTestParser(String parser){
-        XMLUnit.setTestParser(parser);
-    }
-
-    /**
      * Compare XML documents provided by two InputSource classes
      * @param control Control document
      * @param test Document to test
@@ -191,17 +163,6 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
 
     /**
      * Assert that the result of an XML comparison is or is not similar.
-     * @param diff the result of an XML comparison
-     * @param assertion true if asserting that result is similar
-     * @param msg additional message to display if assertion fails
-     * @deprecated Use XMLTestCase#assertXMLEqual(String, Diff, boolean) instead
-     */
-    public void assertXMLEqual(Diff diff, boolean assertion, String msg) {
-        XMLAssert.assertXMLEqual(msg, diff, assertion);
-    }
-    
-    /**
-     * Assert that the result of an XML comparison is or is not similar.
      * @param msg additional message to display if assertion fails
      * @param diff the result of an XML comparison
      * @param assertion true if asserting that result is similar
@@ -217,17 +178,6 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
      */
     public void assertXMLIdentical(Diff diff, boolean assertion) {
         XMLAssert.assertXMLIdentical(diff.toString(), diff, assertion);
-    }
-
-    /**
-     * Assert that the result of an XML comparison is or is not identical
-     * @param diff the result of an XML comparison
-     * @param assertion true if asserting that result is identical
-     * @param msg additional message to display if assertion fails
-     * @deprecated Use XMLTestCase#assertXMLIdentical(String, Diff, boolean) instead
-     */
-    public void assertXMLIdentical(Diff diff, boolean assertion, String msg) {
-        XMLAssert.assertXMLIdentical(msg, diff, assertion);
     }
 
     /**
@@ -925,18 +875,6 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
     /**
      * Assert that a specific XPath does NOT exist in some given XML
      * @param inXpathExpression
-     * @param inXMLString
-     * @deprecated Use assertXpathNotExists instead
-     */
-    public void assertNotXpathExists(String xPathExpression,
-                                     String inXMLString)
-        throws IOException, SAXException , XpathException {
-        XMLAssert.assertXpathNotExists(xPathExpression, inXMLString);
-    }
-
-    /**
-     * Assert that a specific XPath does NOT exist in some given XML
-     * @param inXpathExpression
      * @param inDocument
      * @see XpathEngine which provides the underlying evaluation mechanism
      */
@@ -946,18 +884,6 @@ public abstract class XMLTestCase extends TestCase implements XSLTConstants {
         XMLAssert.assertXpathNotExists(xPathExpression, inDocument);
     }
     
-    /**
-     * Assert that a specific XPath does NOT exist in some given XML
-     * @param inXpathExpression
-     * @param inDocument
-     * @deprecated Use assertXpathNotExists instead
-     */
-    public void assertNotXpathExists(String xPathExpression,
-                                     Document inDocument)
-        throws XpathException {
-        XMLAssert.assertXpathNotExists(xPathExpression, inDocument);
-    }
-
     /**
      * Assert that a piece of XML contains valid XML: the input must
      * contain a DOCTYPE declaration to be validated

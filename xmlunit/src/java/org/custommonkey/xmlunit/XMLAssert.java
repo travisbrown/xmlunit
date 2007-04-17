@@ -145,17 +145,6 @@ public class XMLAssert extends Assert implements XSLTConstants {
 
     /**
      * Assert that the result of an XML comparison is or is not identical
-     * @param diff the result of an XML comparison
-     * @param assertion true if asserting that result is identical
-     * @param msg additional message to display if assertion fails
-     * @deprecated Use XMLTestCase#assertXMLIdentical(String, Diff, boolean) instead
-     */
-    public static void assertXMLIdentical(Diff diff, boolean assertion, String msg) {
-        assertXMLIdentical(msg, diff, assertion);
-    }
-
-    /**
-     * Assert that the result of an XML comparison is or is not identical
      * @param msg Message to display if assertion fails
      * @param diff the result of an XML comparison
      * @param assertion true if asserting that result is identical
