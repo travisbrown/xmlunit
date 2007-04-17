@@ -931,6 +931,26 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         linkend="Whitespace Handling"/> for more details.</para>
 
       </section>
+
+      <section id="XSLT Stylesheet Version">
+        <title>XSLT Stylesheet Version</title>
+
+        <para>Some features of XMLUnit use XSLT stylesheets under the
+        covers, in particular XSLT will be used to strip element
+        content whitespace or comments as well as by
+        <literal>SimpleXpathEngine</literal>.  These stylesheets only
+        require a XSLT transformer that supports XSLT 1.0 and will say
+        so in the <literal>stylesheet</literal> element.</para>
+
+        <para>If your XSLT transformer supports XSLT 2.0 or newer it
+        may<footnote><para>The W3C recommendation says it
+        SHOULD.</para></footnote> issue a warning for these stylesheets
+        which can be annoying.  You can use
+        <literal>XMLUnit.setXSLTVersion</literal> to make XMLUnit
+        change the version attribute to a different value.  Note that
+        XMLUnit hasn't been tested with a value other than
+        <literal>"1.0"</literal>.</para>
+      </section>
     </section>
 
     <section id="Providing Input to XMLUnit">
@@ -2958,6 +2978,11 @@ class MyNodeTester implements NodeTester {
           </listitem>
 
           <listitem>
+            <para>All methods that have been deprecated in XMLUnit 1.0
+            have been removed.</para>
+          </listitem>
+
+          <listitem>
             <para>All methods that had been declared to throw
             <literal>TransformerConfigurationException</literal> or
             <literal>ParserConfigurationException</literal> now no
@@ -3010,6 +3035,10 @@ class MyNodeTester implements NodeTester {
               <listitem>Ignore the order of attributes.</listitem>
             </itemizedlist>
           </listitem>
+
+          <listitem>It is now possible to provide a custom
+          <literal>org.xml.sax.EntityResolver</literal> for control
+          and test parsers.</listitem>
 
           <listitem>It is now possible to provide a custom
           <literal>javax.xml.transform.URIResolver</literal> for
