@@ -33,7 +33,7 @@
       </revision>
       <revision>
         <revnumber>1.1</revnumber>
-        <date>... 2007</date>
+        <date>April 2007</date>
         <revremark>Documentation for XMLUnit Java 1.1</revremark>
       </revision>
     </revhistory>
@@ -470,7 +470,7 @@ public void testXPaths() throws Exception {
         + "<planet name='Earth' position='3' supportsLife='yes'/>"
         + "<planet name='Venus' position='4'/></solar-system>";
     assertXpathExists("//planet[@name='Earth']", mySolarSystemXML);
-    assertNotXpathExists("//star[@name='alpha centauri']",
+    assertXpathNotExists("//star[@name='alpha centauri']",
                          mySolarSystemXML);
     assertXpathsEqual("//planet[@name='Earth']",
                       "//planet[@position='3']", mySolarSystemXML);
@@ -1192,6 +1192,13 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
                 same child nodes but in a different order.</entry>
             </row>
             <row>
+              <entry><literal>CHILD_NODE_NOT_FOUND_ID</literal></entry>
+              <entry><literal>CHILD_NODE_NOT_FOUND</literal></entry>
+              <entry><literal>false</literal></entry>
+              <entry>A child node in one piece of XML couldn't be
+                matched against any other node of the other piece.</entry>
+            </row>
+            <row>
               <entry><literal>ATTR_SEQUENCE_ID</literal></entry>
               <entry><literal>ATTR_SEQUENCE</literal></entry>
               <entry><literal>true</literal></entry>
@@ -1414,6 +1421,11 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
               <entry><literal>CHILD_NODELIST_SEQUENCE_ID</literal></entry>
               <entry>The sequence number of this child node turned into a
               <literal>String</literal>.</entry>
+            </row>
+            <row>
+              <entry><literal>CHILD_NODE_NOT_FOUND_ID</literal></entry>
+              <entry>The name of the unmatched node or
+              <literal>null</literal>.</entry>
             </row>
             <row>
               <entry><literal>ATTR_SEQUENCE_ID</literal></entry>
@@ -2994,6 +3006,22 @@ class MyNodeTester implements NodeTester {
             <para>This change doesn't have a big impact on your tests,
             but if you tried to catch these exceptions they will now
             bypass your catch blocks.</para>
+          </listitem>
+
+          <listitem>
+            <para>A new type of <literal>Difference</literal>
+            (<literal>CHILD_NODE_NOT_FOUND_ID</literal>) has been
+            added.  It will be raised for the excess children if the
+            control element has more child nodes than the test element
+            - or vice versa.</para>
+
+            <para>Prior to XMLUnit 1.1 a <literal>Difference</literal>
+            of either <literal>ELEMENT_TAG_NAME_ID</literal> or
+            <literal>NODE_TYPE_ID</literal> would have been raised if
+            the control element had more children.  The excess
+            children were compared to the very first child node of the
+            test element.  Excess children of the test element were
+            not reported at all.</para>
           </listitem>
         </itemizedlist>
       </section>

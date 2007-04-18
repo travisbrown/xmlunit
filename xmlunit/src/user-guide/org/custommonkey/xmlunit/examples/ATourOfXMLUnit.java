@@ -173,7 +173,7 @@ public class ATourOfXMLUnit extends XMLTestCase {
             + "<planet name='Earth' position='3' supportsLife='yes'/>"
             + "<planet name='Venus' position='4'/></solar-system>";
         assertXpathExists("//planet[@name='Earth']", mySolarSystemXML);
-        assertNotXpathExists("//star[@name='alpha centauri']",
+        assertXpathNotExists("//star[@name='alpha centauri']",
                              mySolarSystemXML);
         assertXpathsEqual("//planet[@name='Earth']",
                           "//planet[@position='3']", mySolarSystemXML);
