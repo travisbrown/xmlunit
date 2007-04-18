@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -110,7 +110,18 @@ public class test_DetailedDiff extends test_Diff {
         DetailedDiff differencesWithWhitespace = new DetailedDiff(
                                                                   new Diff(new InputSource(new FileReader(control)), 
                                                                            new InputSource(new FileReader(test))) );
-        assertEquals(1402, differencesWithWhitespace.getAllDifferences().size()); 
+
+        List l = differencesWithWhitespace.getAllDifferences();
+        int unmatchedNodes = 0;
+        for (Iterator iter = l.iterator(); iter.hasNext();) {
+            Difference d = (Difference) iter.next();
+            if (d.getId() == DifferenceConstants.CHILD_NODE_NOT_FOUND_ID) {
+                unmatchedNodes++;
+            }
+        }
+        
+        assertEquals(1402 + unmatchedNodes,
+                     differencesWithWhitespace.getAllDifferences().size()); 
 
         try {
             XMLUnit.setIgnoreWhitespace(true);
@@ -118,7 +129,14 @@ public class test_DetailedDiff extends test_Diff {
                 new Diff(new FileReader(control), new FileReader(test));
             DetailedDiff detailedDiff = new DetailedDiff(prototype);
             List differences = detailedDiff.getAllDifferences();
-            assertEquals(40, differences.size()); 
+            unmatchedNodes = 0;
+            for (Iterator iter = differences.iterator(); iter.hasNext();) {
+                Difference d = (Difference) iter.next();
+                if (d.getId() == DifferenceConstants.CHILD_NODE_NOT_FOUND_ID) {
+                    unmatchedNodes++;
+                }
+            }
+            assertEquals(40 + unmatchedNodes, differences.size()); 
 
             SimpleXpathEngine xpathEngine = new SimpleXpathEngine();
             Document controlDoc =
@@ -217,8 +235,9 @@ public class test_DetailedDiff extends test_Diff {
         
         DetailedDiff diff = new DetailedDiff(new Diff(control, test));
         List changes = diff.getAllDifferences();
-        // number of children, text of first child
-        assertEquals(2, changes.size());
+        // number of children, text of first child, unexpected second
+        // test child
+        assertEquals(3, changes.size());
     }
 
     protected Diff buildDiff(Document control, Document test) {

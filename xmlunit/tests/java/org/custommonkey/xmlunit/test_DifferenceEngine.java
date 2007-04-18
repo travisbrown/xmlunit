@@ -620,7 +620,7 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
         String test = "<stuff><?item data?></stuff>";
         listenToDifferences(control, test);
-        assertEquals("13th control xpath", "/stuff[1]/item[2]", 
+        assertEquals("13th control xpath", "/stuff[1]/item[1]", 
                      listener.controlXpath);
         assertEquals("13th test xpath", "/stuff[1]/processing-instruction()[1]", 
                      listener.testXpath);       

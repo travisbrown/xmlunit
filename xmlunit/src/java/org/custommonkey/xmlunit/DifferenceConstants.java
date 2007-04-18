@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -84,6 +84,9 @@ public interface DifferenceConstants {
     int CHILD_NODELIST_SEQUENCE_ID = 20;
     /** Comparing 2 Documents only one of which has a doctype */
     int HAS_DOCTYPE_DECLARATION_ID = 21;
+    /** Comparing 2 nodes and one holds more childnodes than can be
+     * matched against child nodes of the other. */
+    int CHILD_NODE_NOT_FOUND_ID = 22;
         
     /** Comparing an implied attribute value against an explicit value */
     public static final Difference ATTR_VALUE_EXPLICITLY_SPECIFIED =
@@ -173,4 +176,9 @@ public interface DifferenceConstants {
     public static final Difference HAS_DOCTYPE_DECLARATION = 
         new Difference(HAS_DOCTYPE_DECLARATION_ID, 
                        "presence of doctype declaration", true);
+
+    /** Comparing 2 nodes and one holds more childnodes than can be
+     * matched against child nodes of the other. */
+    public static final Difference CHILD_NODE_NOT_FOUND = 
+        new Difference(CHILD_NODE_NOT_FOUND_ID, "presence of child node");
 }

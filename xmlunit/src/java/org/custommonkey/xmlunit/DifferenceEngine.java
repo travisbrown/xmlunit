@@ -39,6 +39,7 @@ package org.custommonkey.xmlunit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Attr;
@@ -360,6 +361,8 @@ public class DifferenceEngine implements DifferenceConstants {
         HashMap/*<Node, Node>*/ matchingNodes = new HashMap();
         HashMap/*<Node, Integer>*/ matchingNodeIndexes = new HashMap();
 
+        List/*<Node>*/ unmatchedTestNodes = new ArrayList(testChildren);
+
         // first pass to find the matching nodes in control and test docs
         for (int i=0; i < numNodes; ++i) {
             Node nextControl = (Node) controlChildren.get(i);
@@ -371,12 +374,14 @@ public class DifferenceEngine implements DifferenceConstants {
             boolean matchFound = false;
 
             while (!matchFound) {
-                if (findNodeType == ((Node)testChildren.get(j)).getNodeType()) {
+                Node t = (Node) testChildren.get(j);
+                if (findNodeType == t.getNodeType()
+                    || comparingTextAndCDATA(findNodeType, t.getNodeType())) {
                     matchFound = !matchOnElement
                         || elementQualifier == null
                         || elementQualifier
                         .qualifyForComparison((Element) nextControl,
-                                              (Element) testChildren.get(j));
+                                              (Element) t);
                 }
                 if (!matchFound) {
                     ++j;
@@ -392,46 +397,37 @@ public class DifferenceEngine implements DifferenceConstants {
             if (matchFound) {
                 matchingNodes.put(nextControl, testChildren.get(j));
                 matchingNodeIndexes.put(nextControl, new Integer(j));
+                unmatchedTestNodes.remove(testChildren.get(j));
             }
         }
 
         // next, do the actual comparision on those that matched - or
         // match them against the first test nodes that didn't match
         // any other control nodes
-        Collection matchingTestNodes = matchingNodes.values();
         for (int i=0; i < numNodes; ++i) {
             Node nextControl = (Node) controlChildren.get(i);
             Node nextTest = (Node) matchingNodes.get(nextControl);
             Integer testIndex = (Integer) matchingNodeIndexes.get(nextControl);
-            if (nextTest == null) {
-                short findNodeType = nextControl.getNodeType();
-                int startAt = ( i > lastTestNode ? lastTestNode : i);
-                j = startAt;
-            
-                boolean matchFound = false;
-
-                while (!matchFound) {
-                    if (((Node) testChildren.get(j))
-                        .getNodeType() == findNodeType
-                        && !matchingTestNodes.contains(testChildren.get(j))) {
-                        matchFound = true;
-                    } else {
-                        ++j;
-                        if (j > lastTestNode) {
-                            j = 0;
-                        }
-                        if (j == startAt) {
-                            // been through all children
-                            break;
-                        }
-                    }
-                }
-                nextTest = (Node) testChildren.get(j);
-                testIndex = new Integer(j);
+            if (nextTest == null && !unmatchedTestNodes.isEmpty()) {
+                nextTest = (Node) unmatchedTestNodes.get(0);
+                testIndex = new Integer(testChildren.indexOf(nextTest));
+                unmatchedTestNodes.remove(0);
             }
+            if (nextTest != null) {
             compareNode(nextControl, nextTest, listener, elementQualifier);
             compare(new Integer(i), testIndex,
                     nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
+            } else {
+                compare(nextControl.getNodeName(), null, nextControl, null,
+                        listener, CHILD_NODE_NOT_FOUND);
+            }
+        }
+
+        // now handle remaining unmatched test nodes
+        for (Iterator iter = unmatchedTestNodes.iterator(); iter.hasNext();) {
+            Node n = (Node) iter.next();
+            compare(null, n.getNodeName(), null, n, listener,
+                    CHILD_NODE_NOT_FOUND);
         }
     }
 
