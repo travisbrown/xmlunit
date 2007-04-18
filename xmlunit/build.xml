@@ -165,7 +165,7 @@
     </copy>
   </target>
 
-  <target name="jar" depends="clean,compile"
+  <target name="jar" depends="compile"
     description="creates jar, Maven2 POM and Ivy file">
     <jar jarfile="${lib.dir}/xmlunit-${xmlunit.version}.jar"
        basedir="${out.dir}"
@@ -189,6 +189,8 @@
       </filterset>
     </copy>
   </target>
+
+  <target name="Gump" depends="test,jar"/>
 
   <target name="bindist" depends="jar,test,docs">
     <zip zipfile="${dist.dir}/xmlunit-${xmlunit.version}-bin.zip">
