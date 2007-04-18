@@ -1,16 +1,37 @@
-<project name="xmlunit" default="compile" basedir=".">
-  <!-- The properties junit.lib, xmlxsl.lib, and test.report.dir should be defined in your build.properties file -->
-  <target name="props">
-    <property name="xmlunit.version" value="1.1alpha"/>
-    <property name="src.dir" value="src"/>
-    <property name="test.dir" value="tests"/>
-    <property name="lib.dir" value="lib"/>
-    <property name="out.dir" value="classes"/>
-    <property name="dist.dir" value="dist"/>
-    <property name="docs.dir" value="doc"/>
-    <property name="build.user.guide" value="userguide"/>
-    <property file="build.properties"/>
+<project name="xmlunit" default="test" basedir=".">
 
+  <!-- allow properties to be overridden in a properties file -->
+  <property file="build.properties"/>
+
+  <!-- Version -->
+  <property name="xmlunit.version" value="1.1alpha"/>
+
+  <!-- some locations -->
+  <property name="src.dir" value="src"/>
+  <property name="test.dir" value="tests"/>
+  <property name="build.dir" location="build"/>
+  <property name="lib.dir" value="${build.dir}/lib"/>
+  <property name="out.dir" value="${build.dir}/classes"/>
+  <property name="test.out.dir" value="${build.dir}/test-classes"/>
+  <property name="userguide.out.dir" value="${build.dir}/ug-classes"/>
+  <property name="test.report.dir" value="${build.dir}/test-report"/>
+  <property name="dist.dir" value="${build.dir}/dist"/>
+  <property name="docs.dir" value="${build.dir}/doc"/>
+  <property name="userguide.docs.dir" value="${docs.dir}/userguide"/>
+
+  <!-- javac properties -->
+  <property name="javac.source" value="1.3"/>
+  <property name="javac.target" value="1.3"/>
+  <property name="javac.debug" value="true"/>
+
+  <!-- some library paths -->
+  <!-- where is JAXP? property name="${xmlxsl.lib}" location="."/ -->
+  <!-- where is JUnit? property name="${junit.lib}" location="."/ -->
+
+  <!-- Docbook related properties, macros and targets -->
+  <import file="docbook.xml"/>
+
+  <target name="-props">
     <available property="jaxp13+" classname="javax.xml.xpath.XPath"/>
     <condition property="jaxp13+.impl">
       <and>
@@ -21,32 +42,46 @@
     <available property="regexp.present" classname="java.util.regex.Matcher"/>
   </target>
 
-  <target name="check-props" unless="test.report.dir">
-    <fail>Please provide the
-values for junit.lib, xmlxsl.lib, and test.report.dir
-in build.properties</fail>
-  </target>
-
-  <target name="init" depends="props,check-props">
+  <target name="-init" depends="-props">
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${out.dir}"/>
+    <mkdir dir="${test.out.dir}"/>
     <mkdir dir="${test.report.dir}"/>
     <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${docs.dir}"/>
+    <mkdir dir="${userguide.docs.dir}"/>
   </target>
 
-  <target name="clean" depends="init">
+  <target name="clean"
+    description="removes created directories">
     <delete includeEmptyDirs="true" quiet="true">
-      <fileset dir="${out.dir}" includes="**/*.class"/>
-      <fileset dir="${test.report.dir}" includes="**/TEST*.*"/>
+      <fileset dir="${lib.dir}"/>
+      <fileset dir="${out.dir}"/>
+      <fileset dir="${test.out.dir}"/>
+      <fileset dir="${test.report.dir}"/>
       <fileset dir="${dist.dir}"/>
-      <fileset dir="${build.user.guide}"/>
+      <fileset dir="${docs.dir}"/>
+      <fileset dir="${userguide.docs.dir}"/>
+      <fileset dir="${build.dir}"/>
     </delete> 
   </target>
 
-  <target name="compile" depends="init">
-    <mkdir dir="${out.dir}"/>
-    <javac srcdir="${src.dir}/java:${test.dir}/java" destdir="${out.dir}" debug="on" target="1.2" source="1.3">
+  <target name="compile" depends="-init"
+    description="compiles sources and tests">
+    <javac srcdir="${src.dir}/java" destdir="${out.dir}"
+      debug="${javac.debug}" target="${javac.target}" source="${javac.source}">
       <classpath>
+        <pathelement location="${xmlxsl.lib}"/>
+        <pathelement location="${junit.lib}"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+      <exclude name="**/jaxp13/**" unless="jaxp13+"/>
+      <exclude name="**/*XPathRegexAssert.java" unless="regexp.present"/>
+    </javac>
+    <javac srcdir="${test.dir}/java" destdir="${test.out.dir}"
+      debug="${javac.debug}" target="${javac.target}" source="${javac.source}">
+      <classpath>
+        <pathelement location="${out.dir}"/>
         <pathelement location="${xmlxsl.lib}"/>
         <pathelement location="${junit.lib}"/>
         <pathelement path="${java.class.path}"/>
@@ -56,9 +91,10 @@ in build.properties</fail>
     </javac>
   </target>
 
-  <target name="test" depends="compile">
-    <mkdir dir="${test.report.dir}"/>
-    <junit printsummary="yes" haltonfailure="no" fork="yes" forkMode="perBatch">
+  <target name="test" depends="compile"
+    description="runs the tests">
+    <junit printsummary="yes" haltonfailure="no" fork="yes"
+      forkMode="perBatch" failureproperty="tests.failed">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="user.dir" value="${basedir}"/>
       <!--
@@ -71,6 +107,7 @@ in build.properties</fail>
         -->
       <classpath>
         <pathelement location="${out.dir}"/>
+        <pathelement location="${test.out.dir}"/>
         <pathelement location="${xmlxsl.lib}"/>
         <pathelement location="${junit.lib}"/>
         <pathelement path="${java.class.path}"/>
@@ -90,25 +127,23 @@ in build.properties</fail>
       </fileset>
       <report format="frames" todir="${test.report.dir}/html"/>
     </junitreport>
+
+    <fail if="tests.failed">Some tests failed</fail>
   </target>
 
-  <target name="setDistVersion" depends="init">
-    <replace dir="${src.dir}" token="@@version@@" value="${xmlunit.version}"
-      includes="**/*.java"/>
-    <tstamp>
-      <format property="ivy.publication.datetime" pattern="yyyyMMddHHmmss"/>
-    </tstamp> 
-  </target>
+  <target name="docs"
+    depends="create-users-guide,javadocs,-site"
+    description="creates the documentation bundle"/>
 
-  <target name="docs" depends="init">
-    <mkdir dir="${docs.dir}"/>
-    <delete includeEmptyDirs="true" dir="${docs.dir}/org"/>
-    <javadoc destdir="${docs.dir}"
+  <target name="javadocs" depends="-init"
+    description="creates the API documentation">
+    <delete includeEmptyDirs="true" dir="${docs.dir}/api"/>
+    <javadoc destdir="${docs.dir}/api"
       overview="${src.dir}/java/overview.html"
       windowtitle="XMLUnit Documentation"
       footer="&lt;p&gt;&lt;a href=&quot;http://xmlunit.sourceforge.net/&quot;&gt;XMLUnit&lt;/a&gt; is hosted by sourceforge.net&lt;/p&gt;">
       <group title="XMLUnit v${xmlunit.version}"
-        packages="org.custommonkey.xmlunit.*"/>
+        packages="org.custommonkey.xmlunit*"/>
       <fileset dir="${src.dir}/java">
         <include name="org/custommonkey/**/*.java"/>
       </fileset>
@@ -121,14 +156,23 @@ in build.properties</fail>
     </javadoc>
   </target>
 
-  <target name="jar" depends="clean,setDistVersion,compile">
+  <target name="-site" depends="-init">
+    <copy todir="${docs.dir}">
+      <fileset dir="${src.dir}/site">
+        <include name="*.html"/>
+        <include name="*.png"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar" depends="clean,compile"
+    description="creates jar, Maven2 POM and Ivy file">
     <jar jarfile="${lib.dir}/xmlunit-${xmlunit.version}.jar"
        basedir="${out.dir}"
-       excludes="**/test_*.class"
     />
 
     <copy todir="${lib.dir}">
-      <fileset dir="src/etc">
+      <fileset dir="${src.dir}/etc">
         <include name="xmlunit.pom"/>
         <include name="xmlunit-ivy.xml"/>
       </fileset>
@@ -146,50 +190,59 @@ in build.properties</fail>
     </copy>
   </target>
 
-  <target name="dist" depends="jar,test,docs">
-    <mkdir dir="${dist.dir}"/>
-    <zip zipfile="${dist.dir}/xmlunit${xmlunit.version}.zip">
-        <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="**/xmlunit${xmlunit.version}.jar"/>
-        <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="**/*.java,**/*.txt,**/*.xml,**/*.xsl,**/*.dtd,**/*.xsd"
-            excludes="${out.dir}/*,**/TEST*.xml,bugs/*"/>
-        <zipfileset prefix="xmlunit" dir="${basedir}"
-            includes="${docs.dir}/**/*.css,${docs.dir}/**/*.html,${test.dir}/etc/*.html"/>
-        <zipfileset prefix="xmlunit" dir="${src.dir}/site"
-            includes="*.pdf,example.html"/>
+  <target name="bindist" depends="jar,test,docs">
+    <zip zipfile="${dist.dir}/xmlunit-${xmlunit.version}-bin.zip">
+      <zipfileset prefix="xmlunit-${xmlunit.version}/lib"
+        dir="${lib.dir}" includes="*.jar"/>
+      <zipfileset prefix="xmlunit-${xmlunit.version}/docs"
+        dir="${docs.dir}"/>
+      <zipfileset prefix="xmlunit-${xmlunit.version}" dir=".">
+        <include name="KEYS"/>
+        <include name="LICENSE.txt"/>
+        <include name="README.txt"/>
+      </zipfileset>
     </zip>
   </target>
 
-  <target name="src" depends="clean">
-    <property name="dist.name"
-      value="${ant.project.name}-${xmlunit.version}"/>
-    <copy todir="${dist.dir}/${dist.name}">
-      <fileset dir="${basedir}">
-        <include name="${src.dir}/**"/>
-        <include name="${test.dir}/**"/>
-        <include name="ISSUES"/>
+  <target name="srcdist" depends="-init,create-users-guide">
+    <zip zipfile="${dist.dir}/xmlunit-${xmlunit.version}-src.zip">
+      <zipfileset prefix="xmlunit-${xmlunit.version}" dir=".">
+        <include name="*.xml"/>
+        <include name="${src.dir}/"/>
+        <include name="${test.dir}/"/>
+        <include name="KEYS"/>
         <include name="LICENSE.txt"/>
         <include name="README.txt"/>
-        <include name="build.xml"/>
-        <include name="build.properties"/>
+      </zipfileset>
+      <zipfileset dir="${userguide.docs.dir}"
+        prefix="xmlunit-${xmlunit.version}/userguide"/>
+    </zip>
+  </target>
+
+  <target name="dist"
+    depends="clean,bindist,srcdist,compile-userguide-examples"
+    description="creates the distribution files">
+    <checksum algorithm="md5">
+      <fileset dir="${dist.dir}">
+        <include name="*.zip"/>
       </fileset>
-    </copy>
-    <tar tarfile="${dist.name}-src.tar" basedir="${dist.dir}">
-    </tar>
-    <gzip zipfile="${dist.name}-src.tgz"
-      src="${dist.name}-src.tar" />
-    <delete file="${dist.name}-src.tar" />
+    </checksum>
+    <checksum algorithm="sha1">
+      <fileset dir="${dist.dir}">
+        <include name="*.zip"/>
+      </fileset>
+    </checksum>
   </target>
 
   <target name="compile-userguide-examples" depends="compile">
-    <mkdir dir="${build.user.guide}"/>
+    <mkdir dir="${userguide.out.dir}"/>
     <javac srcdir="src/user-guide" includes="org/"
-      destdir="${build.user.guide}" source="1.3" target="1.2">
+      destdir="${userguide.out.dir}" source="1.3" target="1.2">
       <classpath>
         <pathelement location="${junit.lib}"/>
         <pathelement location="${out.dir}"/>
       </classpath>
     </javac>
+    <delete dir="${userguide.out.dir}"/>
   </target>
 </project>
