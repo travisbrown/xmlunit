@@ -4,7 +4,7 @@
   <property file="build.properties"/>
 
   <!-- Version -->
-  <property name="xmlunit.version" value="1.1alpha"/>
+  <property name="xmlunit.version" value="1.1beta2"/>
 
   <!-- some locations -->
   <property name="src.dir" value="src"/>
