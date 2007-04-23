@@ -171,6 +171,10 @@
        basedir="${out.dir}"
     />
 
+    <tstamp> 	 
+      <format property="ivy.publication.datetime" pattern="yyyyMMddHHmmss"/>
+    </tstamp>
+
     <copy todir="${lib.dir}">
       <fileset dir="${src.dir}/etc">
         <include name="xmlunit.pom"/>
@@ -195,7 +199,7 @@
   <target name="bindist" depends="jar,test,docs">
     <zip zipfile="${dist.dir}/xmlunit-${xmlunit.version}-bin.zip">
       <zipfileset prefix="xmlunit-${xmlunit.version}/lib"
-        dir="${lib.dir}" includes="*.jar"/>
+        dir="${lib.dir}"/>
       <zipfileset prefix="xmlunit-${xmlunit.version}/docs"
         dir="${docs.dir}"/>
       <zipfileset prefix="xmlunit-${xmlunit.version}" dir=".">
@@ -215,6 +219,7 @@
         <include name="KEYS"/>
         <include name="LICENSE.txt"/>
         <include name="README.txt"/>
+        <exclude name="**/csharp/**"/>
       </zipfileset>
       <zipfileset dir="${userguide.docs.dir}"
         prefix="xmlunit-${xmlunit.version}/userguide"/>
