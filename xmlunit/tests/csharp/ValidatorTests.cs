@@ -28,9 +28,12 @@ namespace XmlUnit.Tests {
         
         [Test] public void XsdInvalidFileIsNotValid() {
             Validator validator = PerformAssertion(INVALID_FILE, false);
-            string expected = "The element 'http://www.publishing.org:Book' has incomplete content";
-            Assert.AreEqual(true, 
-                                   validator.ValidationMessage.StartsWith(expected));
+            Assert.IsFalse(validator.IsValid);
+            Assert.IsTrue(validator.ValidationMessage
+                          .IndexOf("http://www.publishing.org") > -1,
+                          validator.ValidationMessage);
+            Assert.IsTrue(validator.ValidationMessage.IndexOf("Book") > -1,
+                          validator.ValidationMessage);
         }
     }
 }
