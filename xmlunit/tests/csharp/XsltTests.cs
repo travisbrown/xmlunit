@@ -27,8 +27,8 @@ namespace XmlUnit.Tests {
             Xslt xslt = new Xslt(IDENTITY_TRANSFORM);
             string input = "<qwerty>uiop</qwerty>";
             string output = new string(input.ToCharArray());
-            Assertion.AssertEquals(output, xslt.Transform(input).AsString());
-            Assertion.AssertEquals(output, xslt.Transform(input).AsString());
+            Assert.AreEqual(output, xslt.Transform(input).AsString());
+            Assert.AreEqual(output, xslt.Transform(input).AsString());
         }                      
     }
 }

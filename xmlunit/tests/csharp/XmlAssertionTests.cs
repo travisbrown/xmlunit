@@ -27,7 +27,7 @@ namespace XmlUnit.Tests {
                                            new DiffConfiguration(description));
                 XmlAssertion.AssertXmlIdentical(diff);
             } catch (NUnit.Framework.AssertionException e) {
-                Assertion.AssertEquals(true, e.Message.StartsWith(description));
+                Assert.IsTrue(e.Message.StartsWith(description));
             }
         }
         
@@ -38,7 +38,7 @@ namespace XmlUnit.Tests {
                                            new DiffConfiguration(description));
                 XmlAssertion.AssertXmlEquals(diff);
             } catch (NUnit.Framework.AssertionException e) {
-                Assertion.AssertEquals(true, e.Message.StartsWith(description));
+                Assert.AreEqual(true, e.Message.StartsWith(description));
             }
         }
         
@@ -55,7 +55,7 @@ namespace XmlUnit.Tests {
             StreamReader reader = GetStreamReader(ValidatorTests.INVALID_FILE);
             try {
                 XmlAssertion.AssertXmlValid(reader);
-                Assertion.Fail("Expected assertion failure");
+                Assert.Fail("Expected assertion failure");
             } catch(AssertionException e) {
                 AvoidUnusedVariableCompilerWarning(e);
             } finally {
@@ -79,7 +79,7 @@ namespace XmlUnit.Tests {
             try {
                 XmlAssertion.AssertXPathExists("//star[@name='alpha centauri']", 
                                                MY_SOLAR_SYSTEM);
-                Assertion.Fail("Expected assertion failure");
+                Assert.Fail("Expected assertion failure");
             } catch (AssertionException e) {
                 AvoidUnusedVariableCompilerWarning(e);
             }
@@ -131,7 +131,7 @@ namespace XmlUnit.Tests {
         	try {
         		XmlAssertion.AssertXslTransformResults(xslt, xmlToTransform, expectedXml);
         		exceptionExpected = false;
-        		Assertion.Fail("Expected dog not cat!");
+        		Assert.Fail("Expected dog not cat!");
         	} catch (AssertionException e) {
         		AvoidUnusedVariableCompilerWarning(e);
         		if (!exceptionExpected) {

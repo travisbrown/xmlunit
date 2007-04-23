@@ -2,7 +2,7 @@ namespace XmlUnit {
     using NUnit.Framework;
     using System.IO;
     
-    public class XmlAssertion : Assertion {
+    public class XmlAssertion : Assert {
         public static void AssertXmlEquals(TextReader controlTextReader, TextReader testTextReader) {
             AssertXmlEquals(new XmlDiff(controlTextReader, testTextReader));
         }
@@ -37,7 +37,11 @@ namespace XmlUnit {
 
         private static void AssertXmlEquals(XmlDiff xmlDiff, bool equalOrNot) {
             DiffResult diffResult = xmlDiff.Compare();
-            Assertion.AssertEquals(diffResult.StringValue, equalOrNot, diffResult.Equal);
+            if (equalOrNot) {
+              IsTrue(diffResult.Equal, diffResult.StringValue);
+            } else {
+              IsFalse(diffResult.Equal, diffResult.StringValue);
+            }
         }
         
         public static void AssertXmlIdentical(XmlDiff xmlDiff) {
@@ -50,7 +54,11 @@ namespace XmlUnit {
         
         private static void AssertXmlIdentical(XmlDiff xmlDiff, bool identicalOrNot) {
             DiffResult diffResult = xmlDiff.Compare();
-            AssertEquals(xmlDiff.OptionalDescription, identicalOrNot, diffResult.Identical);
+            if (identicalOrNot) {
+              IsTrue(diffResult.Identical, xmlDiff.OptionalDescription);
+            } else {
+              IsFalse(diffResult.Identical, xmlDiff.OptionalDescription);
+            }
         }
         
         public static void AssertXmlValid(string someXml) {
@@ -75,7 +83,7 @@ namespace XmlUnit {
         }
         
         public static void AssertXmlValid(Validator validator) {
-            AssertEquals(validator.ValidationMessage, true, validator.IsValid);
+          IsTrue(validator.IsValid, validator.ValidationMessage);
         }
         
         public static void AssertXPathExists(string anXPathExpression, string inXml) {
@@ -88,7 +96,7 @@ namespace XmlUnit {
         
         public static void AssertXPathExists(string anXPathExpression, XmlInput inXml) {
             XPath xpath = new XPath(anXPathExpression);
-            AssertEquals(true, xpath.XPathExists(inXml));
+            AreEqual(true, xpath.XPathExists(inXml));
         }
         
         public static void AssertXPathEvaluatesTo(string anXPathExpression, string inXml, 
@@ -104,7 +112,7 @@ namespace XmlUnit {
         public static void AssertXPathEvaluatesTo(string anXPathExpression, XmlInput inXml, 
                                                   string expectedValue) {
             XPath xpath = new XPath(anXPathExpression);
-            AssertEquals(expectedValue, xpath.EvaluateXPath(inXml));
+            AreEqual(expectedValue, xpath.EvaluateXPath(inXml));
         }
         
         public static void AssertXslTransformResults(string xslTransform, string xmlToTransform, string expectedResult) {

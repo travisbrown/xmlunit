@@ -10,14 +10,14 @@ namespace XmlUnit.Tests {
         [Test] public void EqualResultForSameReader() { 
             TextReader reader = new StringReader("<empty/>");
             DiffResult result = PerformDiff(reader, reader);
-            Assertion.AssertEquals(true, result.Equal);
+            Assert.AreEqual(true, result.Equal);
         }
         
         [Test] public void SameResultForTwoInvocations() {
             TextReader reader = new StringReader("<empty/>");
             DiffResult result1 = PerformDiff(reader, reader);
             DiffResult result2 = _xmlDiff.Compare();
-            Assertion.AssertSame(result1, result2);
+            Assert.AreSame(result1, result2);
             
         }
         
@@ -26,7 +26,7 @@ namespace XmlUnit.Tests {
             TextReader reader2 = new StringReader(input2);
             DiffResult result = PerformDiff(reader1, reader2);
             string msg = "comparing " + input1 + " to " + input2 + ": " + result.Difference;
-            Assertion.AssertEquals(msg, expected, result.Equal);
+            Assert.AreEqual(expected, result.Equal);
         }
         
         private void AssertExpectedResult(string[] inputs1, string[] inputs2, bool expected) {

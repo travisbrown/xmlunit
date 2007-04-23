@@ -19,7 +19,7 @@ namespace XmlUnit.Tests {
             FileStream input = File.Open(file, FileMode.Open, FileAccess.Read);
             try {
                 Validator validator = new Validator(new XmlInput(new StreamReader(input)));
-                Assertion.AssertEquals(expected, validator.IsValid);
+                Assert.AreEqual(expected, validator.IsValid);
                 return validator;
             } finally {
                 input.Close();
@@ -29,7 +29,7 @@ namespace XmlUnit.Tests {
         [Test] public void XsdInvalidFileIsNotValid() {
             Validator validator = PerformAssertion(INVALID_FILE, false);
             string expected = "The element 'http://www.publishing.org:Book' has incomplete content";
-            Assertion.AssertEquals(true, 
+            Assert.AreEqual(true, 
                                    validator.ValidationMessage.StartsWith(expected));
         }
     }

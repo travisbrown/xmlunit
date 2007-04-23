@@ -14,16 +14,16 @@ namespace XmlUnit.Tests {
                 
         [Test] public void DefaultConfiguredWithGenericDescription() {
             DiffConfiguration diffConfiguration = new DiffConfiguration();
-            Assertion.AssertEquals(DiffConfiguration.DEFAULT_DESCRIPTION, 
+            Assert.AreEqual(DiffConfiguration.DEFAULT_DESCRIPTION, 
                                    diffConfiguration.Description);
             
-            Assertion.AssertEquals(DiffConfiguration.DEFAULT_DESCRIPTION, 
+            Assert.AreEqual(DiffConfiguration.DEFAULT_DESCRIPTION, 
                                    new XmlDiff("", "").OptionalDescription);
         }
         
         [Test] public void DefaultConfiguredToUseValidatingParser() {
             DiffConfiguration diffConfiguration = new DiffConfiguration();
-            Assertion.AssertEquals(DiffConfiguration.DEFAULT_USE_VALIDATING_PARSER, 
+            Assert.AreEqual(DiffConfiguration.DEFAULT_USE_VALIDATING_PARSER, 
                                    diffConfiguration.UseValidatingParser);
             
             FileStream controlFileStream = File.Open(ValidatorTests.VALID_FILE, 
@@ -34,7 +34,7 @@ namespace XmlUnit.Tests {
                 XmlDiff diff = new XmlDiff(new StreamReader(controlFileStream), 
                                            new StreamReader(testFileStream));
                 diff.Compare();
-                Assertion.Fail("Expected validation failure");
+                Assert.Fail("Expected validation failure");
             } catch (XmlSchemaException e) {
                 string message = e.Message; // to prevent 'unused variable' compiler warning 
             } finally {
@@ -45,7 +45,7 @@ namespace XmlUnit.Tests {
                 
         [Test] public void CanConfigureNotToUseValidatingParser() {
             DiffConfiguration diffConfiguration = new DiffConfiguration(false);
-            Assertion.AssertEquals(false, diffConfiguration.UseValidatingParser);
+            Assert.AreEqual(false, diffConfiguration.UseValidatingParser);
             
             FileStream controlFileStream = File.Open(ValidatorTests.VALID_FILE, 
                                                      FileMode.Open, FileAccess.Read);
@@ -57,7 +57,7 @@ namespace XmlUnit.Tests {
                                            diffConfiguration);
                 diff.Compare();
             } catch (XmlSchemaException e) {
-                Assertion.Fail("Unexpected validation failure: " + e.Message);
+                Assert.Fail("Unexpected validation failure: " + e.Message);
             } finally {
                 controlFileStream.Close();
                 testFileStream.Close();
@@ -66,7 +66,7 @@ namespace XmlUnit.Tests {
         
         [Test] public void DefaultConfiguredWithWhitespaceHandlingAll() {
             DiffConfiguration diffConfiguration = new DiffConfiguration();
-            Assertion.AssertEquals(WhitespaceHandling.All, diffConfiguration.WhitespaceHandling);
+            Assert.AreEqual(WhitespaceHandling.All, diffConfiguration.WhitespaceHandling);
             
             PerformAssertion(xmlWithoutWhitespace, xmlWithWhitespaceElement, false);
             PerformAssertion(xmlWithoutWhitespace, xmlWithoutWhitespaceElement, false);
@@ -85,8 +85,8 @@ namespace XmlUnit.Tests {
             PerformAssertion(diff, assertion);
         }        
         private void PerformAssertion(XmlDiff diff, bool assertion) {
-            Assertion.AssertEquals(assertion, diff.Compare().Equal);            
-            Assertion.AssertEquals(assertion, diff.Compare().Identical);            
+            Assert.AreEqual(assertion, diff.Compare().Equal);            
+            Assert.AreEqual(assertion, diff.Compare().Identical);            
         }
 
         [Test] public void CanConfigureWhitespaceHandlingSignificant() {

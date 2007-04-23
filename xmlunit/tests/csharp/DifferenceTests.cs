@@ -9,16 +9,15 @@ namespace XmlUnit.Tests {
         
         [SetUp] public void CreateMinorDifference() {
             DifferenceType id = DifferenceType.ATTR_SEQUENCE_ID;
-            Assertion.AssertEquals(false, Differences.isMajorDifference(id));
+            Assert.IsFalse(Differences.isMajorDifference(id));
             minorDifference = new Difference(id);
         }
         
         [Test] public void ToStringContainsId() {
             string commentDifference = minorDifference.ToString();
             string idValue = "type: " + (int)DifferenceType.ATTR_SEQUENCE_ID;
-            Assertion.AssertEquals("contains " + idValue, 
-                                   true, 
-                                   commentDifference.IndexOfAny(idValue.ToCharArray()) > 0);
+            Assert.IsTrue(commentDifference.IndexOfAny(idValue.ToCharArray()) > 0,
+                          "contains " + idValue);
         }
     }
 }
