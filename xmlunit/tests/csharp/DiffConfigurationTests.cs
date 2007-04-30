@@ -21,7 +21,8 @@ namespace XmlUnit.Tests {
                                    new XmlDiff("", "").OptionalDescription);
         }
         
-        [Test] public void DefaultConfiguredToUseValidatingParser() {
+      [Test][ExpectedException(typeof(XmlSchemaValidationException))]
+        public void DefaultConfiguredToUseValidatingParser() {
             DiffConfiguration diffConfiguration = new DiffConfiguration();
             Assert.AreEqual(DiffConfiguration.DEFAULT_USE_VALIDATING_PARSER, 
                                    diffConfiguration.UseValidatingParser);
@@ -34,16 +35,14 @@ namespace XmlUnit.Tests {
                 XmlDiff diff = new XmlDiff(new StreamReader(controlFileStream), 
                                            new StreamReader(testFileStream));
                 diff.Compare();
-                Assert.Fail("Expected validation failure");
-            } catch (XmlSchemaException e) {
-                string message = e.Message; // to prevent 'unused variable' compiler warning 
             } finally {
                 controlFileStream.Close();
                 testFileStream.Close();
             }
         }
                 
-        [Test] public void CanConfigureNotToUseValidatingParser() {
+      [Test]
+      public void CanConfigureNotToUseValidatingParser() {
             DiffConfiguration diffConfiguration = new DiffConfiguration(false);
             Assert.AreEqual(false, diffConfiguration.UseValidatingParser);
             

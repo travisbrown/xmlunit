@@ -22,24 +22,30 @@ namespace XmlUnit.Tests {
         
         [Test] public void AssertXmlIdenticalUsesOptionalDescription() {
             string description = "An Optional Description";
+            bool caughtException = true;
             try {
                 XmlDiff diff = new XmlDiff(new XmlInput("<a/>"), new XmlInput("<b/>"), 
                                            new DiffConfiguration(description));
                 XmlAssertion.AssertXmlIdentical(diff);
+                caughtException = false;
             } catch (NUnit.Framework.AssertionException e) {
                 Assert.IsTrue(e.Message.StartsWith(description));
             }
+            Assert.IsTrue(caughtException);
         }
         
         [Test] public void AssertXmlEqualsUsesOptionalDescription() {
             string description = "Another Optional Description";
+            bool caughtException = true;
             try {
                 XmlDiff diff = new XmlDiff(new XmlInput("<a/>"), new XmlInput("<b/>"), 
                                            new DiffConfiguration(description));
                 XmlAssertion.AssertXmlEquals(diff);
+                caughtException = false;
             } catch (NUnit.Framework.AssertionException e) {
                 Assert.AreEqual(true, e.Message.StartsWith(description));
             }
+            Assert.IsTrue(caughtException);
         }
         
         [Test] public void AssertXmlValidTrueForValidFile() {
@@ -53,14 +59,16 @@ namespace XmlUnit.Tests {
         
         [Test] public void AssertXmlValidFalseForInvalidFile() {
             StreamReader reader = GetStreamReader(ValidatorTests.INVALID_FILE);
+            bool caughtException = true;
             try {
                 XmlAssertion.AssertXmlValid(reader);
-                Assert.Fail("Expected assertion failure");
+                caughtException = false;
             } catch(AssertionException e) {
                 AvoidUnusedVariableCompilerWarning(e);
             } finally {
                 reader.Close();
             }
+            Assert.IsTrue(caughtException);
         }
         
         private StreamReader GetStreamReader(string file) {
@@ -76,13 +84,15 @@ namespace XmlUnit.Tests {
         }
         
         [Test] public void AssertXPathExistsFailsForNonExistentXPath() {
+            bool caughtException = true;
             try {
                 XmlAssertion.AssertXPathExists("//star[@name='alpha centauri']", 
                                                MY_SOLAR_SYSTEM);
-                Assert.Fail("Expected assertion failure");
+                caughtException = false;
             } catch (AssertionException e) {
                 AvoidUnusedVariableCompilerWarning(e);
             }
+            Assert.IsTrue(caughtException);
         }
         
         [Test] public void AssertXPathEvaluatesToWorksForMatchingExpression() {
@@ -127,17 +137,14 @@ namespace XmlUnit.Tests {
         	StreamReader xml = GetStreamReader(".\\..\\tests\\etc\\testAnimal.xml");
         	XmlInput xmlToTransform = new XmlInput(xml);
         	XmlInput expectedXml = new XmlInput("<cat/>");
-        	bool exceptionExpected = true;
+                bool caughtException = true;
         	try {
         		XmlAssertion.AssertXslTransformResults(xslt, xmlToTransform, expectedXml);
-        		exceptionExpected = false;
-        		Assert.Fail("Expected dog not cat!");
+                caughtException = false;
         	} catch (AssertionException e) {
         		AvoidUnusedVariableCompilerWarning(e);
-        		if (!exceptionExpected) {
-        			throw e;
-        		}
         	}
+            Assert.IsTrue(caughtException);
         }
 
 
