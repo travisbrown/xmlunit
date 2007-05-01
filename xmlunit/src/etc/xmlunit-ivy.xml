@@ -5,7 +5,7 @@
     publication="@DATE@">
     <license name="@LICENSE@"
       url="@LICENSE_URL@"/>
-    <description>@DESCRIPTION@</description>
+    <description homepage="http://xmlunit.sourceforge.net/">@DESCRIPTION@</description>
   </info>
   <publications>
     <artifact name="@ARTIFACT@" type="@TYPE@"/>
