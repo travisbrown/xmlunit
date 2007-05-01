@@ -76,6 +76,7 @@ public final class XMLUnit {
     private static boolean normalizeWhitespace = false;
     private static boolean ignoreAttributeOrder = false;
     private static String xsltVersion = "1.0";
+    private static String xpathFactoryName = null;
 
     private static final String XSLT_VERSION_START = " version=\"";
     private static final String XSLT_VERSION_END = "\">";
@@ -741,6 +742,20 @@ public final class XMLUnit {
      */
     public static String getXSLTVersion() {
         return xsltVersion;
+    }
+
+    /**
+     * Sets the class to use as XPathFactory when using JAXP 1.3.
+     */
+    public static void setXPathFactory(String className) {
+        xpathFactoryName = className;
+    }
+
+    /**
+     * Gets the class to use as XPathFactory when using JAXP 1.3.
+     */
+    public static String getXPathFactory() {
+        return xpathFactoryName;
     }
 
     /**

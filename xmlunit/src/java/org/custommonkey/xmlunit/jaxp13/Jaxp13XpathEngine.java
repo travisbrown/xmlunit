@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit.jaxp13;
 
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.XpathEngine;
 import org.custommonkey.xmlunit.exceptions.ConfigurationException;
 import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.custommonkey.xmlunit.NamespaceContext;
-import org.custommonkey.xmlunit.XpathEngine;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -59,7 +60,15 @@ public class Jaxp13XpathEngine implements XpathEngine {
 
     public Jaxp13XpathEngine() throws ConfigurationException {
         try {
-            xpath = XPathFactory.newInstance().newXPath();
+            XPathFactory f = null;
+            if (XMLUnit.getXPathFactory() != null) {
+                f = (XPathFactory) Class.forName(XMLUnit.getXPathFactory())
+                    .newInstance();
+            } else {
+                f = XPathFactory.newInstance();
+            }
+
+            xpath = f.newXPath();
         } catch (Exception ex) {
             throw new ConfigurationException(ex);
         }
