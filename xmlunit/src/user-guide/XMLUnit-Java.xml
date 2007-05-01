@@ -889,6 +889,11 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
         building DOM <literal>Document</literal>s using the configured
         parsers.</para>
 
+        <para>You can also set the class name for the
+        <literal>XPathFactory</literal> to use when using JAXP 1.3 by
+        passing the class name to
+        <literal>XMLUnit.setXPathFactory</literal>.</para>
+
       </section>
 
       <section id="EntityResolver">
@@ -2668,6 +2673,10 @@ boolean isValid = v.isValid();
       <literal>SimpleXpathEngine</literal> will use the configured
       JAXP XSLT transformer (see <xref linkend="JAXP"/>) under the
       covers.</para>
+
+      <para>When using JAXP 1.3 you can chose the actual
+      <literal>XPathFactory</literal> implementation using
+      <literal>XMLUnit.setXPathFactory</literal>.</para>
 
       <para>It is possible to establish a global
       <literal>NamespaceContext</literal> with the help of the
