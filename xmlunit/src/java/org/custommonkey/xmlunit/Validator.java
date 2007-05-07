@@ -464,7 +464,9 @@ public class Validator extends DefaultHandler implements ErrorHandler {
                 throw new XMLUnitRuntimeException("failed to resolve entity: "
                                                   + publicId, e);
             }
-            if (s == null && systemId != null) {
+            if (s != null) {
+                return s;
+            } else if (systemId != null) {
                 return new InputSource(systemId);
             }
         }
