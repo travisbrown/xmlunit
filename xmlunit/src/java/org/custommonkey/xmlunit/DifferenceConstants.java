@@ -87,6 +87,16 @@ public interface DifferenceConstants {
     /** Comparing 2 nodes and one holds more childnodes than can be
      * matched against child nodes of the other. */
     int CHILD_NODE_NOT_FOUND_ID = 22;
+    /** Comparing 2 nodes with different xsi:schemaLocation
+     * attributes, potentially only one of the two provides such an
+     * attribute at all.
+     */
+    int SCHEMA_LOCATION_ID = 23;
+    /** Comparing 2 nodes with different xsi:noNamespaceSchemaLocation
+     * attributes, potentially only one of the two provides such an
+     * attribute at all.
+     */
+    int NO_NAMESPACE_SCHEMA_LOCATION_ID = 24;
         
     /** Comparing an implied attribute value against an explicit value */
     public static final Difference ATTR_VALUE_EXPLICITLY_SPECIFIED =
@@ -181,4 +191,20 @@ public interface DifferenceConstants {
      * matched against child nodes of the other. */
     public static final Difference CHILD_NODE_NOT_FOUND = 
         new Difference(CHILD_NODE_NOT_FOUND_ID, "presence of child node");
+
+    /** Comparing 2 nodes with different xsi:schemaLocation
+     * attributes, potentially only one of the two provides such an
+     * attribute at all.
+     */
+    public static final Difference SCHEMA_LOCATION = 
+        new Difference(SCHEMA_LOCATION_ID, "xsi:schemaLocation attribute",
+                       true);
+    /** Comparing 2 nodes with different xsi:noNamespaceSchemaLocation
+     * attributes, potentially only one of the two provides such an
+     * attribute at all.
+     */
+    public static final Difference NO_NAMESPACE_SCHEMA_LOCATION = 
+        new Difference(NO_NAMESPACE_SCHEMA_LOCATION_ID,
+                       "xsi:noNamespaceSchemaLocation attribute",
+                       true);
 }

@@ -1,6 +1,6 @@
 /*
  ******************************************************************
- Copyright (c) 200, Jeff Martin, Tim Bacon
+ Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without

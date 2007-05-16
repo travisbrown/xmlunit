@@ -780,6 +780,57 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         assertEquals(expectDifference, listener.different);
     }
 
+    public void testMissingSchemaLocation() throws Exception {
+        testMissingXSIAttribute(XMLConstants
+                                .W3C_XML_SCHEMA_INSTANCE_SCHEMA_LOCATION_ATTR,
+                                DifferenceConstants.SCHEMA_LOCATION_ID);
+    }
+
+    public void testMissingNoNamespaceSchemaLocation() throws Exception {
+        testMissingXSIAttribute(XMLConstants
+                                .W3C_XML_SCHEMA_INSTANCE_NO_NAMESPACE_SCHEMA_LOCATION_ATTR,
+                                DifferenceConstants.NO_NAMESPACE_SCHEMA_LOCATION_ID);
+    }
+
+    private void testMissingXSIAttribute(String attrName,
+                                         int expectedDifference)
+        throws Exception {
+        Element control = document.createElement("foo");
+        control.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+                               attrName, "bar");
+        Element test = document.createElement("foo");
+        engine.compare(control, test, listener, null);
+        assertEquals(expectedDifference, listener.comparingWhat);
+        //resetListener();
+        //engine.compare(test, control, listener, null);
+        //assertEquals(expectedDifference, listener.comparingWhat);
+    }
+
+    public void testDifferentSchemaLocation() throws Exception {
+        testDifferentXSIAttribute(XMLConstants
+                                  .W3C_XML_SCHEMA_INSTANCE_SCHEMA_LOCATION_ATTR,
+                                  DifferenceConstants.SCHEMA_LOCATION_ID);
+    }
+
+    public void testDifferentNoNamespaceSchemaLocation() throws Exception {
+        testDifferentXSIAttribute(XMLConstants
+                                  .W3C_XML_SCHEMA_INSTANCE_NO_NAMESPACE_SCHEMA_LOCATION_ATTR,
+                                  DifferenceConstants.NO_NAMESPACE_SCHEMA_LOCATION_ID);
+    }
+
+    private void testDifferentXSIAttribute(String attrName,
+                                           int expectedDifference)
+        throws Exception {
+        Element control = document.createElement("foo");
+        control.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+                               attrName, "bar");
+        Element test = document.createElement("foo");
+        test.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+                            attrName, "baz");
+        engine.compare(control, test, listener, null);
+        assertEquals(expectedDifference, listener.comparingWhat);
+    }
+
     private void listenToDifferences(String control, String test)
         throws SAXException, IOException {
         Document controlDoc = XMLUnit.buildControlDocument(control);

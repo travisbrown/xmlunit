@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007 Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -139,4 +139,22 @@ public interface XMLConstants {
      */
     public static final String W3C_XML_SCHEMA_NS_URI
         = "http://www.w3.org/2001/XMLSchema";
+
+    /**
+     * http://www.w3.org/2001/XMLSchema-instance
+     */
+    public static final String W3C_XML_SCHEMA_INSTANCE_NS_URI
+        = "http://www.w3.org/2001/XMLSchema-instance";
+
+    /**
+     * "schemaLocation"
+     */
+    public static final String W3C_XML_SCHEMA_INSTANCE_SCHEMA_LOCATION_ATTR
+        = "schemaLocation";
+
+    /**
+     * "noNamespaceSchemaLocation"
+     */
+    String W3C_XML_SCHEMA_INSTANCE_NO_NAMESPACE_SCHEMA_LOCATION_ATTR
+        = "noNamespaceSchemaLocation";
 }

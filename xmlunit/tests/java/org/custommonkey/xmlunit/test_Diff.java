@@ -683,4 +683,27 @@ public class test_Diff extends TestCase{
         }
     }
 
+    /**
+     * inspired by {@link
+     * http://day-to-day-stuff.blogspot.com/2007/05/comparing-xml-in-junit-test.html
+     * Erik von Oosten's Weblog }, made us implement special handling
+     * of schemaLocation.
+     */
+    public void testNamespacePrefixDiff() throws Exception {
+        String xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<Message xmlns=\"http://www.a.nl/a10.xsd\""
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+            + " xsi:schemaLocation=\"C:/longpath/a10.xsd\""
+            + ">"
+            + "<MessageHeader/>"
+            + "</Message>";
+        String xml2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<a:Message xmlns:a=\"http://www.a.nl/a10.xsd\">"
+            + "<a:MessageHeader/>"
+            + "</a:Message>";
+        Diff d = buildDiff(xml1, xml2);
+        assertFalse(d.toString(), d.identical());
+        assertTrue(d.toString(), d.similar());
+    }
+
 }

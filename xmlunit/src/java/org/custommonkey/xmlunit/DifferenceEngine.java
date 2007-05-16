@@ -453,9 +453,10 @@ public class DifferenceEngine implements DifferenceConstants {
                 control, test, listener, ELEMENT_TAG_NAME);
 
         NamedNodeMap controlAttr = control.getAttributes();
-        Integer controlNonXmlnsAttrLength = getNonXmlnsAttrLength(controlAttr);
+        Integer controlNonXmlnsAttrLength =
+            getNonSpecialAttrLength(controlAttr);
         NamedNodeMap testAttr = test.getAttributes();
-        Integer testNonXmlnsAttrLength = getNonXmlnsAttrLength(testAttr);
+        Integer testNonXmlnsAttrLength = getNonSpecialAttrLength(testAttr);
         compare(controlNonXmlnsAttrLength, testNonXmlnsAttrLength,
                 control, test, listener, ELEMENT_NUM_ATTRIBUTES);
 
@@ -463,10 +464,16 @@ public class DifferenceEngine implements DifferenceConstants {
                                  listener);
     }
 
-    private Integer getNonXmlnsAttrLength(NamedNodeMap attributes) {
+    /**
+     * The number of attributes not related to namespace declarations
+     * and/or Schema location.
+     */
+    private Integer getNonSpecialAttrLength(NamedNodeMap attributes) {
         int length = 0, maxLength = attributes.getLength();
         for (int i = 0; i < maxLength; ++i) {
-            if (!isXMLNSAttribute((Attr) attributes.item(i))) {
+            Attr a = (Attr) attributes.item(i);
+            if (!isXMLNSAttribute(a)
+                && !isRecognizedXMLSchemaInstanceAttribute(a)) {
                 ++length;
             }
         }
@@ -493,8 +500,13 @@ public class DifferenceEngine implements DifferenceConstants {
                 } else {
                     compareTo = (Attr) testAttr.getNamedItem(attrName);
                 }
-                            
-                if (compareTo != null) {
+
+                if (isRecognizedXMLSchemaInstanceAttribute(nextAttr)) {
+                    compareRecognizedXMLSchemaInstanceAttribute(nextAttr,
+                                                                compareTo,
+                                                                listener);
+
+                } else if (compareTo != null) {
                     compareAttribute(nextAttr, compareTo, listener);
 
                     if (!XMLUnit.getIgnoreAttributeOrder()) {
@@ -536,6 +548,48 @@ public class DifferenceEngine implements DifferenceConstants {
     private boolean isXMLNSAttribute(Attr attribute) {
         return XMLConstants.XMLNS_PREFIX.equals(attribute.getPrefix()) ||
             XMLConstants.XMLNS_PREFIX.equals(attribute.getName());
+    }
+
+    /**
+     * @param attr
+     * @return true if the attribute is an XML Schema Instance
+     * namespace attribute XMLUnit treats in a special way.
+     */
+    private boolean isRecognizedXMLSchemaInstanceAttribute(Attr attr) {
+        return XMLConstants
+            .W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attr.getNamespaceURI())
+            && (XMLConstants
+                .W3C_XML_SCHEMA_INSTANCE_SCHEMA_LOCATION_ATTR
+                .equals(attr.getLocalName())
+                || XMLConstants
+                .W3C_XML_SCHEMA_INSTANCE_NO_NAMESPACE_SCHEMA_LOCATION_ATTR
+                .equals(attr.getLocalName()));
+    }
+
+    /**
+     * Compare two attributes
+     * @param control
+     * @param test
+     * @param listener
+     * @throws DifferenceFoundException
+     */
+    protected void compareRecognizedXMLSchemaInstanceAttribute(Attr control,
+                                                               Attr test,
+                                                               DifferenceListener listener)
+        throws DifferenceFoundException {
+        Difference d = 
+            XMLConstants.W3C_XML_SCHEMA_INSTANCE_SCHEMA_LOCATION_ATTR
+            .equals(control.getLocalName())
+            ? SCHEMA_LOCATION : NO_NAMESPACE_SCHEMA_LOCATION;
+
+        controlTracker.visited(control);
+        if (test != null) {
+            testTracker.visited(test);
+        }
+        
+        compare(control.getValue(),
+                test != null ? test.getValue() : "[not specified]",
+                control, test, listener, d);
     }
 
     /**
