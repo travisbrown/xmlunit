@@ -801,9 +801,9 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         Element test = document.createElement("foo");
         engine.compare(control, test, listener, null);
         assertEquals(expectedDifference, listener.comparingWhat);
-        //resetListener();
-        //engine.compare(test, control, listener, null);
-        //assertEquals(expectedDifference, listener.comparingWhat);
+        resetListener();
+        engine.compare(test, control, listener, null);
+        assertEquals(expectedDifference, listener.comparingWhat);
     }
 
     public void testDifferentSchemaLocation() throws Exception {
@@ -829,6 +829,15 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
                             attrName, "baz");
         engine.compare(control, test, listener, null);
         assertEquals(expectedDifference, listener.comparingWhat);
+    }
+
+    public void testMissingAttribute() throws Exception {
+        Element control = document.createElement("foo");
+        control.setAttribute("bar", "baz");
+        Element test = document.createElement("foo");
+        test.setAttribute("baz", "bar");
+        engine.compare(control, test, listener, null);
+        assertEquals(ATTR_NAME_NOT_FOUND_ID, listener.comparingWhat);
     }
 
     private void listenToDifferences(String control, String test)

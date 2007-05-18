@@ -485,6 +485,14 @@ public class DifferenceEngine implements DifferenceConstants {
                                   NamedNodeMap testAttr,
                                   DifferenceListener listener)
         throws DifferenceFoundException {
+        ArrayList allTestAttrs = new ArrayList();
+        for (int i=0; i < testAttr.getLength(); ++i) {
+            Attr nextAttr = (Attr) testAttr.item(i);
+            if (!isXMLNSAttribute(nextAttr)) {
+                allTestAttrs.add(nextAttr);
+            }
+        }
+        
         for (int i=0; i < controlAttr.getLength(); ++i) {
             Attr nextAttr = (Attr) controlAttr.item(i);
             if (isXMLNSAttribute(nextAttr)) {
@@ -499,6 +507,10 @@ public class DifferenceEngine implements DifferenceConstants {
                                                                nextAttr.getNamespaceURI(), attrName);
                 } else {
                     compareTo = (Attr) testAttr.getNamedItem(attrName);
+                }
+
+                if (compareTo != null) {
+                    allTestAttrs.remove(compareTo);
                 }
 
                 if (isRecognizedXMLSchemaInstanceAttribute(nextAttr)) {
@@ -525,6 +537,20 @@ public class DifferenceEngine implements DifferenceConstants {
                 }
             }
         }
+
+        for (Iterator iter = allTestAttrs.iterator(); iter.hasNext(); ) {
+            Attr nextAttr = (Attr) iter.next();
+            if (isRecognizedXMLSchemaInstanceAttribute(nextAttr)) {
+                compareRecognizedXMLSchemaInstanceAttribute(null, nextAttr,
+                                                            listener);
+            } else {
+                compare(null,
+                        getUnNamespacedNodeName(nextAttr,
+                                                isNamespaced(nextAttr)),
+                        control, test, listener, ATTR_NAME_NOT_FOUND);
+            }
+        }
+
         controlTracker.clearTrackedAttribute();
         testTracker.clearTrackedAttribute();
     }
@@ -577,17 +603,20 @@ public class DifferenceEngine implements DifferenceConstants {
                                                                Attr test,
                                                                DifferenceListener listener)
         throws DifferenceFoundException {
+        Attr nonNullNode = control != null ? control : test;
         Difference d = 
             XMLConstants.W3C_XML_SCHEMA_INSTANCE_SCHEMA_LOCATION_ATTR
-            .equals(control.getLocalName())
+            .equals(nonNullNode.getLocalName())
             ? SCHEMA_LOCATION : NO_NAMESPACE_SCHEMA_LOCATION;
 
-        controlTracker.visited(control);
+        if (control != null) {
+            controlTracker.visited(control);
+        }
         if (test != null) {
             testTracker.visited(test);
         }
         
-        compare(control.getValue(),
+        compare(control != null ? control.getValue() : "[not specified]",
                 test != null ? test.getValue() : "[not specified]",
                 control, test, listener, d);
     }

@@ -81,15 +81,18 @@ public class test_DetailedDiff extends test_Diff {
 
         List differences = detailedDiff.getAllDifferences();
 
-        assertEquals("size: " + detailedDiff, 4, differences.size());
+        assertEquals("size: " + detailedDiff, 5, differences.size());
         assertEquals("first: " + detailedDiff,
                      DifferenceConstants.ELEMENT_NUM_ATTRIBUTES, differences.get(0));
         assertEquals("second: " + detailedDiff,
                      DifferenceConstants.ATTR_VALUE, differences.get(1));
         assertEquals("third: " + detailedDiff,
                      DifferenceConstants.ATTR_SEQUENCE, differences.get(2));
-        assertEquals("fourth: " + detailedDiff,
-                     DifferenceConstants.HAS_CHILD_NODES, differences.get(3));
+        assertEquals("forth: " + detailedDiff,
+                     DifferenceConstants.ATTR_NAME_NOT_FOUND,
+                     differences.get(3));
+        assertEquals("fifth: " + detailedDiff,
+                     DifferenceConstants.HAS_CHILD_NODES, differences.get(4));
     }
 
     public void testPrototypeIsADetailedDiff() throws Exception {

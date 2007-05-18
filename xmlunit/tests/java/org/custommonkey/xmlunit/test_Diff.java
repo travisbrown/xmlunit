@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 200, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -686,7 +686,7 @@ public class test_Diff extends TestCase{
     /**
      * inspired by {@link
      * http://day-to-day-stuff.blogspot.com/2007/05/comparing-xml-in-junit-test.html
-     * Erik von Oosten's Weblog }, made us implement special handling
+     * Erik von Oosten's Weblog}, made us implement special handling
      * of schemaLocation.
      */
     public void testNamespacePrefixDiff() throws Exception {
