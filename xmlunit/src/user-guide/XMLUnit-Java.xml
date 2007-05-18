@@ -1137,6 +1137,24 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
               <entry>Two nodes in the two pieces of XML share the same
               local name but use different XML Namespace URIs.</entry>
             </row>
+            <row>
+              <entry><literal>SCHEMA_LOCATION_ID</literal></entry>
+              <entry><literal>SCHEMA_LOCATION</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>Two nodes have different values for the
+              <literal>schemaLocation</literal> attribute of the
+              XMLSchema-Instance namespace.  The attribute could be
+              present on only one of the two nodes.</entry>
+            </row>
+            <row>
+              <entry><literal>NO_NAMESPACE_SCHEMA_LOCATION_ID</literal></entry>
+              <entry><literal>NO_NAMESPACE_SCHEMA_LOCATION</literal></entry>
+              <entry><literal>true</literal></entry>
+              <entry>Two nodes have different values for the
+              <literal>noNamespaceSchemaLocation</literal> attribute
+              of the XMLSchema-Instance namespace.  The attribute
+              could be present on only one of the two nodes.</entry>
+            </row>
           </tbody>
         </tgroup>
       </table>
@@ -1400,6 +1418,16 @@ Expected node test to pass, but it failed! Incorrect value [#text: 9]
             <row>
               <entry><literal>NAMESPACE_URI_ID</literal></entry>
               <entry>The Namespace URI.</entry>
+            </row>
+            <row>
+              <entry><literal>SCHEMA_LOCATION_ID</literal></entry>
+              <entry>The attribute's value or "[attribute absent]" if
+              it has not been specified.</entry>
+            </row>
+            <row>
+              <entry><literal>NO_NAMESPACE_SCHEMA_LOCATION_ID</literal></entry>
+              <entry>The attribute's value or "[attribute absent]" if
+              it has not been specified.</entry>
             </row>
             <row>
               <entry><literal>ELEMENT_TAG_NAME_ID</literal></entry>
@@ -3031,6 +3059,38 @@ class MyNodeTester implements NodeTester {
             children were compared to the very first child node of the
             test element.  Excess children of the test element were
             not reported at all.</para>
+          </listitem>
+
+          <listitem>
+            <para>The <literal>schemaLocation</literal> and
+            <literal>noNamespaceSchemaLocation</literal> attributes of
+            the XMLSchema-Instance Namespace are now treated in a
+            different way from "normal" attributes.  They will be
+            flagged as new kinds of <literal>Difference</literal> that
+            is recoverable.</para>
+
+            <para>This means that two pieces of XML that were
+            different in XMLUnit 1.0 because they differed in one of
+            the two attributes will be similar in XMLUnit 1.1.</para>
+          </listitem>
+
+          <listitem>
+            <para>When comparing two elements that differ on
+            attributes the comparision is now symmetric.</para>
+
+            <para>In XMLUnit 1.0 if an attribute was present on the
+            test but not the control element this wasn't flagged as a
+            <literal>Difference</literal>; in XMLUnit 1.1 it
+            is.</para>
+
+            <para>In most practical cases this doesn't cause any
+            problems since the two elements either have a different
+            number of attributes or there are attributes in the
+            control element that are missing in the test element - so
+            the pieces of XML have been flagged as different before as
+            well.  If you are using <literal>DetailiedDiff</literal>
+            this change may lead to more detected
+            <literal>Difference</literal>s, though.</para>
           </listitem>
         </itemizedlist>
       </section>
