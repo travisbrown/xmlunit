@@ -69,6 +69,7 @@ import org.w3c.dom.Text;
 public class DifferenceEngine implements DifferenceConstants {
     private static final String NULL_NODE = "null";
     private static final String NOT_NULL_NODE = "not null";
+    private static final String ATTRIBUTE_ABSENT = "[attribute absent]";
     private final ComparisonController controller;
     private final XpathNodeTracker controlTracker;
     private final XpathNodeTracker testTracker;
@@ -485,11 +486,11 @@ public class DifferenceEngine implements DifferenceConstants {
                                   NamedNodeMap testAttr,
                                   DifferenceListener listener)
         throws DifferenceFoundException {
-        ArrayList allTestAttrs = new ArrayList();
+        ArrayList unmatchedTestAttrs = new ArrayList();
         for (int i=0; i < testAttr.getLength(); ++i) {
             Attr nextAttr = (Attr) testAttr.item(i);
             if (!isXMLNSAttribute(nextAttr)) {
-                allTestAttrs.add(nextAttr);
+                unmatchedTestAttrs.add(nextAttr);
             }
         }
         
@@ -510,7 +511,7 @@ public class DifferenceEngine implements DifferenceConstants {
                 }
 
                 if (compareTo != null) {
-                    allTestAttrs.remove(compareTo);
+                    unmatchedTestAttrs.remove(compareTo);
                 }
 
                 if (isRecognizedXMLSchemaInstanceAttribute(nextAttr)) {
@@ -523,7 +524,7 @@ public class DifferenceEngine implements DifferenceConstants {
 
                     if (!XMLUnit.getIgnoreAttributeOrder()) {
                         Attr attributeItem = (Attr) testAttr.item(i);
-                        String testAttrName = "[attribute absent]";
+                        String testAttrName = ATTRIBUTE_ABSENT;
                         if (attributeItem != null) {
                             testAttrName =
                                 getUnNamespacedNodeName(attributeItem);
@@ -538,7 +539,7 @@ public class DifferenceEngine implements DifferenceConstants {
             }
         }
 
-        for (Iterator iter = allTestAttrs.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = unmatchedTestAttrs.iterator(); iter.hasNext(); ) {
             Attr nextAttr = (Attr) iter.next();
             if (isRecognizedXMLSchemaInstanceAttribute(nextAttr)) {
                 compareRecognizedXMLSchemaInstanceAttribute(null, nextAttr,
@@ -616,8 +617,8 @@ public class DifferenceEngine implements DifferenceConstants {
             testTracker.visited(test);
         }
         
-        compare(control != null ? control.getValue() : "[not specified]",
-                test != null ? test.getValue() : "[not specified]",
+        compare(control != null ? control.getValue() : ATTRIBUTE_ABSENT,
+                test != null ? test.getValue() : ATTRIBUTE_ABSENT,
                 control, test, listener, d);
     }
 
