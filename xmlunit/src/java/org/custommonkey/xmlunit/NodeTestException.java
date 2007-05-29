@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
  * @see NodeTest
  */
 public class NodeTestException extends Exception {
-    private final Node node;
+    private transient final Node node;
 
     /**
      * Constructor for specific node and message

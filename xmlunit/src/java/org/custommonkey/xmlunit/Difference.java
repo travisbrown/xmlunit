@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -145,6 +145,13 @@ public class Difference {
         } else {
             return false;
         }
+    }
+
+    /**
+     * hashcode implementation to go with equals.
+     */
+    public int hashCode() {
+        return id;
     }
 
     /**

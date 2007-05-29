@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@ import org.w3c.dom.ProcessingInstruction;
  * Class for describing Nodes
  */
 public class NodeDescriptor implements XMLConstants {
-    protected static String DOCUMENT_NODE_DESCRIPTION = "Document Node ";
+    protected static final String DOCUMENT_NODE_DESCRIPTION = "Document Node ";
         
     /**
      * Convert a Node into a simple String representation 

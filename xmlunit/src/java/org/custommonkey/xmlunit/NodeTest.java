@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -160,7 +160,7 @@ public class NodeTest {
      * Node type specific Node Filter: accepts Nodes of those types specified
      * in constructor, rejects all others
      */
-    private class NodeTypeNodeFilter implements NodeFilter {
+    private static class NodeTypeNodeFilter implements NodeFilter {
         private final short[] nodeTypes;
 
         /**

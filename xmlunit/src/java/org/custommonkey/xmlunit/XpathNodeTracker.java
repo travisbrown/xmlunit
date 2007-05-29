@@ -58,8 +58,6 @@ public class XpathNodeTracker implements XMLConstants {
     private final List indentationList = new ArrayList();
     private TrackingEntry currentEntry;
 
-    private boolean trackRepeatedVisits = false;
-
     /**
      * Simple constructor
      */ 
@@ -198,7 +196,7 @@ public class XpathNodeTracker implements XMLConstants {
      * Wrapper class around a mutable <code>int</code> value
      * Avoids creation of many immutable <code>Integer</code> objects
      */
-    private final class Int {
+    private static final class Int {
         private int value;
                 
         public Int(int startAt) {
@@ -222,7 +220,7 @@ public class XpathNodeTracker implements XMLConstants {
      * Holds node tracking details - one instance is used for each level of indentation in a DOM
      * Provides reference between a String-ified Node value and the xpath index of that value
      */
-    private final class TrackingEntry {
+    private static final class TrackingEntry {
         private final Map valueMap = new HashMap();
         private String currentValue, currentAttribute;
 

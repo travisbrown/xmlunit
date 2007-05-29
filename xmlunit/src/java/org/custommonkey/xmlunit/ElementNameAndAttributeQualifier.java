@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit;
 
+import java.util.Arrays;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -49,7 +50,7 @@ import org.w3c.dom.NamedNodeMap;
  * @see Diff#overrideElementQualifier(ElementQualifier)
  */
 public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
-    public static final String[] ALL_ATTRIBUTES = {"*"};
+    private static final String[] ALL_ATTRIBUTES = {"*"};
         
     private final String[] qualifyingAttrNames;
         
@@ -76,7 +77,9 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
      * elements can be compared further for differences
      */
     public ElementNameAndAttributeQualifier(String[] attrNames) {
-        this.qualifyingAttrNames = attrNames;
+        this.qualifyingAttrNames = new String[attrNames.length];
+        System.arraycopy(attrNames, 0, qualifyingAttrNames, 0,
+                         attrNames.length);
     }
 
     /**
@@ -109,7 +112,7 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
         String controlValue, testValue;
         Attr[] qualifyingAttributes;
         NamedNodeMap namedNodeMap = control.getAttributes();
-        if (qualifyingAttrNames == ALL_ATTRIBUTES) {  
+        if (matchesAllAttributes(qualifyingAttrNames)) {
             qualifyingAttributes = new Attr[namedNodeMap.getLength()];
             for (int n=0; n < qualifyingAttributes.length; ++n) {
                 qualifyingAttributes[n] = (Attr) namedNodeMap.item(n);
@@ -150,4 +153,7 @@ public class ElementNameAndAttributeQualifier extends ElementNameQualifier {
         return true;
     }
 
+    private static boolean matchesAllAttributes(String[] attributes) {
+        return Arrays.equals(attributes, ALL_ATTRIBUTES);
+    }
 }
