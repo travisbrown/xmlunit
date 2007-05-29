@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -450,14 +450,8 @@ public class XMLAssert extends Assert implements XSLTConstants {
                                          String testXpath,
                                          Document testDocument)
         throws XpathException {
-        XpathEngine xpath = XMLUnit.newXpathEngine();
-        Diff diff = new Diff(asXpathResultDocument(XMLUnit.newControlParser(),
-                                                   xpath.getMatchingNodes(controlXpath,
-                                                                          controlDocument)),
-                             asXpathResultDocument(XMLUnit.newTestParser(),
-                                                   xpath.getMatchingNodes(testXpath,
-                                                                          testDocument)));
-        assertXMLEqual(diff, true);
+        assertXpathEquality(controlXpath, controlDocument, testXpath,
+                            testDocument, true);
     }
 
     /**
@@ -559,6 +553,25 @@ public class XMLAssert extends Assert implements XSLTConstants {
                                             String testXpath,
                                             Document testDocument)
         throws XpathException {
+        assertXpathEquality(controlXpath, controlDocument, testXpath,
+                            testDocument, false);
+    }
+
+    /**
+     * Assert that the node lists of two Xpaths in two documents are
+     * equal or not.
+     * @param xpathOne
+     * @param xpathTwo
+     * @param document
+     * @param equality whether the values should be equal.
+     * @see XpathEngine
+     */
+    private static void assertXpathEquality(String controlXpath,
+                                            Document controlDocument,
+                                            String testXpath,
+                                            Document testDocument,
+                                            boolean equal)
+        throws XpathException {
         XpathEngine xpath = XMLUnit.newXpathEngine();
         Diff diff = new Diff(asXpathResultDocument(XMLUnit.newControlParser(),
                                                    xpath.getMatchingNodes(controlXpath,
@@ -566,7 +579,7 @@ public class XMLAssert extends Assert implements XSLTConstants {
                              asXpathResultDocument(XMLUnit.newTestParser(),
                                                    xpath.getMatchingNodes(testXpath,
                                                                           testDocument)));
-        assertXMLEqual(diff, false);
+        assertXMLEqual(diff, equal);
     }
 
     /**
