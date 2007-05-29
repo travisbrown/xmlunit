@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,7 @@ final class DoctypeSupport {
 
         StringBuffer sb = new StringBuffer(DOCTYPE_OPEN_DECL);
         sb.append(DOCTYPE).append(name).append(SYSTEM)
-            .append(systemId).append("\"").append(DOCTYPE_CLOSE_DECL);
+            .append(systemId).append('\"').append(DOCTYPE_CLOSE_DECL);
         String s = sb.toString();
         IntegerBuffer buf =
             new IntegerBuffer(s.length() * (characters ? 1 : 2));

@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,15 @@ public class XMLUnitRuntimeException extends RuntimeException {
     public XMLUnitRuntimeException(String message, Throwable cause) {
         super(message);
         this.cause = cause;
+    }
+
+    /**
+     * Inititializes an exeption without cause.
+     *
+     * @param message the detail message
+     */
+    public XMLUnitRuntimeException(String message) {
+        this(message, null);
     }
 
     /**

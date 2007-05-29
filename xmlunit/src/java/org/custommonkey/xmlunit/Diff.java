@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -279,7 +279,7 @@ public class Diff
      * @param difference
      */
     private void appendDifference(StringBuffer appendTo, Difference difference) {
-        appendTo.append(" ").append(difference).append('\n');
+        appendTo.append(' ').append(difference).append('\n');
     }
 
     /**

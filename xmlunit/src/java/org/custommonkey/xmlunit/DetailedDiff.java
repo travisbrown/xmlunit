@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,6 @@ public class DetailedDiff extends Diff {
      */
     public int differenceFound(Difference difference) {
         final int returnValue = super.differenceFound(difference);
-        Difference localDifference = null;
         switch (returnValue) {
         case RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL:
             return returnValue;
@@ -82,6 +81,11 @@ public class DetailedDiff extends Diff {
         case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
             difference.setRecoverable(true);
             break;
+        default:
+            throw new IllegalArgumentException(returnValue
+                                               + " is not a defined "
+                                               + " DifferenceListener"
+                                               + ".RETURN_... value");
         }
         allDifferences.add(difference);
         return returnValue;

@@ -62,7 +62,7 @@ public class XpathNodeTracker implements XMLConstants {
      * Simple constructor
      */ 
     public XpathNodeTracker() {
-        indent();
+        newLevel();
     }
         
     /**
@@ -81,6 +81,10 @@ public class XpathNodeTracker implements XMLConstants {
         if (currentEntry != null) {
             currentEntry.clearTrackedAttribute();
         }
+        newLevel();
+    }
+
+    private void newLevel() {
         currentEntry = new TrackingEntry();
         indentationList.add(currentEntry);
     }
@@ -137,6 +141,9 @@ public class XpathNodeTracker implements XMLConstants {
         case Node.CDATA_SECTION_NODE:
         case Node.TEXT_NODE:
             visitedNode(node, XPATH_CHARACTER_NODE_IDENTIFIER);
+            break;
+        default:
+            // ignore unhandled node types
             break;
         }
     }
@@ -203,15 +210,15 @@ public class XpathNodeTracker implements XMLConstants {
             value = startAt;
         }
                 
-        public final void increment() {
+        public void increment() {
             ++value;
         }
                 
-        public final int getValue() {
+        public int getValue() {
             return value;
         }
                 
-        public final Integer toInteger() {
+        public Integer toInteger() {
             return new Integer(value);
         }
     }
@@ -237,7 +244,7 @@ public class XpathNodeTracker implements XMLConstants {
          * @param visited the non-attribute node visited
          * @param value the String-ified value of the non-attribute node visited
          */
-        public final void trackNode(Node visited, String value) {
+        public void trackNode(Node visited, String value) {
             if (nodeReferenceMap == null || trackNodeReferences) {
                 Int occurrence = lookup(value);
                 if (occurrence == null) {
@@ -260,14 +267,14 @@ public class XpathNodeTracker implements XMLConstants {
          * Keep a reference to the visited attribute at the current visited node
          * @param value the attribute visited
          */
-        public final void trackAttribute(String visited) {
+        public void trackAttribute(String visited) {
             currentAttribute = visited;
         }
                                 
         /**
          * Clear any reference to the current visited attribute         
          */
-        public final void clearTrackedAttribute() {
+        public void clearTrackedAttribute() {
             currentAttribute = null;
         }
                 
@@ -275,7 +282,7 @@ public class XpathNodeTracker implements XMLConstants {
          * Append the details of the current visited node to a StringBuffer
          * @param buf the StringBuffer to append to
          */
-        public final void appendEntryTo(StringBuffer buf) {
+        public void appendEntryTo(StringBuffer buf) {
             if (currentValue == null) {
                 return;
             }

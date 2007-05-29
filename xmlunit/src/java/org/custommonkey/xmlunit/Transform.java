@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XMLUnitRuntimeException;
 
 import java.io.File;
 import java.io.StringReader;
@@ -178,7 +179,8 @@ public class Transform {
         try {
             return PWD.toURL().toExternalForm();
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Unable to determine current working directory!");
+            throw new XMLUnitRuntimeException("Unable to determine current "
+                                              + "working directory!", e);
         }
     }
     /**

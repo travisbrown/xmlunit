@@ -37,7 +37,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -264,7 +263,7 @@ public class DifferenceEngine implements DifferenceConstants {
         boolean flag = n.hasChildNodes();
         if (flag && XMLUnit.getIgnoreComments()) {
             List nl = nodeList2List(n.getChildNodes());
-            flag = nl.size() > 0;
+            flag = !nl.isEmpty();
         }
         return flag ? Boolean.TRUE : Boolean.FALSE;
     }

@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,7 @@ import javax.xml.XMLConstants;
 public class XMLUnitNamespaceContext2Jaxp13
     implements javax.xml.namespace.NamespaceContext {
 
-    private final HashMap/*<String, String>*/ nsMap;
+    private final Map/*<String, String>*/ nsMap;
 
     public XMLUnitNamespaceContext2Jaxp13(NamespaceContext ctx) {
         nsMap = turnIntoMap(ctx);
@@ -91,7 +91,7 @@ public class XMLUnitNamespaceContext2Jaxp13
         return i.hasNext() ? (String) i.next() : null;
     }
 
-    private static HashMap turnIntoMap(NamespaceContext ctx) {
+    private static Map turnIntoMap(NamespaceContext ctx) {
         HashMap/*<String, String>*/ m = new HashMap();
         for (Iterator i = ctx.getPrefixes(); i.hasNext(); ) {
             String prefix = (String) i.next();

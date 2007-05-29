@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -228,10 +228,10 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
                 prefix = "";
             }
 
-            if (uri.indexOf("'") != -1) {
+            if (uri.indexOf('\'') != -1) {
                 quoteStyle = "\"";
             }
-            nsDecls.append(" ").append(XMLNS_PREFIX);
+            nsDecls.append(' ').append(XMLNS_PREFIX);
             if (prefix.length() > 0) {
                 nsDecls.append(':');
             }

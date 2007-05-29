@@ -1,7 +1,7 @@
 // -*- Mode: JDE -*-
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,8 @@ import junit.framework.Assert;
  */
 
 public class XPathRegexAssert {
+    // no instances
+    private XPathRegexAssert() {}
 
     public static void assertXPathMatches(String message, String regex,
                                           String xpath, Document doc)
