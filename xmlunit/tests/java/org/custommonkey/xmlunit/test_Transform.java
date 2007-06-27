@@ -39,7 +39,11 @@ package org.custommonkey.xmlunit;
 import java.io.File;
 import java.io.FileReader;
 
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.URIResolver;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -116,6 +120,30 @@ public class test_Transform extends TestCase{
         assertEquals("<creepycrawly/>", transform.getResultString());
     }
 
+    /**
+     * Issue 1742826
+     */
+    public void testURIResolverForStylesheet() throws Exception {
+        TestResolver tr = new TestResolver();
+        try {
+            XMLUnit.setURIResolver(tr);
+            String s = "<foo/>";
+            String xsl = test_Constants.XML_DECLARATION
+                + test_Constants.XSLT_START
+                + "<xsl:include href=\"urn:bar\"/>"
+                + test_Constants.XSLT_END;
+            try {
+                Transform transform = new Transform(s, xsl);
+                fail("should fail because of unknown include URI");
+            } catch (ConfigurationException tce) {
+                // expected exception
+            }
+            assertTrue("URIResolver has been called", tr.called);
+        } finally {
+            XMLUnit.setURIResolver(null);
+        }
+    }
+
     private void assertNotEquals(Object expected, Object actual) {
         if (expected.equals(actual)) {
             fail("Expected " + expected + " different to actual!");
@@ -130,13 +158,6 @@ public class test_Transform extends TestCase{
         animal = new File(test_Constants.BASEDIR + "/tests/etc/animal.xsl");
     }
 
-    /**
-     * Return the test suite containing this test
-     */
-    public static TestSuite suite(){
-        return new TestSuite(test_Transform.class);
-    }
-
     private static String stripLineFeeds(String s) {
         int index = s.indexOf(test_Constants.LINE_SEPARATOR);
         while (index > -1) {
@@ -145,6 +166,15 @@ public class test_Transform extends TestCase{
             index = s.indexOf(test_Constants.LINE_SEPARATOR);
         }
         return s;
+    }
+
+    private static class TestResolver implements URIResolver {
+        private boolean called = false;
+
+        public Source resolve(String h, String b) {
+            called = true;
+            return null;
+        }
     }
 }
 
