@@ -196,9 +196,6 @@ public class Transform {
             Transformer t = stylesheetSource == null
                 ? factory.newTransformer()
                 : factory.newTransformer(stylesheetSource);
-            if (XMLUnit.getURIResolver() != null) {
-                t.setURIResolver(XMLUnit.getURIResolver());
-            }
             return t;
         } catch (javax.xml.transform.TransformerConfigurationException ex) {
             throw new ConfigurationException(ex);

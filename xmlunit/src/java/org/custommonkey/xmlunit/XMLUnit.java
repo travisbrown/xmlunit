@@ -397,6 +397,9 @@ public final class XMLUnit {
     public static TransformerFactory getTransformerFactory() {
         if (transformerFactory == null) {
             transformerFactory = TransformerFactory.newInstance();
+            if (uriResolver != null) {
+                transformerFactory.setURIResolver(uriResolver);
+            }
         }
         return transformerFactory;
     }
@@ -405,7 +408,11 @@ public final class XMLUnit {
      * Sets the URIResolver to use during transformations.
      */
     public static void setURIResolver(URIResolver resolver) {
-        uriResolver = resolver;
+        if (uriResolver != resolver) {
+            uriResolver = resolver;
+            transformerFactory = null;
+            getTransformerFactory();
+        }
     }
 
     /**
