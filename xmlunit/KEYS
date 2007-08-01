@@ -1,3 +1,14 @@
+This file contains the PGP keys of various developers.
+
+Users: pgp < KEYS
+       gpg --import KEYS
+Developers: 
+        pgp -kxa <your name> and append it to this file.
+        (pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+        (gpg --list-sigs <your name>
+             && gpg --armor --export <your name>) >> this file.
+
+
 pub   1024D/5F6B8B72 2001-05-28
 uid                  Stefan Bodewig <bodewig@apache.org>
 sig 3        5F6B8B72 2001-05-28  Stefan Bodewig <bodewig@apache.org>
