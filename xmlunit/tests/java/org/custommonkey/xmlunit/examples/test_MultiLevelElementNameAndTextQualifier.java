@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2007, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -138,6 +138,40 @@ public class test_MultiLevelElementNameAndTextQualifier extends TestCase {
         d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
         assertTrue(d.similar());
 
+    }
+
+    public void XtestUserGuideExample() throws Exception {
+        String control =
+            "<table>\n"
+            + "  <tr>\n"
+            + "    <td>foo</td>\n"
+            + "  </tr>\n"
+            + "  <tr>\n"
+            + "    <td>bar</td>\n"
+            + "  </tr>\n"
+            + "</table>\n";
+        String test =
+            "<table>\n"
+            + "  <tr>\n"
+            + "    <td>bar</td>\n"
+            + "  </tr>\n"
+            + "  <tr>\n"
+            + "    <td>foo</td>\n"
+            + "  </tr>\n"
+            + "</table>\n";
+
+        Diff d = new Diff(control, test);
+        d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
+        //assertTrue(d.toString(), d.similar());
+        
+        d = new Diff(control, test);
+        d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
+        try {
+            XMLUnit.setIgnoreWhitespace(true);
+            assertTrue(d.toString(), d.similar());
+        } finally {
+            XMLUnit.setIgnoreWhitespace(false);
+        }
     }
 
     public void setUp() throws Exception {
