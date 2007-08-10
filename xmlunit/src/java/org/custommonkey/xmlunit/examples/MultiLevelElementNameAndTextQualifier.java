@@ -52,7 +52,7 @@ import org.custommonkey.xmlunit.ElementQualifier;
  * ElementNameQualifier} and MultiLevelElementNameQualifier(1) should
  * lead to the same results.</p>
  *
- * <p>Any attribute values ar completely ignored.  Only works on
+ * <p>Any attribute values are completely ignored.  Only works on
  * elements with exactly one child element at each level.</p>
  *
  * <p>This class mostly exists as an example for custom ElementQualifiers.</p>
@@ -61,6 +61,7 @@ public class MultiLevelElementNameAndTextQualifier
     implements ElementQualifier {
 
     private final int levels;
+    private final boolean ignoreEmptyTexts;
 
     private static final ElementNameQualifier NAME_QUALIFIER =
         new ElementNameQualifier();
@@ -70,13 +71,28 @@ public class MultiLevelElementNameAndTextQualifier
     /**
      * Uses element names and the text nested <code>levels</code>
      * child elements deeper into the element to compare elements.
+     *
+     * <p>Does not ignore empty text nodes.
      */
     public MultiLevelElementNameAndTextQualifier(int levels) {
+        this(levels, false);
+    }
+
+    /**
+     * Uses element names and the text nested <code>levels</code>
+     * child elements deeper into the element to compare elements.
+     *
+     * @param ignoreEmptyTexts whether whitespace-only textnodes
+     * should be ignored.
+     */
+    public MultiLevelElementNameAndTextQualifier(int levels,
+                                                 boolean ignoreEmptyTexts) {
         if (levels < 1) {
             throw new IllegalArgumentException("levels must be equal or"
                                                + " greater than one");
         }
         this.levels = levels;
+        this.ignoreEmptyTexts = ignoreEmptyTexts;
     }
 
     public boolean qualifyForComparison(Element control, Element test) {
@@ -89,11 +105,12 @@ public class MultiLevelElementNameAndTextQualifier
              currentLevel++) {
             stillSimilar = NAME_QUALIFIER.qualifyForComparison(currentControl,
                                                                currentTest);
+
             if (stillSimilar) {
                 if (currentControl.hasChildNodes()
                     && currentTest.hasChildNodes()) {
-                    Node n1 = currentControl.getFirstChild();
-                    Node n2 = currentTest.getFirstChild();
+                    Node n1 = getFirstEligibleChild(currentControl);
+                    Node n2 = getFirstEligibleChild(currentTest);
                     if (n1.getNodeType() == Node.ELEMENT_NODE
                         && n2.getNodeType() == Node.ELEMENT_NODE) {
                         currentControl = (Element) n1;
@@ -115,5 +132,17 @@ public class MultiLevelElementNameAndTextQualifier
 
         return stillSimilar;
     }
-        
+
+    private Node getFirstEligibleChild(Node parent) {
+        Node n1 = parent.getFirstChild();
+        if (ignoreEmptyTexts) {
+            while (n1.getNodeType() == Node.TEXT_NODE
+                   && n1.getNodeValue().trim().length() == 0) {
+                Node n2 = n1.getNextSibling();
+                if (n2 == null) break;
+                n1 = n2;
+            }
+        }
+        return n1;
+    }
 }

@@ -140,7 +140,7 @@ public class test_MultiLevelElementNameAndTextQualifier extends TestCase {
 
     }
 
-    public void XtestUserGuideExample() throws Exception {
+    public void testUserGuideExample() throws Exception {
         String control =
             "<table>\n"
             + "  <tr>\n"
@@ -162,16 +162,21 @@ public class test_MultiLevelElementNameAndTextQualifier extends TestCase {
 
         Diff d = new Diff(control, test);
         d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
-        //assertTrue(d.toString(), d.similar());
+        assertFalse(d.toString(), d.similar());
         
-        d = new Diff(control, test);
-        d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
         try {
             XMLUnit.setIgnoreWhitespace(true);
+            d = new Diff(control, test);
+            d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
             assertTrue(d.toString(), d.similar());
         } finally {
             XMLUnit.setIgnoreWhitespace(false);
         }
+
+        d = new Diff(control, test);
+        d.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2,
+                                                                             true));
+        assertTrue(d.toString(), d.similar());
     }
 
     public void setUp() throws Exception {

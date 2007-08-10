@@ -14,8 +14,6 @@
         <firstname>Tim</firstname>
         <surname>Bacon</surname>
       </author>
-    </authorgroup>
-    <authorgroup>
       <author>
         <firstname>Stefan</firstname>
         <surname>Bodewig</surname>
@@ -35,6 +33,11 @@
         <revnumber>1.1</revnumber>
         <date>April 2007</date>
         <revremark>Documentation for XMLUnit Java 1.1</revremark>
+      </revision>
+      <revision>
+        <revnumber>1.2</revnumber>
+        <date>...</date>
+        <revremark>Documentation for XMLUnit Java 1.2</revremark>
       </revision>
     </revhistory>
   </articleinfo>
@@ -1911,6 +1914,21 @@ public class IgnoreDoctype implements DifferenceListener {
         identical to <literal>ElementNameAndTextQualifier</literal>.
         In <xref linkend="htmltable"/> a value of 2 would be
         needed.</para>
+
+        <para>By default
+        <literal>MultiLevelElementNameAndTextQualifier</literal> will
+        not ignore whitespace between the elements leading up to the
+        nested text.  If your piece of XML contains this sort of
+        whitespace (like <xref linkend="htmltable"/> which contains a
+        newline and several space characters between
+        <literal>&lt;tr&gt;</literal> and
+        <literal>&lt;td&gt;</literal>) you can either instruct XMLUnit
+        to ignore whitespace completely (see
+          <xref linkend="Whitespace Handling"/>) or use the two-arg
+        constructor of
+        <literal>MultiLevelElementNameAndTextQualifier</literal>
+        introduced with XMLUnit 1.2 and set the
+        <literal>ignoreEmptyTexts</literal> argument to true.</para>
       </section>
 
     </section>
@@ -3215,6 +3233,11 @@ class MyNodeTester implements NodeTester {
         </itemizedlist>
       </section>
     </section>
+
+    <section id="Changes 1.2">
+      <title>Changes from XMLUnit 1.1 to 1.2</title>
+    </section>
+
   </appendix>
 
 </article>
