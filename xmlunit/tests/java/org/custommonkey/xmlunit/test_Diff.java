@@ -706,4 +706,26 @@ public class test_Diff extends TestCase{
         assertTrue(d.toString(), d.similar());
     }
 
+    /**
+     * Bug Report 1779701
+     * @see http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1779701&amp;group_id=23187&amp;atid=377768
+     */
+    public void testWhitespaceAndNamespaces() throws Exception {
+	String control =
+	    "<env:Envelope xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>"
+	    + "\r\n <env:Header/>"
+	    + "\r\n </env:Envelope>";
+	String test =
+	    "<env:Envelope xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>"
+	    + "<env:Header/>"
+	    + "</env:Envelope>";
+	XMLUnit.setIgnoreWhitespace(true);
+	try {
+	    Diff diff = XMLUnit.compareXML(control, test);
+	    assertTrue(diff.toString(), diff.identical());
+	} finally {
+	    XMLUnit.setIgnoreWhitespace(false);
+	}
+    }
+
 }
