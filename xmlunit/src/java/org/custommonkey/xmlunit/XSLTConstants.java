@@ -83,4 +83,11 @@ public interface XSLTConstants extends XMLConstants {
      * &lt;/xsl:stylesheet&gt;
      */
     String XSLT_END = "</xsl:stylesheet>";
+
+    /**
+     * Factory class of the XSLTC version shipping with JDK 1.5 which
+     * is pretty broken.
+     */
+    String JAVA5_XSLTC_FACTORY_NAME =
+        "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
 }

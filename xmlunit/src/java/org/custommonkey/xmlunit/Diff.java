@@ -178,16 +178,9 @@ public class Diff
      *  differences ignore whitespace
      */
     private Document getWhitespaceManipulatedDocument(Document originalDoc) {
-        if (!XMLUnit.getIgnoreWhitespace()) {
-            return originalDoc;
-        }
-        try {
-            Transform whitespaceStripper = XMLUnit.getStripWhitespaceTransform(
-                                                                               originalDoc);
-            return whitespaceStripper.getResultDocument();
-        } catch (TransformerException e) {
-            throw new XMLUnitRuntimeException(e.getMessage(), e.getCause());
-        }
+	return XMLUnit.getIgnoreWhitespace()
+	    ? XMLUnit.getWhitespaceStrippedDocument(originalDoc)
+	    : originalDoc;
     }
 
     /**

@@ -37,11 +37,13 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit;
 
 import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XMLUnitRuntimeException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
@@ -52,6 +54,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.EntityResolver;
@@ -456,6 +460,54 @@ public final class XMLUnit {
      */
     public static Transform getStripWhitespaceTransform(Document forDocument) {
         return new Transform(forDocument, getStripWhitespaceStylesheet());
+    }
+
+    /**
+     * Returns a new Document instance that is identical to the one
+     * passed in with element content whitespace removed.
+     *
+     * <p>Will use {@link #getStripWhitespaceTransform
+     * getStripWhitespaceTransform} unless we are operating under the
+     * severly broken XSLTC Transformer shipping with JDK 1.5.</p>
+     */
+    public static Document getWhitespaceStrippedDocument(Document forDoc) {
+        String factory = getTransformerFactory().getClass().getName();
+        if (XSLTConstants.JAVA5_XSLTC_FACTORY_NAME.equals(factory)) {
+            return stripWhiteSpaceWithoutXSLT(forDoc);
+        } else {
+            return stripWhiteSpaceUsingXSLT(forDoc);
+        }
+    }
+
+    private static Document stripWhiteSpaceUsingXSLT(Document forDoc) {
+        try {
+            Transform whitespaceStripper = getStripWhitespaceTransform(forDoc);
+            return whitespaceStripper.getResultDocument();
+        } catch (TransformerException e) {
+            throw new XMLUnitRuntimeException(e.getMessage(), e.getCause());
+        }
+    }
+
+    private static Document stripWhiteSpaceWithoutXSLT(Document forDoc) {
+        Document copy = (Document) forDoc.cloneNode(true);
+        stripEmptyTextNodes(copy);
+        return copy;
+    }
+
+    private static void stripEmptyTextNodes(Node n) {
+        final NodeList nl = n.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node child = nl.item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                stripEmptyTextNodes(child);
+            } else if (child.getNodeType() == Node.TEXT_NODE) {
+                String value = child.getNodeValue();
+                if (value == null || value.trim().length() == 0) {
+                    n.removeChild(child);
+                    --i;
+                }
+            }
+        }
     }
 
     private static String getStripCommentsStylesheet() {
