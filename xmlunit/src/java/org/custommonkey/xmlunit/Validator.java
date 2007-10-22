@@ -476,8 +476,11 @@ public class Validator extends DefaultHandler implements ErrorHandler {
     /**
      * Deal with exceptions passed to the ErrorHandler interface by the parser.
      */
-    private void errorHandlerException(Exception e) {
-        invalidate(e.getMessage());
+    private void errorHandlerException(SAXParseException e) {
+        String msg = "At line " + e.getLineNumber() + ", column: "
+            + e.getColumnNumber() + " ==> " + e.getMessage();
+        if (!msg.endsWith("\n")) msg += "\n";
+        invalidate(msg);
     }
 
     /**
