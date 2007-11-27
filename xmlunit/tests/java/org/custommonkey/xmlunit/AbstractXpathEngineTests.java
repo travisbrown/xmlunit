@@ -137,6 +137,39 @@ public abstract class AbstractXpathEngineTests extends TestCase {
         assertEquals("1", s);
     }
 
+    // http://sourceforge.net/forum/forum.php?thread_id=1832061&forum_id=73274
+    public void testXpathExistsWithNsAndLocalNameSelector() throws Exception {
+        String testDoc =
+            "<MtcEnv Version=\"1.0\" xmlns=\"http://www.Mtc.com/schemas\" xmlns:bms=\"http://www.cieca.com/BMS\"> "
+            + "<EnvContext> "
+            + "<NameValuePair> "
+            + "<Name>Timestamp</Name> "
+            + "<Value>2007-07-26T11:59:00</Value> "
+            + "</NameValuePair> "
+            + "</EnvContext> "
+            + "<EnvBodyList> "
+            + "<EnvBody> "
+            + "<Metadata> "
+            + "<Identifier>CIECABMSAssignmentAddRq</Identifier> "
+            + "</Metadata> "
+            + "<Content> "
+            + "<bms:CIECA> "
+            + "<bms:AssignmentAddRq> "
+            + "<bms:RqUID>3744f84b-ac18-5303-0082-764bdeb20df9</bms:RqUID> "
+            + "</bms:AssignmentAddRq> "
+            + "</bms:CIECA> "
+            + "</Content> "
+            + "</EnvBody> "
+            + "</EnvBodyList> "
+            + "</MtcEnv>";
+        Document d = XMLUnit.buildControlDocument(testDoc);
+
+        XpathEngine engine = newXpathEngine();
+        NodeList l =
+            engine.getMatchingNodes("//*[local-name()='RqUID'][namespace-uri()='http://www.cieca.com/BMS']", d);
+        assertEquals(1, l.getLength());
+    }
+
     public void setUp() throws Exception {
         testDocument = XMLUnit.buildControlDocument(testString);
     }
