@@ -728,4 +728,20 @@ public class test_Diff extends TestCase{
 	}
     }
 
+    /**
+     * Bug Report 1863632
+     * @see http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1863632&amp;group_id=23187&amp;atid=377768
+     */
+    public void testBasicWhitespaceHandling() throws Exception {
+	String control = "<a><b/></a>";
+	String test = "<a>\r\n  <b/>\r\n</a>";
+	XMLUnit.setIgnoreWhitespace(true);
+	try {
+	    Diff diff = XMLUnit.compareXML(control, test);
+	    assertTrue(diff.toString(), diff.identical());
+	} finally {
+	    XMLUnit.setIgnoreWhitespace(false);
+	}
+    }
+
 }
