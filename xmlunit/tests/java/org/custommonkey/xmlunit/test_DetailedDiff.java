@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
+import org.custommonkey.xmlunit.examples.MultiLevelElementNameAndTextQualifier;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -241,6 +242,59 @@ public class test_DetailedDiff extends test_Diff {
         // number of children, text of first child, unexpected second
         // test child
         assertEquals(3, changes.size());
+    }
+
+    /**
+     * Bug 1860681
+     * @see https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1860681&amp;group_id=23187&amp;atid=377768
+     */
+    public void XtestXpathOfMissingNode() throws Exception {
+        String control = 
+            "<books>"
+            + "  <book>"
+            + "    <title>Kabale und Liebe</title>"
+            + "  </book>"
+            + "  <book>"
+            + "    <title>Schuld und Suehne</title>"
+            + "  </book>"
+            + "</books>";
+        String test =
+            "<books>"
+            + "  <book>"
+            + "    <title>Schuld und Suehne</title>"
+            + "  </book>"
+            + "</books>";
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            Diff diff = new Diff(control, test);
+            diff.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
+            DetailedDiff dd = new DetailedDiff(diff); 
+            List l = dd.getAllDifferences();
+            assertEquals(3, l.size());
+            // (0) number of children, (1) node not found, (2) order different
+            Difference d = (Difference) l.get(1);
+            assertEquals(DifferenceConstants.CHILD_NODE_NOT_FOUND_ID,
+                         d.getId());
+            assertEquals("/books[1]/book[1]",
+                         d.getControlNodeDetail().getXpathLocation());
+            assertNull(d.getTestNodeDetail().getXpathLocation());
+
+            // and reverse
+            diff = new Diff(test, control);
+            diff.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(2));
+            dd = new DetailedDiff(diff); 
+            l = dd.getAllDifferences();
+            assertEquals(3, l.size());
+            // (0) number of children, (1) order different, (2) node not found
+            d = (Difference) l.get(2);
+            assertEquals(DifferenceConstants.CHILD_NODE_NOT_FOUND_ID,
+                         d.getId());
+            assertEquals("/books[1]/book[1]",
+                         d.getTestNodeDetail().getXpathLocation());
+            assertNull(d.getControlNodeDetail().getXpathLocation());
+        } finally {
+            XMLUnit.setIgnoreWhitespace(false);
+        }
     }
 
     protected Diff buildDiff(Document control, Document test) {
