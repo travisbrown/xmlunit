@@ -21,24 +21,30 @@ namespace XmlUnit.Tests {
                                    new XmlDiff("", "").OptionalDescription);
         }
         
-      [Test][ExpectedException(typeof(XmlSchemaValidationException))]
+      [Test]
         public void DefaultConfiguredToUseValidatingParser() {
             DiffConfiguration diffConfiguration = new DiffConfiguration();
             Assert.AreEqual(DiffConfiguration.DEFAULT_USE_VALIDATING_PARSER, 
                                    diffConfiguration.UseValidatingParser);
             
-            FileStream controlFileStream = File.Open(ValidatorTests.VALID_FILE, 
-                                                     FileMode.Open, FileAccess.Read);
-            FileStream testFileStream = File.Open(ValidatorTests.INVALID_FILE, 
-                                                  FileMode.Open, FileAccess.Read);
-            try {         
+            bool exception = false;
+            using (FileStream controlFileStream = File.Open(ValidatorTests.VALID_FILE, 
+                                                            FileMode.Open,
+                                                            FileAccess.Read))
+            using (FileStream testFileStream = File.Open(ValidatorTests.INVALID_FILE, 
+                                                         FileMode.Open,
+                                                         FileAccess.Read)) {
+              try {
                 XmlDiff diff = new XmlDiff(new StreamReader(controlFileStream), 
                                            new StreamReader(testFileStream));
                 diff.Compare();
-            } finally {
-                controlFileStream.Close();
-                testFileStream.Close();
+              } catch (System.Exception) {
+                // should be an XmlSchemaValidationException in .NET 2.0
+                // and later
+                exception = true;
+              }
             }
+            Assert.IsTrue(exception, "expected validation to fail");
         }
                 
       [Test]

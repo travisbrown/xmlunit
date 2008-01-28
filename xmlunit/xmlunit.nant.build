@@ -1,5 +1,5 @@
 <project name="xmlunit" description="XmlUnit for .Net" default="compile">
-  <property name="project.version" value="0.3" overwrite="false"/>
+  <property name="project.version" value="0.3.1" overwrite="false"/>
   <property name="base.dir" value="${project::get-base-directory()}"
     overwrite="false"/>
   <property name="src.dir" value="${base.dir}/src/csharp" overwrite="false"/>

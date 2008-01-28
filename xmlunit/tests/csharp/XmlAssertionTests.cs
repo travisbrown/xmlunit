@@ -29,7 +29,7 @@ namespace XmlUnit.Tests {
                 XmlAssertion.AssertXmlIdentical(diff);
                 caughtException = false;
             } catch (NUnit.Framework.AssertionException e) {
-                Assert.IsTrue(e.Message.StartsWith(description));
+              Assert.IsTrue(e.Message.IndexOf(description) > -1);
             }
             Assert.IsTrue(caughtException);
         }
@@ -43,7 +43,7 @@ namespace XmlUnit.Tests {
                 XmlAssertion.AssertXmlEquals(diff);
                 caughtException = false;
             } catch (NUnit.Framework.AssertionException e) {
-                Assert.AreEqual(true, e.Message.StartsWith(description));
+                Assert.IsTrue(e.Message.IndexOf(description) > -1);
             }
             Assert.IsTrue(caughtException);
         }
