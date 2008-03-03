@@ -3236,6 +3236,34 @@ class MyNodeTester implements NodeTester {
 
     <section id="Changes 1.2">
       <title>Changes from XMLUnit 1.1 to 1.2</title>
+
+      <section id="Breaking Changes 1.2">
+        <title>Breaking Changes</title>
+
+        <itemizedlist>
+          <listitem>
+            If XMLUnit detects that it cannot match a certain node
+            (i.e. it encounters
+            a <literal>CHILD_NODE_NOT_FOUND</literal>
+            kind of difference) the XPath for the "missing" node will
+            be null.  It used to be some random XPath of a different node.
+          </listitem>
+        </itemizedlist>
+      </section>
+
+      <section id="Bugfixes 1.2">
+        <title>Important Bug Fixes</title>
+
+        <itemizedlist>
+          <listitem>
+            If XMLUnit couldn't match nodes (i.e. it encountered
+            a <literal>CHILD_NODE_NOT_FOUND</literal> kind of
+            difference), the XPath expressions of the node details
+            have been random.  <ulink
+            url="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1860681&amp;group_id=23187&amp;atid=377768">Issue 1860681</ulink>.
+          </listitem>
+        </itemizedlist>
+      </section>
     </section>
 
   </appendix>

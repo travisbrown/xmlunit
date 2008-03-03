@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -356,6 +356,7 @@ public class DifferenceEngine implements DifferenceConstants {
 
         int j = 0;
         final int lastTestNode = testChildren.size() - 1;
+        controlTracker.preloadChildList(controlChildren);
         testTracker.preloadChildList(testChildren);
 
         HashMap/*<Node, Node>*/ matchingNodes = new HashMap();
@@ -418,16 +419,27 @@ public class DifferenceEngine implements DifferenceConstants {
             compare(new Integer(i), testIndex,
                     nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
             } else {
-                compare(nextControl.getNodeName(), null, nextControl, null,
-                        listener, CHILD_NODE_NOT_FOUND);
+                missingNode(nextControl, null, listener);
             }
         }
 
         // now handle remaining unmatched test nodes
         for (Iterator iter = unmatchedTestNodes.iterator(); iter.hasNext();) {
-            Node n = (Node) iter.next();
-            compare(null, n.getNodeName(), null, n, listener,
-                    CHILD_NODE_NOT_FOUND);
+            missingNode(null, (Node) iter.next(), listener);
+        }
+    }
+
+    private void missingNode(Node control, Node test,
+                             DifferenceListener listener)
+        throws DifferenceFoundException {
+        if (control != null) {
+            controlTracker.visited(control);
+            compare(control.getNodeName(), null, control, null,
+                    listener, CHILD_NODE_NOT_FOUND, controlTracker, null);
+        } else {
+            testTracker.visited(test);
+            compare(null, test.getNodeName(), null, test, listener,
+                    CHILD_NODE_NOT_FOUND, null, testTracker);
         }
     }
 
@@ -760,11 +772,35 @@ public class DifferenceEngine implements DifferenceConstants {
     protected void compare(Object expected, Object actual,
                            Node control, Node test, DifferenceListener listener, Difference difference)
         throws DifferenceFoundException {
+        compare(expected, actual, control, test, listener, difference,
+                controlTracker, testTracker);
+    }
+
+    /**
+     * If the expected and actual values are unequal then inform the listener of
+     *  a difference and throw a DifferenceFoundException.
+     * @param expected
+     * @param actual
+     * @param control
+     * @param test
+     * @param listener
+     * @param differenceType
+     * @throws DifferenceFoundException
+     */
+    protected void compare(Object expected, Object actual,
+                           Node control, Node test, DifferenceListener listener,
+                           Difference difference, XpathNodeTracker controlLoc,
+                           XpathNodeTracker testLoc)
+        throws DifferenceFoundException {
         if (unequal(expected, actual)) {
             NodeDetail controlDetail = new NodeDetail(String.valueOf(expected),
-                                                      control, controlTracker.toXpathString());
+                                                      control,
+                                                      controlLoc == null ? null
+                                                      : controlLoc.toXpathString());
             NodeDetail testDetail = new NodeDetail(String.valueOf(actual),
-                                                   test, testTracker.toXpathString());
+                                                   test,
+                                                   testLoc == null ? null
+                                                   : testLoc.toXpathString());
             Difference differenceInstance = new Difference(difference, 
                                                            controlDetail, testDetail);
             listener.differenceFound(differenceInstance);

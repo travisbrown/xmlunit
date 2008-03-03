@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -620,10 +620,13 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         String control = "<stuff><item id=\"1\"/><item id=\"2\"/></stuff>";
         String test = "<stuff><?item data?></stuff>";
         listenToDifferences(control, test);
-        assertEquals("13th control xpath", "/stuff[1]/item[1]", 
+        // mutiple Differences, we only see the last one, missing second element
+        assertEquals("13 difference type",
+                     DifferenceConstants.CHILD_NODE_NOT_FOUND_ID,
+                     listener.comparingWhat);
+        assertEquals("13th control xpath", "/stuff[1]/item[2]", 
                      listener.controlXpath);
-        assertEquals("13th test xpath", "/stuff[1]/processing-instruction()[1]", 
-                     listener.testXpath);       
+        assertNull("13th test xpath", listener.testXpath);       
     }
 
     public void testXpathLocation14() throws Exception {

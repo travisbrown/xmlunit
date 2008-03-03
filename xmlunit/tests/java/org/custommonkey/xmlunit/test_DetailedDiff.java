@@ -248,7 +248,7 @@ public class test_DetailedDiff extends test_Diff {
      * Bug 1860681
      * @see https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1860681&amp;group_id=23187&amp;atid=377768
      */
-    public void XtestXpathOfMissingNode() throws Exception {
+    public void testXpathOfMissingNode() throws Exception {
         String control = 
             "<books>"
             + "  <book>"
@@ -277,7 +277,9 @@ public class test_DetailedDiff extends test_Diff {
                          d.getId());
             assertEquals("/books[1]/book[1]",
                          d.getControlNodeDetail().getXpathLocation());
-            assertNull(d.getTestNodeDetail().getXpathLocation());
+            assertNull("should be null but is "
+                       + d.getTestNodeDetail().getXpathLocation(),
+                       d.getTestNodeDetail().getXpathLocation());
 
             // and reverse
             diff = new Diff(test, control);
