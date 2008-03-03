@@ -1,6 +1,6 @@
 /*
 *****************************************************************
-Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ public final class XMLUnit {
     private static DocumentBuilderFactory controlBuilderFactory;
     private static DocumentBuilderFactory testBuilderFactory;
     private static TransformerFactory transformerFactory;
+    private static SAXParserFactory saxParserFactory;
     private static boolean ignoreWhitespace = false;
     private static URIResolver uriResolver = null;
     private static EntityResolver testEntityResolver = null;
@@ -433,18 +434,35 @@ public final class XMLUnit {
      */
     public static void setSAXParserFactory(String className) {
         System.setProperty("javax.xml.parsers.SAXParserFactory", className);
+        saxParserFactory = null;
         getSAXParserFactory();
     }
 
     /**
+     * Override the SAX parser to use in tests.
+     * Currently only used by {@link Validator Validator class}
+     * @param factory
+     */
+    public static void setSAXParserFactory(SAXParserFactory factory) {
+        saxParserFactory = factory;
+    }
+
+    /**
      * Get the SAX parser to use in tests.
-     * @return the SAXParserFactory instance used by the {@link Validator Validator}
-     * to perform DTD validation
+     *
+     * <p>Unless an instance has been given via {@link
+     * setSAXParserFactory(SAXParserFactory) setSAXParserFactory}
+     * explicitly, the returned factory will be namespace aware.</p>
+     *
+     * @return the SAXParserFactory instance used by the {@link
+     * Validator Validator} to perform DTD validation
      */
     public static SAXParserFactory getSAXParserFactory() {
-        SAXParserFactory newFactory = SAXParserFactory.newInstance();
-        newFactory.setNamespaceAware(true);
-        return newFactory;
+        if (saxParserFactory == null) {
+            saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setNamespaceAware(true);
+        }
+        return saxParserFactory;
     }
 
     private static String getStripWhitespaceStylesheet() {

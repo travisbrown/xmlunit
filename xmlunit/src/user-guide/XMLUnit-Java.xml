@@ -3251,6 +3251,17 @@ class MyNodeTester implements NodeTester {
         </itemizedlist>
       </section>
 
+      <section id="New Features 1.2">
+        <title>New Features</title>
+
+        <itemizedlist>
+          <listitem>The <literal>SAXParserFactory</literal> used
+          by <literal>Validator</literal> can now be configured
+          completely.  <ulink href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1903928&amp;group_id=23187&amp;atid=377771">Issue
+          1903928</ulink>.</listitem>
+        </itemizedlist>
+      </section>
+
       <section id="Bugfixes 1.2">
         <title>Important Bug Fixes</title>
 
