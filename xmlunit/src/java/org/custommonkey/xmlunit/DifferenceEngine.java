@@ -414,9 +414,10 @@ public class DifferenceEngine implements DifferenceConstants {
                 unmatchedTestNodes.remove(0);
             }
             if (nextTest != null) {
-            compareNode(nextControl, nextTest, listener, elementQualifier);
-            compare(new Integer(i), testIndex,
-                    nextControl, nextTest, listener, CHILD_NODELIST_SEQUENCE);
+                compareNode(nextControl, nextTest, listener, elementQualifier);
+                compare(new Integer(i), testIndex,
+                        nextControl, nextTest, listener,
+                        CHILD_NODELIST_SEQUENCE);
             } else {
                 missingNode(nextControl, null, listener);
             }
