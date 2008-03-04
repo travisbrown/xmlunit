@@ -356,7 +356,6 @@ public class DifferenceEngine implements DifferenceConstants {
 
         int j = 0;
         final int lastTestNode = testChildren.size() - 1;
-        controlTracker.preloadChildList(controlChildren);
         testTracker.preloadChildList(testChildren);
 
         HashMap/*<Node, Node>*/ matchingNodes = new HashMap();
