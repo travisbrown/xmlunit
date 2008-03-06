@@ -37,7 +37,6 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit.jaxp13;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -114,7 +113,7 @@ public class Validator {
         } catch (SAXException e) {
             // error has been recorded in our ErrorHandler anyway
         }
-        return Collections.unmodifiableList(l);
+        return l;
     }
 
     private Schema parseSchema(ErrorHandler h) throws SAXException {

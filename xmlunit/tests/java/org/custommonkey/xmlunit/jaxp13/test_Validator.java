@@ -36,7 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package org.custommonkey.xmlunit.jaxp13;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.transform.stream.StreamSource;
@@ -49,41 +49,29 @@ public class test_Validator extends TestCase {
 
     public void testGoodSchemaIsValid() throws Exception {
         Validator v = new Validator();
-        v.addSchemaSource(new StreamSource(
-                              new FileInputStream(test_Constants.BASEDIR 
-                                                  + "/tests/etc/Book.xsd")
-                                           )
-                          );
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.xsd")));
         assertTrue(v.isSchemaValid());
     }
 
     public void testGoodSchemaHasNoErrors() throws Exception {
         Validator v = new Validator();
-        v.addSchemaSource(new StreamSource(
-                              new FileInputStream(test_Constants.BASEDIR 
-                                                  + "/tests/etc/Book.xsd")
-                                           )
-                          );
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.xsd")));
         assertEquals(0, v.getSchemaErrors().size());
     }
 
     public void testBrokenSchemaIsInvalid() throws Exception {
         Validator v = new Validator();
-        v.addSchemaSource(new StreamSource(
-                              new FileInputStream(test_Constants.BASEDIR 
-                                                  + "/tests/etc/broken.xsd")
-                                           )
-                          );
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/broken.xsd")));
         assertFalse(v.isSchemaValid());
     }
 
     public void testBrokenSchemaHasErrors() throws Exception {
         Validator v = new Validator();
-        v.addSchemaSource(new StreamSource(
-                              new FileInputStream(test_Constants.BASEDIR 
-                                                  + "/tests/etc/broken.xsd")
-                                           )
-                          );
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/broken.xsd")));
         List l = v.getSchemaErrors();
         /*
         for (Iterator i = l.iterator(); i.hasNext(); ) {
