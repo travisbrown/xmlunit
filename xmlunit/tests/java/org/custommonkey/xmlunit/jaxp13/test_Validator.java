@@ -154,4 +154,76 @@ public class test_Validator extends TestCase {
             assertTrue(e.getCause() instanceof IOException);
         }
     }
+
+    /**
+     * fails unless you manage to setup JAXP 1.3 and RELAX NG support
+     *
+     * <p>The setup that worked for Stefan when he wrote this test:
+     * JDK 1.5.0_09, isorelax-jaxp-bridge-1.0, together with msv.jar,
+     * isorelax.jar, relaxngDatatype.jar and xsdlib.jar from msv's
+     * latest nightly build (2008-02-13, actually).  The same jars do
+     * not work with Java6.</p>
+     * 
+     * @see http://weblogs.java.net/blog/kohsuke/archive/2006/02/validate_xml_us.html
+     */
+    public void XtestGoodRelaxNGSchemaIsValid() throws Exception {
+        Validator v = new Validator(javax.xml.XMLConstants.RELAXNG_NS_URI);
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.rng")));
+        assertTrue(v.isSchemaValid());
+    }
+
+    /**
+     * fails unless you manage to setup JAXP 1.3 and RELAX NG support
+     * @see #XtestGoodRelaxNGSchemaIsValid()
+     */
+    public void XtestGoodInstanceIsValidRNG() throws Exception {
+        Validator v = new Validator(javax.xml.XMLConstants.RELAXNG_NS_URI);
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.rng")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/BookXsdGeneratedNoSchema.xml"));
+        assertTrue(v.isInstanceValid(s));
+    }
+
+    /**
+     * fails unless you manage to setup JAXP 1.3 and RELAX NG support
+     * @see #XtestGoodRelaxNGSchemaIsValid()
+     */
+    public void XtestBadInstanceIsInvalidRNG() throws Exception {
+        Validator v = new Validator(javax.xml.XMLConstants.RELAXNG_NS_URI);
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.rng")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/invalidBook.xml"));
+        List l = v.getInstanceErrors(s);
+        for (Iterator i = l.iterator(); i.hasNext(); ) {
+            Object ex = i.next();
+            assertTrue(ex instanceof SAXParseException);
+            /*
+            System.err.println(ex);
+            */
+        }
+        assertTrue(l.size() > 0);
+    }
+
+    /**
+     * fails even using the setup in XtestGoodRelaxNGSchemaIsValid()
+     * since a SAXParser is trying to read the compact syntax
+     * definition and chokes on it not being XML.
+     * @see #XtestGoodRelaxNGSchemaIsValid()
+     */
+    public void XtestGoodRelaxNGCompactSyntaxIsValid() throws Exception {
+        Validator v = new Validator(javax.xml.XMLConstants.RELAXNG_NS_URI);
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.rngc")));
+        assertTrue(v.isSchemaValid());
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/BookXsdGeneratedNoSchema.xml"));
+        assertTrue(v.isInstanceValid(s));
+    }
+
 }

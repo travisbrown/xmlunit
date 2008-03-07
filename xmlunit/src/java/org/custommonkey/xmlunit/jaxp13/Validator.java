@@ -50,10 +50,10 @@ import org.xml.sax.SAXParseException;
 /**
  * Validator class based of {@link javax.xml.validation javax.xml.validation}.
  *
- * <p>This class currently only provides support for validating schema
- * definitions.  It defaults to the W3C XML Schema 1.0 but can be used
- * to validate against any schema language supported by your
- * SchemaFactory implementation.</p>
+ * <p>This class provides support for validating schema definitions as
+ * well as instance documents.  It defaults to the W3C XML Schema 1.0
+ * but can be used to validate against any schema language supported
+ * by your SchemaFactory implementation.</p>
  */
 public class Validator {
     private final String schemaLanguage;
@@ -122,7 +122,20 @@ public class Validator {
         try {
             parseSchema(new CollectingErrorHandler(l));
         } catch (SAXException e) {
-            // error has been recorded in our ErrorHandler anyway
+            // error should have been recorded in our ErrorHandler, at
+            // least that's what the Javadocs say "SchemaFactory is
+            // not allowed to throw SAXException without first
+            // reporting it to ErrorHandler.".
+            //
+            // Unfortunately not all implementations seem to follow
+            // this rule.  In particular using the setup described in
+            // org.custommonkey.xmlunit.jaxp13.test_Validator#XtestGoodRelaxNGCompactSyntaxIsValid()
+            // an exception ("SAXParseException: Content is not
+            // allowed in prolog.") will be thrown that never enters
+            // our Errorhandler.
+            if (l.size() == 0) {
+                l.add(e);
+            }
         }
         return l;
     }
@@ -169,7 +182,11 @@ public class Validator {
         try {
             v.validate(instance);
         } catch (SAXException e) {
-            // error has been recorded in our ErrorHandler anyway
+            // error should have been recorded in our ErrorHandler,
+            // but better double-check.
+            if (l.size() == 0) {
+                l.add(e);
+            }
         } catch (java.io.IOException i) {
             throw new XMLUnitRuntimeException("Error reading instance source",
                                               i);
