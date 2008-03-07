@@ -42,6 +42,7 @@ import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import org.custommonkey.xmlunit.exceptions.XMLUnitRuntimeException;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -56,13 +57,14 @@ import org.xml.sax.SAXParseException;
  */
 public class Validator {
     private final String schemaLanguage;
+    private final SchemaFactory factory;
     private final ArrayList sources = new ArrayList();
 
     /**
      * validates using W3C XML Schema 1.0.
      */
     public Validator() {
-        this(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        this(XMLConstants.W3C_XML_SCHEMA_NS_URI, null);
     }
 
     /**
@@ -72,7 +74,27 @@ public class Validator {
      * javax.xml.validation.SchemaFactory SchemaFactory}.
      */
     public Validator(String schemaLanguage) {
+        this(schemaLanguage, null);
+    }
+
+    /**
+     * validates using the specified schema factory.
+     */
+    public Validator(SchemaFactory factory) {
+        this(null, factory);
+    }
+
+    /**
+     * validates using the specified schema language or factory.
+     *
+     * @param schemaLanguage the schema language to use - see {@link
+     * javax.xml.validation.SchemaFactory SchemaFactory}.
+     * @param schemaFactory the concrete factory to use.  If this is
+     * non-null, the first argument will be ignored.
+     */
+    protected Validator(String schemaLanguage, SchemaFactory factory) {
         this.schemaLanguage = schemaLanguage;
+        this.factory = factory;
     }
 
     /**
@@ -97,28 +119,90 @@ public class Validator {
      */
     public List/*<SAXParseException>*/ getSchemaErrors() {
         final ArrayList l = new ArrayList();
-        ErrorHandler h = new ErrorHandler() {
-                public void error(SAXParseException e) {
-                    l.add(e);
-                }
-                public void fatalError(SAXParseException e) {
-                    l.add(e);
-                }
-                public void warning(SAXParseException e) {
-                    l.add(e);
-                }
-            };
         try {
-            parseSchema(h);
+            parseSchema(new CollectingErrorHandler(l));
         } catch (SAXException e) {
             // error has been recorded in our ErrorHandler anyway
         }
         return l;
     }
 
+    /**
+     * Is the given schema instance valid according to the configured
+     * schema definition(s)?
+     *
+     * @throws XMLUnitRuntimeException if the schema definition is
+     * invalid or the Source is a SAXSource and the underlying
+     * XMLReader throws an IOException (see {@link
+     * javax.xml.validation.Validator#validate validate in
+     * Validator}).
+     */
+    public boolean isInstanceValid(Source instance)
+        throws XMLUnitRuntimeException {
+        return getInstanceErrors(instance).size() == 0;
+    }
+
+    /**
+     * Obtain a list of all errors in the given instance.
+     *
+     * <p>The list contains {@link org.xml.sax.SAXParseException
+     * SAXParseException}s.</p>
+     *
+     * @throws XMLUnitRuntimeException if the schema definition is
+     * invalid or the Source is a SAXSource and the underlying
+     * XMLReader throws an IOException (see {@link
+     * javax.xml.validation.Validator#validate validate in
+     * Validator}).
+     */
+    public List/*<SAXParseException>*/ getInstanceErrors(Source instance)
+        throws XMLUnitRuntimeException {
+        Schema schema = null;
+        try {
+            schema = parseSchema(null);
+        } catch (SAXException e) {
+            throw new XMLUnitRuntimeException("Schema is invalid", e);
+        }
+
+        final ArrayList l = new ArrayList();
+        javax.xml.validation.Validator v = schema.newValidator();
+        v.setErrorHandler(new CollectingErrorHandler(l));
+        try {
+            v.validate(instance);
+        } catch (SAXException e) {
+            // error has been recorded in our ErrorHandler anyway
+        } catch (java.io.IOException i) {
+            throw new XMLUnitRuntimeException("Error reading instance source",
+                                              i);
+        }
+        return l;
+    }
+
     private Schema parseSchema(ErrorHandler h) throws SAXException {
-        SchemaFactory fac = SchemaFactory.newInstance(schemaLanguage);
+        SchemaFactory fac = factory != null ? factory
+            : SchemaFactory.newInstance(schemaLanguage);
         fac.setErrorHandler(h);
-        return fac.newSchema((Source[]) sources.toArray(new Source[0]));
+        try {
+            return fac.newSchema((Source[])
+                                 sources.toArray(new Source[sources.size()]));
+        } finally {
+            fac.setErrorHandler(null);
+        }
+    }
+
+    private static final class CollectingErrorHandler implements ErrorHandler {
+        private final List l;
+
+        CollectingErrorHandler(List l) {
+            this.l = l;
+        }
+        public void error(SAXParseException e) {
+            l.add(e);
+        }
+        public void fatalError(SAXParseException e) {
+            l.add(e);
+        }
+        public void warning(SAXParseException e) {
+            l.add(e);
+        }
     }
 }

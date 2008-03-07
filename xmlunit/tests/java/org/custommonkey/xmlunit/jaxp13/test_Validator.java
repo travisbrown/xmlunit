@@ -37,6 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit.jaxp13;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.transform.stream.StreamSource;
@@ -44,6 +45,9 @@ import javax.xml.transform.stream.StreamSource;
 import junit.framework.TestCase;
 
 import org.custommonkey.xmlunit.test_Constants;
+import org.custommonkey.xmlunit.exceptions.XMLUnitRuntimeException;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class test_Validator extends TestCase {
 
@@ -73,12 +77,81 @@ public class test_Validator extends TestCase {
         v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
                                                     + "/tests/etc/broken.xsd")));
         List l = v.getSchemaErrors();
-        /*
         for (Iterator i = l.iterator(); i.hasNext(); ) {
-            System.err.println(i.next());
+            Object ex = i.next();
+            assertTrue(ex instanceof SAXParseException);
+            /*
+            System.err.println(ex);
+            */
         }
-        */
         assertTrue(l.size() > 0);
     }
 
+    public void testGoodInstanceIsValid() throws Exception {
+        Validator v = new Validator();
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.xsd")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/BookXsdGenerated.xml"));
+        assertTrue(v.isInstanceValid(s));
+    }
+
+    public void testBadInstanceIsInvalid() throws Exception {
+        Validator v = new Validator();
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.xsd")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/invalidBook.xml"));
+        assertFalse(v.isInstanceValid(s));
+    }
+
+    public void testBadInstanceHasErrors() throws Exception {
+        Validator v = new Validator();
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.xsd")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/invalidBook.xml"));
+        List l = v.getInstanceErrors(s);
+        for (Iterator i = l.iterator(); i.hasNext(); ) {
+            Object ex = i.next();
+            assertTrue(ex instanceof SAXParseException);
+            /*
+            System.err.println(ex);
+            */
+        }
+        assertTrue(l.size() > 0);
+    }
+
+    public void testInstanceValidationOfBrokenSchema() {
+        Validator v = new Validator();
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/broken.xsd")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/BookXsdGenerated.xml"));
+        try {
+            v.isInstanceValid(s);
+            fail("expected exception because schema is invalid");
+        } catch (XMLUnitRuntimeException e) {
+            assertTrue(e.getCause() instanceof SAXException);
+        }
+    }
+
+    public void testInstanceValidationOfMissingFile() {
+        Validator v = new Validator();
+        v.addSchemaSource(new StreamSource(new File(test_Constants.BASEDIR 
+                                                    + "/tests/etc/Book.xsd")));
+        StreamSource s =
+            new StreamSource(new File(test_Constants.BASEDIR
+                                      + "/tests/etc/not there.xml"));
+        try {
+            v.isInstanceValid(s);
+            fail("expected exception because instance doesn't exist");
+        } catch (XMLUnitRuntimeException e) {
+            assertTrue(e.getCause() instanceof IOException);
+        }
+    }
 }

@@ -456,6 +456,14 @@ public void testValidation() throws Exception {
       or more XML Schema definitions.  See <xref
       linkend="XML Schema Validation"/> for details.</para>
 
+      <para>XMLUnit 1.2 introduces a new <literal>Validator</literal>
+        class that relies on JAXP
+        1.3's <literal>javax.xml.validation</literal> package.  This
+        Validator can validate against W3C XML Schema, but may support
+        different Schema languages like RELAX NG if your JAXP
+        implementation supports it.  See
+        <xref linkend="JAXP 1.3 Validation"/> for details.</para>
+
     </section>
 
     <section id="Xpath Tests"><title>Xpath Tests</title>
@@ -2436,7 +2444,7 @@ catalog-class-name=org.apache.xml.resolver.Resolver
       the configured <literal>EntityResolver</literal> may still be
       used.</para>
 
-      <example>
+      <example id="schema-jaxp12">
         <title>Validating Against a Local XML Schema</title>
         <programlisting language="Java"><![CDATA[
 InputSource is = new InputSource(new FileInputStream(myXmlDocument));
@@ -2500,6 +2508,65 @@ boolean isValid = v.isValid();
         linkend="XML Schema Validation"/>).</listitem>
       </itemizedlist>
     </section>
+
+    <section id="JAXP 1.3 Validation">
+      <title>JAXP 1.3 Validation</title>
+
+      <para>JAXP 1.3 - shipping with Java5 or better and available as
+      a separate product for earlier Java VMs - introduces a new
+      package <ulink url="https://jaxp-sources.dev.java.net/nonav/docs/api/"><literal>javax.xml.validation</literal></ulink>
+      designed for validations of snippets of XML against different
+      schema languages.  Any compliant implementation must support the
+      W3C XMl Schema language, but other languages
+      like <ulink url="http://www.relaxng.org/">RELAX NG</ulink> or
+      <ulink url="http://www.schematron.com/">Schematron</ulink> may
+      be supported as well.</para>
+
+      <para>The
+      class <literal>org.custommonkey.xmlunit.jaxp13.Validator</literal>
+      can be used to validate a piece of XML against a schema
+      definition but also to validate the schema definition itself.
+      By default <literal>Validator</literal> will assume your
+      definition uses the W3C XML Schema language, but it provides a
+      constructor that can be used to specify a different language via
+      an URL supported by the <literal>SchemaFactory</literal> class.
+      Alternatively you can specify the schema factory itself.</para>
+
+      <para>The schema definition itself can be given via
+      <literal>Source</literal> elements, just like the pices of XML
+      to validate are specified as <literal>Source</literal> as
+      well.</para>
+
+      <para>The following example
+      uses <literal>org.custommonkey.xmlunit.jaxp13.Validator</literal>
+      to perform the same type of validation shown in
+      <xref linkend="schema-jaxp12"/>.</para>
+
+      <example id="schema-jaxp13">
+        <title>Validating Against a Local XML Schema</title>
+        <programlisting language="Java"><![CDATA[
+Validator v = new Validator();
+v.addSchemaSource(new StreamSource(new File(myXmlSchemaFile)));
+StreamSource is = new StreamSource(new File(myXmlDocument));
+boolean isValid = v.isInstanceValid(is);
+]]></programlisting></example>
+
+      <para>Validating a schema definition is shown in the next
+      example.</para>
+
+      <example>
+        <title>Validating a XML Schema Defintion</title>
+        <programlisting language="Java"><![CDATA[
+Validator v = new Validator();
+v.addSchemaSource(new StreamSource(new File(myXmlSchemaFile)));
+boolean isValid = v.isSchemaValid();
+]]></programlisting></example>
+
+      <para>There is no explicit JUnit 3 support
+      for <literal>org.custommonkey.xmlunit.jaxp13.Validator</literal>.</para>
+
+    </section>
+
   </section>
 
   <section id="XPath Tests">
@@ -3259,6 +3326,16 @@ class MyNodeTester implements NodeTester {
           by <literal>Validator</literal> can now be configured
           completely.  <ulink href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1903928&amp;group_id=23187&amp;atid=377771">Issue
           1903928</ulink>.</listitem>
+
+          <listitem>A new
+          class <literal>org.custommonkey.xmlunit.jaxp13.Validator</literal>
+          can be used to validate schema definitions and schema
+          instances using the <literal>javax.xml.validation</literal>
+          package of JAXP 1.3.  Depending on your JAXP implementation
+          this may allow you to validate documents against schema
+          definitions written in RELAX NG or other schema languages in
+          addition to W3C XML Schema.  See
+          <xref linkend="JAXP 1.3 Validation"/> for details.</listitem>
         </itemizedlist>
       </section>
 
