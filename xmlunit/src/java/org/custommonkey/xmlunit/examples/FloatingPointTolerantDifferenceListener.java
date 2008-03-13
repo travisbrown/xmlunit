@@ -35,32 +35,39 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.custommonkey.xmlunit.examples;
 
-import java.util.Locale;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 
 /**
- * Ignores case for all textual content.
+ * Expects texts to be floating point numbers and treats them as
+ * identical if they only differ by a given tolerance value (or less).
  */
-public class CaseInsensitiveDifferenceListener
+public class FloatingPointTolerantDifferenceListener
     extends TextDifferenceListenerBase {
 
-    public CaseInsensitiveDifferenceListener(DifferenceListener delegateTo) {
+    private final double tolerance;
+
+    public FloatingPointTolerantDifferenceListener(DifferenceListener delegateTo,
+                                                   double tolerance) {
         super(delegateTo);
+        this.tolerance = tolerance;
     }
 
     protected int textualDifference(Difference d) {
         String control = d.getControlNodeDetail().getValue();
-        if (control != null) {
-            control = control.toLowerCase(Locale.US);
-            if (d.getTestNodeDetail().getValue() != null
-                && control.equals(d.getTestNodeDetail().getValue()
-                                  .toLowerCase(Locale.US))) {
-                return
-                    DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
+        String test = d.getTestNodeDetail().getValue();
+        if (control != null && test != null) {
+            try {
+                double controlVal = Double.parseDouble(control);
+                double testVal = Double.parseDouble(test);
+                return Math.abs(controlVal - testVal) < tolerance
+                    ? DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL
+                    : DifferenceListener.RETURN_ACCEPT_DIFFERENCE;
+            } catch (NumberFormatException nfe) {
+                // ignore, delegate to nested DifferenceListener
             }
         }
-        // some string is null, delegate
+        // no numbers or null, delegate
         return super.textualDifference(d);
     }
 }

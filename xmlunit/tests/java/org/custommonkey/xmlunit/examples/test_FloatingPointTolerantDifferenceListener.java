@@ -36,31 +36,49 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.custommonkey.xmlunit.examples;
 
 import java.util.Locale;
+import junit.framework.TestCase;
+
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
+import org.w3c.dom.Node;
 
-/**
- * Ignores case for all textual content.
- */
-public class CaseInsensitiveDifferenceListener
-    extends TextDifferenceListenerBase {
+public class test_FloatingPointTolerantDifferenceListener extends TestCase {
 
-    public CaseInsensitiveDifferenceListener(DifferenceListener delegateTo) {
-        super(delegateTo);
+    public void testFloatingPointTolerance() throws Exception {
+        String control = "<foo value=\"2.718281828\"/>";
+        String test = "<foo value=\"2.71\"/>";
+        Diff d = new Diff(control, test);
+
+        FloatingPointTolerantDifferenceListener c =
+            new FloatingPointTolerantDifferenceListener(new DifferenceListener() {
+                    public int differenceFound(Difference d) {
+                        fail("differenceFound shouldn't get invoked, but"
+                             + " was with type " + d.getId());
+                        return -42;
+                    }
+                    public void skippedComparison(Node c, Node t) {
+                        fail("skippedComparison shouldn't get invoked");
+                    }
+                }, 1e-2);
+
+        d.overrideDifferenceListener(c);
+        assertTrue(d.identical());
+
+        c = new FloatingPointTolerantDifferenceListener(new DifferenceListener() {
+                public int differenceFound(Difference d) {
+                    fail("differenceFound shouldn't get invoked, but"
+                         + " was with type " + d.getId());
+                    return -42;
+                }
+                public void skippedComparison(Node c, Node t) {
+                    fail("skippedComparison shouldn't get invoked");
+                }
+            }, 1e-3);
+
+        d = new Diff(control, test);
+        d.overrideDifferenceListener(c);
+        assertFalse(d.identical());
     }
 
-    protected int textualDifference(Difference d) {
-        String control = d.getControlNodeDetail().getValue();
-        if (control != null) {
-            control = control.toLowerCase(Locale.US);
-            if (d.getTestNodeDetail().getValue() != null
-                && control.equals(d.getTestNodeDetail().getValue()
-                                  .toLowerCase(Locale.US))) {
-                return
-                    DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
-            }
-        }
-        // some string is null, delegate
-        return super.textualDifference(d);
-    }
 }
