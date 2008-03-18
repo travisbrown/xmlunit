@@ -744,4 +744,20 @@ public class test_Diff extends TestCase{
 	}
     }
 
+    /**
+     * @see https://sourceforge.net/forum/message.php?msg_id=4843316
+     */
+    public void testNormalizeWhiteSpaceDoesntStripLeadingSpace()
+        throws Exception {
+	String control = "<name>value</name>";
+	String test = "<name> value</name>";
+	XMLUnit.setNormalizeWhitespace(true);
+	try {
+	    Diff diff = XMLUnit.compareXML(control, test);
+	    assertFalse(diff.toString(), diff.similar());
+	} finally {
+	    XMLUnit.setNormalizeWhitespace(false);
+	}
+    }
+
 }
