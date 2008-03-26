@@ -81,6 +81,9 @@ public class DetailedDiff extends Diff {
         case RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR:
             difference.setRecoverable(true);
             break;
+        case RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT:
+            difference.setRecoverable(false);
+            break;
         default:
             throw new IllegalArgumentException(returnValue
                                                + " is not a defined "

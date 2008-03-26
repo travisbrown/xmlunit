@@ -744,4 +744,24 @@ public class test_Diff extends TestCase{
 	}
     }
 
+    public void testUpgradingOfRecoverableDifference() throws Exception {
+        String control = "<foo:bar xmlns:foo='urn:foo'/>";
+        String test = "<bar xmlns='urn:foo'/>";
+        Diff diff = buildDiff(control, test);
+        assertFalse(diff.toString(), diff.identical());
+        assertTrue(diff.toString(), diff.similar());
+
+        diff = buildDiff(control, test);
+        diff.overrideDifferenceListener(new DifferenceListener() {
+                public int differenceFound(Difference d) {
+                    return RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT;
+                }
+                public void skippedComparison(Node c, Node t) {
+                    fail("skippedComparison shouldn't get invoked");
+                }
+            });
+
+        assertFalse(diff.toString(), diff.identical());
+        assertFalse(diff.toString(), diff.similar());
+    }
 }

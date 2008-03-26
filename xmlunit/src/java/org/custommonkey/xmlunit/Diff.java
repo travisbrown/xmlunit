@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -306,6 +306,10 @@ public class Diff
                 similar = false;
                 haltComparison = true;
             }
+            break;
+        case RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT:
+            identical = similar = false;
+            haltComparison = true;
             break;
         default:
             throw new IllegalArgumentException(returnValue

@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -62,6 +62,12 @@ public interface DifferenceListener {
      * interpreted as being similar.
      */
     int RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR = 2;
+    /** 
+     * Override return value for the <code>differenceFound</code> method.
+     * Indicates that the nodes identified as being similar should be 
+     * interpreted as being different.
+     */
+    int RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT = 3;
     /**
      * Receive notification that 2 nodes are different.
      * @param difference a Difference instance as defined in {@link
