@@ -721,7 +721,7 @@ public class test_Diff extends TestCase{
 	    + "</env:Envelope>";
 	XMLUnit.setIgnoreWhitespace(true);
 	try {
-	    Diff diff = XMLUnit.compareXML(control, test);
+	    Diff diff = buildDiff(control, test);
 	    assertTrue(diff.toString(), diff.identical());
 	} finally {
 	    XMLUnit.setIgnoreWhitespace(false);
@@ -737,10 +737,11 @@ public class test_Diff extends TestCase{
 	String test = "<a>\r\n  <b/>\r\n</a>";
 	XMLUnit.setIgnoreWhitespace(true);
 	try {
-	    Diff diff = XMLUnit.compareXML(control, test);
+	    Diff diff = buildDiff(control, test);
 	    assertTrue(diff.toString(), diff.identical());
 	} finally {
 	    XMLUnit.setIgnoreWhitespace(false);
 	}
     }
+
 }
