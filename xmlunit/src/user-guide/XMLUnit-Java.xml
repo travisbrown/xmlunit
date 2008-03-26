@@ -1865,8 +1865,8 @@ public class IgnoreDoctype implements DifferenceListener {
         node 4 to test node 4.</para>
       </section>
 
-      <section id="MultiLevelElementNameAndTextQualifier">
-        <title><literal>org.custommonkey.xmlunit.examples.MultiLevelElementNameAndTextQualifier</literal></title>
+      <section id="RecursiveElementNameAndTextQualifier">
+        <title><literal>org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier</literal></title>
 
         <para>All <literal>ElementQualifier</literal>s seen so far
         only looked at the <literal>Element</literal>s themselves and
@@ -1878,7 +1878,7 @@ public class IgnoreDoctype implements DifferenceListener {
 
         <example id="htmltable">
           <title>Example for
-          <literal>MultiLevelElementNameAndTextQualifier</literal>
+          <literal>RecursiveElementNameAndTextQualifier</literal>
           (the comments are not part of the example)</title>
           <programlisting language="HTML"><![CDATA[
 <!-- control -->
@@ -1914,29 +1914,58 @@ public class IgnoreDoctype implements DifferenceListener {
         <literal>ElementQualifier</literal> that looks at the element's
         name, as well as the name of the first child element and the
         text nested into that first child element.  This is what
-        <literal>MultiLevelElementNameAndTextQualifier</literal> does.
-        <literal>MultiLevelElementNameAndTextQualifier</literal>'s
-        constructor expects a single argument which is the nesting
-        level of the expected text.  If you use an argument of 1,
-        <literal>MultiLevelElementNameAndTextQualifier</literal> is
-        identical to <literal>ElementNameAndTextQualifier</literal>.
-        In <xref linkend="htmltable"/> a value of 2 would be
-        needed.</para>
+        <literal>RecursiveElementNameAndTextQualifier</literal>
+        does.</para>
+
+        <para><literal>RecursiveElementNameAndTextQualifier</literal>
+        ignores whitespace between the elements leading up to the
+        nested text.</para>
+      </section>
+
+      <section id="MultiLevelElementNameAndTextQualifier">
+        <title><literal>org.custommonkey.xmlunit.examples.MultiLevelElementNameAndTextQualifier</literal></title>
+
+        <para>
+          <literal>MultiLevelElementNameAndTextQualifier</literal> has
+          in a way been the predecessor
+          of <xref linkend="RecursiveElementNameAndTextQualifier"><literal>RecursiveElementNameAndTextQualifier</literal></xref>.
+          It also matches element names and those of nested child
+          elements until it finds matches, but
+          unlike <literal>RecursiveElementNameAndTextQualifier</literal>,
+          you must
+          tell <literal>MultiLevelElementNameAndTextQualifier</literal>
+          at which nesting level it should expect the nested text.
+        </para>
+
+        <para>
+          <literal>MultiLevelElementNameAndTextQualifier</literal>'s
+          constructor expects a single argument which is the nesting
+          level of the expected text.  If you use an argument of 1,
+          <literal>MultiLevelElementNameAndTextQualifier</literal> is
+          identical to <literal>ElementNameAndTextQualifier</literal>.
+          In <xref linkend="htmltable"/> a value of 2 would be
+          needed.</para>
 
         <para>By default
-        <literal>MultiLevelElementNameAndTextQualifier</literal> will
-        not ignore whitespace between the elements leading up to the
-        nested text.  If your piece of XML contains this sort of
-        whitespace (like <xref linkend="htmltable"/> which contains a
-        newline and several space characters between
-        <literal>&lt;tr&gt;</literal> and
-        <literal>&lt;td&gt;</literal>) you can either instruct XMLUnit
-        to ignore whitespace completely (see
+          <literal>MultiLevelElementNameAndTextQualifier</literal>
+          will not ignore whitespace between the elements leading up
+          to the nested text.  If your piece of XML contains this sort
+          of whitespace (like <xref linkend="htmltable"/> which
+          contains a newline and several space characters between
+          <literal>&lt;tr&gt;</literal> and
+          <literal>&lt;td&gt;</literal>) you can either instruct
+          XMLUnit to ignore whitespace completely (see
           <xref linkend="Whitespace Handling"/>) or use the two-arg
-        constructor of
-        <literal>MultiLevelElementNameAndTextQualifier</literal>
-        introduced with XMLUnit 1.2 and set the
-        <literal>ignoreEmptyTexts</literal> argument to true.</para>
+          constructor of
+          <literal>MultiLevelElementNameAndTextQualifier</literal>
+          introduced with XMLUnit 1.2 and set the
+          <literal>ignoreEmptyTexts</literal> argument to
+          true.</para>
+
+        <para>In
+          general <literal>RecursiveElementNameAndTextQualifier</literal>
+          requires less knowledge upfront and its whitespace-handling
+          is more intuitive.</para>
       </section>
 
     </section>
@@ -3336,6 +3365,27 @@ class MyNodeTester implements NodeTester {
           definitions written in RELAX NG or other schema languages in
           addition to W3C XML Schema.  See
           <xref linkend="JAXP 1.3 Validation"/> for details.</listitem>
+
+          <listitem>New examples have been added:
+            <itemizedlist>
+              <listitem><literal>RecursiveElementNameAndTextQualifier</literal>
+                - a more flexible <literal>ElementQualifier</literal>
+                that fills the same need as
+                <literal>MultiLevelElementNameAndTextQualifier</literal>
+                 See
+                 <xref linkend="RecursiveElementNameAndTextQualifier"/>
+                 for more details.</listitem>
+
+              <listitem><literal>CaseInsensitiveDifferenceListener</literal>
+                a - <literal>DifferenceListener</literal> that ignores
+                case when comparing texts.</listitem>
+
+              <listitem><literal>FloatingPointTolerantDifferenceListener</literal>
+                a - <literal>DifferenceListener</literal> that tries
+                to parse texts as floting point numbers and compares
+                them using a configurable tolerance.</listitem>
+            </itemizedlist>
+          </listitem>
         </itemizedlist>
       </section>
 
