@@ -736,7 +736,8 @@ public final class XMLUnit {
      *
      * <p>Normalized in this context means that all whitespace is
      * replaced by the space character and adjacent whitespace
-     * characters are collapsed to a single space character.</p>
+     * characters are collapsed to a single space character.  It will
+     * also trim the resulting character content on both ends.</p>
      *
      * <p>The default value is false.</p>
      *

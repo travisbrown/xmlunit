@@ -671,7 +671,7 @@ public class test_Diff extends TestCase{
 
     public void testNormalizedWhitespace() throws Exception {
         String xml1 = "<foo>a = b;</foo>";
-        String xml2 = "<foo>\r\n\ta = b; \r\n</foo>";
+        String xml2 = "<foo>\r\n\ta =\tb; \r\n</foo>";
         try {
             assertFalse(buildDiff(xml1, xml2).identical());
             assertFalse(buildDiff(xml1, xml2).similar());
@@ -743,21 +743,4 @@ public class test_Diff extends TestCase{
 	    XMLUnit.setIgnoreWhitespace(false);
 	}
     }
-
-    /**
-     * @see https://sourceforge.net/forum/message.php?msg_id=4843316
-     */
-    public void XtestNormalizeWhiteSpaceDoesntStripLeadingSpace()
-        throws Exception {
-	String control = "<name>value</name>";
-	String test = "<name> value</name>";
-	XMLUnit.setNormalizeWhitespace(true);
-	try {
-	    Diff diff = XMLUnit.compareXML(control, test);
-	    assertFalse(diff.toString(), diff.similar());
-	} finally {
-	    XMLUnit.setNormalizeWhitespace(false);
-	}
-    }
-
 }
