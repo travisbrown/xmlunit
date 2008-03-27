@@ -1639,7 +1639,7 @@ public class HaltOnNonRecoverable implements ComparisonController {
       ignored by <literal>DifferenceEngine</literal>, it becomes
       important when used together with <literal>Diff</literal>,
       though (see <xref linkend="Diff"/>).  The return value should be
-      one of the three constants defined in the the
+      one of the four constants defined in the the
       <literal>DifferenceListener</literal> interface:</para>
 
       <programlisting language="Java"><![CDATA[
@@ -1661,6 +1661,12 @@ public class HaltOnNonRecoverable implements ComparisonController {
      * interpreted as being similar.
      */
     int RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
+    /** 
+     * Override return value for the <code>differenceFound</code> method.
+     * Indicates that the nodes identified as being similar should be 
+     * interpreted as being different.
+     */
+    int RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT = 3;
 ]]></programlisting>
 
       <para>The <literal>skippedComparison</literal> method is
@@ -3365,6 +3371,13 @@ class MyNodeTester implements NodeTester {
           definitions written in RELAX NG or other schema languages in
           addition to W3C XML Schema.  See
           <xref linkend="JAXP 1.3 Validation"/> for details.</listitem>
+
+          <listitem><literal>DifferenceListener</literal> can now
+          "upgrade" recoverable differences to non-recoverable by
+          returning <literal>RETURN_UPGRADE_DIFFERENCE_NODES_DIFFERENT</literal>
+          in the <literal>differenceFound</literal>
+          method.  <ulink url="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1854284&amp;group_id=23187&amp;atid=377771">Issue
+          1854284</ulink>.</listitem>
 
           <listitem>New examples have been added:
             <itemizedlist>
