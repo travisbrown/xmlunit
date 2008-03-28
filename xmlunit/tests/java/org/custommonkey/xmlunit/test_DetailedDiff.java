@@ -311,6 +311,11 @@ public class test_DetailedDiff extends test_Diff {
         return new DetailedDiff(super.buildDiff(control, test));
     }
 
+    protected Diff buildDiff(String control, String test,
+                             DifferenceEngine engine) throws Exception {
+        return new DetailedDiff(super.buildDiff(control, test, engine));
+    }
+
     public test_DetailedDiff(String name) {
         super(name);
         firstForecast = "<weather><today icon=\"clouds\" temp=\"17\">"

@@ -70,19 +70,43 @@ public class DifferenceEngine implements DifferenceConstants {
     private static final String NOT_NULL_NODE = "not null";
     private static final String ATTRIBUTE_ABSENT = "[attribute absent]";
     private final ComparisonController controller;
+    private MatchTracker matchTracker;
     private final XpathNodeTracker controlTracker;
     private final XpathNodeTracker testTracker;
     
     /**
-     * Simple constructor
+     * Simple constructor that uses no MatchTracker at all.
      * @param controller the instance used to determine whether a Difference
      * detected by this class should halt further comparison or not
      * @see ComparisonController#haltComparison(Difference)
      */
     public DifferenceEngine(ComparisonController controller) {
+        this(controller, null);
+    }
+        
+    /**
+     * Simple constructor
+     * @param controller the instance used to determine whether a Difference
+     * detected by this class should halt further comparison or not
+     * @param matchTracker the instance that is notified on each
+     * successful match.  May be null.
+     * @see ComparisonController#haltComparison(Difference)
+     * @see MatchTracker#matchFound(Difference)
+     */
+    public DifferenceEngine(ComparisonController controller,
+                            MatchTracker matchTracker) {
         this.controller = controller;
+        this.matchTracker = matchTracker;
         this.controlTracker = new XpathNodeTracker();
         this.testTracker = new XpathNodeTracker();
+    }
+
+    /**
+     * @param matchTracker the instance that is notified on each
+     * successful match.  May be null.
+     */
+    public void setMatchTracker(MatchTracker matchTracker) {
+        this.matchTracker = matchTracker;
     }
         
     /**
@@ -792,21 +816,23 @@ public class DifferenceEngine implements DifferenceConstants {
                            Difference difference, XpathNodeTracker controlLoc,
                            XpathNodeTracker testLoc)
         throws DifferenceFoundException {
+        NodeDetail controlDetail = new NodeDetail(String.valueOf(expected),
+                                                  control,
+                                                  controlLoc == null ? null
+                                                  : controlLoc.toXpathString());
+        NodeDetail testDetail = new NodeDetail(String.valueOf(actual),
+                                               test,
+                                               testLoc == null ? null
+                                               : testLoc.toXpathString());
+        Difference differenceInstance = new Difference(difference, 
+                                                       controlDetail, testDetail);
         if (unequal(expected, actual)) {
-            NodeDetail controlDetail = new NodeDetail(String.valueOf(expected),
-                                                      control,
-                                                      controlLoc == null ? null
-                                                      : controlLoc.toXpathString());
-            NodeDetail testDetail = new NodeDetail(String.valueOf(actual),
-                                                   test,
-                                                   testLoc == null ? null
-                                                   : testLoc.toXpathString());
-            Difference differenceInstance = new Difference(difference, 
-                                                           controlDetail, testDetail);
             listener.differenceFound(differenceInstance);
             if (controller.haltComparison(differenceInstance)) {
                 throw flowControlException;
             }
+        } else if (matchTracker != null) {
+            matchTracker.matchFound(differenceInstance);
         }
     }
 

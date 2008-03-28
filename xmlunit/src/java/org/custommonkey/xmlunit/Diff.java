@@ -83,6 +83,7 @@ public class Diff
     private DifferenceEngine differenceEngine;
     private DifferenceListener  differenceListenerDelegate;
     private ElementQualifier elementQualifierDelegate;
+    private MatchTracker matchTrackerDelegate;
 
     /**
      * Construct a Diff that compares the XML in two Strings
@@ -397,12 +398,25 @@ public class Diff
     }
 
     /**
+     * Override the <code>MatchTracker</code> used to track
+     * successfully matched nodes.
+     * @param delegate the MatchTracker instance to delegate handling to.
+     */
+    public void overrideMatchTracker(MatchTracker delegate) {
+        this.matchTrackerDelegate = delegate;
+        if (differenceEngine != null) {
+            differenceEngine.setMatchTracker(delegate);
+        }
+    }
+
+    /**
      * Lazily initializes the difference engine if it hasn't been set
      * via a constructor.
      */
     private DifferenceEngine getDifferenceEngine() {
         return differenceEngine == null
-            ? new DifferenceEngine(this) : differenceEngine;
+            ? new DifferenceEngine(this, matchTrackerDelegate)
+            : differenceEngine;
     }
 
 }

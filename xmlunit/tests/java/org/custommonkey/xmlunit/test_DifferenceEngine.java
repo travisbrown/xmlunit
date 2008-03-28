@@ -843,6 +843,40 @@ public class test_DifferenceEngine extends TestCase implements DifferenceConstan
         assertEquals(ATTR_NAME_NOT_FOUND_ID, listener.comparingWhat);
     }
 
+    public void testMatchTrackerSetViaConstructor() throws Exception {
+        Element control = document.createElement("foo");
+        Element test = document.createElement("foo");
+        final int[] count = new int[1];
+        DifferenceEngine d =
+            new DifferenceEngine(new SimpleComparisonController(),
+                                 new MatchTracker() {
+                                     public void matchFound(Difference d) {
+                                         count[0]++;
+                                     }
+                                 });
+        d.compare(control, test, listener, null);
+        // NODE_TYPE (not null), NODE_TYPE(Element), NAMESPACE_URI(none),
+        // NAMESPACE_PREFIX(none), ELEMENT_TAG_NAME(foo),
+        // ELEMENT_NUM_ATTRIBUTE(none), HAS_CHILD_NODES(false)
+        assertEquals(7, count[0]);
+    }
+
+    public void testMatchTrackerSetViaSetter() throws Exception {
+        Element control = document.createElement("foo");
+        Element test = document.createElement("foo");
+        final int[] count = new int[1];
+        engine.setMatchTracker(new MatchTracker() {
+                public void matchFound(Difference d) {
+                    count[0]++;
+                }
+            });
+        engine.compare(control, test, listener, null);
+        // NODE_TYPE (not null), NODE_TYPE(Element), NAMESPACE_URI(none),
+        // NAMESPACE_PREFIX(none), ELEMENT_TAG_NAME(foo),
+        // ELEMENT_NUM_ATTRIBUTE(none), HAS_CHILD_NODES(false)
+        assertEquals(7, count[0]);
+    }
+
     private void listenToDifferences(String control, String test)
         throws SAXException, IOException {
         Document controlDoc = XMLUnit.buildControlDocument(control);
