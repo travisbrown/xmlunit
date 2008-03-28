@@ -2093,6 +2093,66 @@ assertEquals(2, l.size()); // expected <b/> but was <c/> and vice versa
 
     </section>
 
+    <section id="MatchTracker">
+      <title><literal>MatchTracker</literal></title>
+
+      <para>Sometimes you might be interested in any sort of
+      comparison result and want to get notified of successful matches
+      as well.  Maybe you want to provide feedback on the amount of
+      differences and similarities between two documents, for
+      example.</para>
+
+      <para>The interface <literal>MatchTracker</literal> can be
+      implemented to get notified on each and every successful match,
+      note that there may be a lot more comparisions going on than you
+      might expect and that your callback gets notified a lot.</para>
+
+      <example>
+        <title>The <literal>MatchTracker</literal> interface</title>
+        <programlisting language="Java"><![CDATA[
+package org.custommonkey.xmlunit;
+
+/**
+ * Listener for callbacks from a {@link DifferenceEngine#compare
+ * DifferenceEngine comparison} that is notified on each and every
+ * comparision that resulted in a match.
+ */
+public interface MatchTracker {
+    /**
+     * Receive notification that 2 match.
+     * @param match a Difference instance as defined in {@link
+     * DifferenceConstants DifferenceConstants} describing the test
+     * that matched and containing the detail of the nodes that have
+     * been compared
+     */
+    void matchFound(Difference difference);
+}
+]]></programlisting></example>
+
+      <para>Despite its name the <literal>Difference</literal>
+        instance passed into the <literal>matchFound</literal> method
+        really describes a match and not a difference.  You can expect
+        that the <literal>getValue</literal> method on both the
+        control and the test <literal>NodeDetail</literal> will be
+        equal.</para>
+
+      <para><literal>DifferenceEngine</literal> provides a constructor
+        overload that allows you to pass in
+        a <literal>MatchTracker</literal> instance and also provides
+        a <literal>setMatchTracker</literal>
+        method.  <literal>Diff</literal>
+        and <literal>DetailedDiff</literal>
+        provide <literal>overrideMatchTracker</literal> methods that
+        fill the same purpose.</para>
+
+      <para>Note that your <literal>MatchTracker</literal> won't
+        receive any callbacks once the
+        configured <literal>ComparisonController</literal> has decided
+        that <literal>DifferenceEngine</literal> should halt the
+        comparision.</para>
+
+    </section>
+
     <section id="Comparing: JUnit 3">
       <title>JUnit 3.x Convenience Methods</title>
 
@@ -3378,6 +3438,12 @@ class MyNodeTester implements NodeTester {
           in the <literal>differenceFound</literal>
           method.  <ulink url="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1854284&amp;group_id=23187&amp;atid=377771">Issue
           1854284</ulink>.</listitem>
+
+          <listitem>A new callback
+          interface <literal>MatchTracker</literal> is now notified on
+          successful matches of Nodes.  For more details see
+          <xref linkend="MatchTracker"/>.  <ulink url="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1860491&amp;group_id=23187&amp;atid=377771">Issue
+          1860491</ulink>.</listitem>
 
           <listitem>New examples have been added:
             <itemizedlist>
