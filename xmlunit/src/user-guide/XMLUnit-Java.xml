@@ -3421,7 +3421,7 @@ class MyNodeTester implements NodeTester {
           </listitem>
 
           <listitem>
-            <literal>XMLUnit.setsetIgnoreDiffBetweenTextAndCDATA</literal>
+            <literal>XMLUnit.setIgnoreDiffBetweenTextAndCDATA</literal>
             now also
             sets <literal>DocumentBuilderFactory.setCoalescing</literal>.
             This has been done so that whitespace differences can be
