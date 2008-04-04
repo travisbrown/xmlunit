@@ -3410,6 +3410,16 @@ class MyNodeTester implements NodeTester {
             kind of difference) the XPath for the "missing" node will
             be null.  It used to be some random XPath of a different node.
           </listitem>
+
+          <listitem>
+            <literal>XMLUnit.setsetIgnoreDiffBetweenTextAndCDATA</literal>
+            now also
+            sets <literal>DocumentBuilderFactory.setCoalescing</literal>.
+            This has been done so that whitespace differences can be
+            resolved according to the corresponding flags even in the
+            presence of CDATA
+            sections.  <ulink href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1903923&amp;group_id=23187&amp;atid=377768">Issue
+            1903923</ulink>.</listitem>
         </itemizedlist>
       </section>
 

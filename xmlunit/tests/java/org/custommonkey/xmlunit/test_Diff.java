@@ -843,4 +843,28 @@ public class test_Diff extends TestCase{
         assertEquals(12, count[0]);
     }
 
+    public void testCDATAAndIgnoreWhitespace() throws Exception {
+        String control = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<Data><Person><Name><![CDATA[JOE]]></Name></Person></Data>";
+
+        String test = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<Data>"
+            +" <Person>"
+            +" <Name>"
+            +" <![CDATA[JOE]]>"
+            +" </Name>"
+            +" </Person>"
+            +"</Data>";
+        
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+        try {
+            Diff diff = buildDiff(control, test);
+            assertTrue(diff.toString(), diff.similar());
+        } finally {
+            XMLUnit.setIgnoreWhitespace(false);
+            XMLUnit.setIgnoreDiffBetweenTextAndCDATA(false);
+        }
+    }
 }
+
