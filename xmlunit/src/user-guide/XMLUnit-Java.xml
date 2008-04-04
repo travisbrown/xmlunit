@@ -2354,6 +2354,15 @@ assertXMLEqual("expected pieces to be similar", CONTROL, TEST);
 </programlisting>
       </section>
 
+      <section id="Entity Reference Expansion">
+        <title>Entity Reference Expansion</title>
+
+        <para>Normally the XML parser will expand character references
+        to their Unicode equivalents but for more complex entity
+        definitions the parser may expand them or not.
+        Using <literal>XMLUnit.setExpandEntityReferences</literal> you
+        can control the parser's setting.</para>
+      </section>
     </section>
 
   </section>
@@ -3454,6 +3463,13 @@ class MyNodeTester implements NodeTester {
           successful matches of Nodes.  For more details see
           <xref linkend="MatchTracker"/>.  <ulink url="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1860491&amp;group_id=23187&amp;atid=377771">Issue
           1860491</ulink>.</listitem>
+
+          <listitem>It is now possible to have more control over
+          whether the parser expand entity references or not by
+          using <literal>XMLUnit.setExpandEntityReferences</literal>,
+          see <xref linkend="Entity Reference
+          Expansion"/>.  <ulink href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1877458&amp;group_id=23187&amp;atid=377771">Issue
+          1877458</ulink>.</listitem>
 
           <listitem>New examples have been added:
             <itemizedlist>

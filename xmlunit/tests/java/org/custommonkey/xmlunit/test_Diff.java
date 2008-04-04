@@ -866,5 +866,21 @@ public class test_Diff extends TestCase{
             XMLUnit.setIgnoreDiffBetweenTextAndCDATA(false);
         }
     }
+
+    /**
+     * Not a real test.  Need something that actually fails unless I
+     * set the flag.
+     */
+    public void testEntityExpansion() throws Exception {
+        String control = "<root>bla&#13;bla</root>";
+        String test = "<root>bla&#xD;bla</root>";
+        //XMLUnit.setExpandEntityReferences(true);
+        try {
+            Diff diff = buildDiff(control, test);
+            assertTrue(diff.toString(), diff.similar());
+        } finally {
+            XMLUnit.setExpandEntityReferences(false);
+        }
+    }
 }
 

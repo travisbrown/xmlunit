@@ -82,6 +82,7 @@ public final class XMLUnit {
     private static boolean ignoreAttributeOrder = false;
     private static String xsltVersion = "1.0";
     private static String xpathFactoryName = null;
+    private static boolean expandEntities = false;
 
     private static final String XSLT_VERSION_START = " version=\"";
     private static final String XSLT_VERSION_END = "\">";
@@ -849,6 +850,26 @@ public final class XMLUnit {
     static String getXSLTStart() {
         return XSLTConstants.XSLT_START_NO_VERSION
             + XSLT_VERSION_START + getXSLTVersion() + XSLT_VERSION_END;
+    }
+
+    /**
+     * Whether the parser shall be instructed to expand entity references.
+     *
+     * <p>Defaults to false.</p>
+     *
+     * @see javax.xml.parsers.DocumentBuilderFactory#setExpandEntityReferences
+     */
+    public static void setExpandEntityReferences(boolean b) {
+        expandEntities = b;
+        getControlDocumentBuilderFactory().setExpandEntityReferences(b);
+        getTestDocumentBuilderFactory().setExpandEntityReferences(b);
+    }
+
+    /**
+     * Whether the parser shall be instructed to expand entity references.
+     */
+    public static boolean getExpandEntityReferences() {
+        return expandEntities;
     }
 }
 
