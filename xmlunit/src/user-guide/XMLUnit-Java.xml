@@ -3429,6 +3429,13 @@ class MyNodeTester implements NodeTester {
             presence of CDATA
             sections.  <ulink href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1903923&amp;group_id=23187&amp;atid=377768">Issue
             1903923</ulink>.</listitem>
+
+          <listitem>
+            Two protected methods
+            in <literal>SimpleXPathEngine</literal> (which you
+            shouldn't extend anyway) have added XpathException to
+            their throws list.
+          </listitem>
         </itemizedlist>
       </section>
 

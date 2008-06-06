@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2006-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2006-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -49,6 +49,16 @@ public class XpathException extends XMLUnitException {
      */
     public XpathException(Throwable t) {
         this(t != null ? t.getMessage() : null, t);
+    }
+
+    /**
+     * Inititializes the exeption.
+     *
+     * @param message the detail message
+     * @param cause the root cause of the exception
+     */
+    public XpathException(String message) {
+        this(message, null);
     }
 
     /**

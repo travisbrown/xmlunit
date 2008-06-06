@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001-2007, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -123,16 +123,23 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * @param xslt
      * @param document
      * @param result
+     * @throws XpathException
      * @throws TransformerException
      * @throws ConfigurationException
      */
     private void performTransform(String xslt, Document document,
                                   Result result)
-        throws TransformerException, ConfigurationException {
+        throws TransformerException, ConfigurationException, XpathException {
         try {
             StreamSource source = new StreamSource(new StringReader(xslt));
             Transformer transformer =
                 XMLUnit.getTransformerFactory().newTransformer(source);
+            // Issue 1985229 says Xalan-J 2.7.0 may return null for
+            // illegal input
+            if (transformer == null) {
+                throw new XpathException("failed to obtain an XSLT transformer"
+                                         + " for XPath expression.");
+            }
             transformer.transform(new DOMSource(document), result);
         } catch (javax.xml.transform.TransformerConfigurationException ex) {
             throw new ConfigurationException(ex);
@@ -149,7 +156,7 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      * @return the root node of the Document created by the copy-of transform.
      */
     protected Node getXPathResultNode(String select, Document document)
-        throws ConfigurationException, TransformerException {
+        throws ConfigurationException, TransformerException, XpathException {
         return getXPathResultAsDocument(select, document).getDocumentElement();
     }
 
@@ -164,7 +171,7 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
      */
     protected Document getXPathResultAsDocument(String select,
                                                 Document document)
-        throws ConfigurationException, TransformerException {
+        throws ConfigurationException, TransformerException, XpathException {
         DOMResult result = new DOMResult();
         performTransform(getCopyTransformation(select), document, result);
         return (Document) result.getNode();
