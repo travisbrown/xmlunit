@@ -402,12 +402,22 @@ public final class XMLUnit {
      */
     public static TransformerFactory getTransformerFactory() {
         if (transformerFactory == null) {
-            transformerFactory = TransformerFactory.newInstance();
-            if (uriResolver != null) {
-                transformerFactory.setURIResolver(uriResolver);
-            }
+            transformerFactory = newTransformerFactory();
         }
         return transformerFactory;
+    }
+
+    /**
+     * Get a fresh transformer to use for XSLT transformations (and by
+     * implication serialization and XPaths).
+     * @return a new instance of the default transformer factory
+     */
+    static TransformerFactory newTransformerFactory() {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        if (uriResolver != null) {
+            tf.setURIResolver(uriResolver);
+        }
+        return tf;
     }
 
     /**

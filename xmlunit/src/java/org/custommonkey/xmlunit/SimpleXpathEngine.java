@@ -42,9 +42,11 @@ import org.custommonkey.xmlunit.exceptions.XpathException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
-import javax.xml.transform.Result;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Result;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -132,14 +134,31 @@ public class SimpleXpathEngine implements XpathEngine, XSLTConstants {
         throws TransformerException, ConfigurationException, XpathException {
         try {
             StreamSource source = new StreamSource(new StringReader(xslt));
-            Transformer transformer =
-                XMLUnit.getTransformerFactory().newTransformer(source);
+            TransformerFactory tf = XMLUnit.newTransformerFactory();
+            ErrorListener el = new ErrorListener() {
+                    public void error(TransformerException ex)
+                        throws TransformerException {
+                        // any error in our simple stylesheet must be fatal
+                        throw ex;
+                    }
+                    public void fatalError(TransformerException ex)
+                        throws TransformerException {
+                        throw ex;
+                    }
+                    public void warning(TransformerException ex) {
+                        // there shouldn't be any warning
+                        ex.printStackTrace();
+                    }
+                };
+            tf.setErrorListener(el);
+            Transformer transformer = tf.newTransformer(source);
             // Issue 1985229 says Xalan-J 2.7.0 may return null for
             // illegal input
             if (transformer == null) {
                 throw new XpathException("failed to obtain an XSLT transformer"
                                          + " for XPath expression.");
             }
+            transformer.setErrorListener(el);
             transformer.transform(new DOMSource(document), result);
         } catch (javax.xml.transform.TransformerConfigurationException ex) {
             throw new ConfigurationException(ex);
