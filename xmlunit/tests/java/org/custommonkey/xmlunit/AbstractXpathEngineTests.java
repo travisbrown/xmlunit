@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2007, Jeff Martin, Tim Bacon
+Copyright (c) 2007-2008, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,8 @@ package org.custommonkey.xmlunit;
 
 import java.util.HashMap;
 import junit.framework.TestCase;
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -179,4 +181,15 @@ public abstract class AbstractXpathEngineTests extends TestCase {
     }
 
 
+    public void testEvaluateInvalidXPath() throws Exception {
+    	String xpath = "count(test//*[@attrOne='open source])";
+    	try {
+            String result = newXpathEngine().evaluate(xpath, testDocument);
+            fail("expected Exception to be thrown but wasn't");
+    	} catch (XpathException ex) {
+            // expected
+    	} catch (ConfigurationException ex) {
+            // acceptable in the JAXP 1.2 case
+        }
+    }
 }
