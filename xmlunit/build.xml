@@ -215,6 +215,7 @@ POSSIBILITY OF SUCH DAMAGE.
       <fileset dir="${src.dir}/etc">
         <include name="xmlunit.pom"/>
         <include name="xmlunit-ivy.xml"/>
+        <include name="xmlunit-maven-metadata.xml"/>
       </fileset>
       <mapper type="glob" from="xmlunit*" to="xmlunit-${xmlunit.version}*"/>
       <filterset>
