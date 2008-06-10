@@ -69,7 +69,7 @@
       element <literal><![CDATA[<foo>bar</foo>]]></literal>) and valid
       XML with incorrect content (e.g.  element
       <literal><![CDATA[<foo>baz</foo>]]></literal>). What we really
-      wanted was an <literal>assertXMLEquals()</literal> method, so we
+      wanted was an <literal>assertXMLEqual()</literal> method, so we
       could compare the message that we expected the system to
       generate and the message that the system actually generated. And
       that was the beginning of XMLUnit.</para>
@@ -135,7 +135,7 @@
       should work with any JAXP compliant parser library, such as
       Xerces-J <footnote id="xerces-link"><para><ulink
       url="http://xerces.apache.org/">http://xerces.apache.org/</ulink></para></footnote>
-      from the Apache Software Foundation. To use the XSL and XPath
+      from the Apache Software Foundation. To use the XSLT and XPath
       features of XMLUnit a Trax (the XSLT portion of JAXP) compliant
       transformation engine is required, such as Xalan-J<footnote
       id="xalan-link"><para><ulink
@@ -203,7 +203,7 @@ public class MyXMLTestCase extends XMLTestCase {
       the control and test XML are either similar or
       identical. Obviously in this case the pieces of XML are
       different and the test will fail. The failure message indicates
-      both what the difference is and the Xpath locations of the nodes
+      both what the difference is and the XPath locations of the nodes
       that were being compared:</para>
 
       <programlisting><![CDATA[
@@ -217,7 +217,7 @@ Comparing test xml to control xml
       class stores the result of an XML comparison and makes it
       available through the methods <literal>similar()</literal> and
       <literal>identical()</literal>. The
-      <literal>assertXMLEquals()</literal> method tests the value of
+      <literal>assertXMLEqual()</literal> method tests the value of
       <literal>Diff.similar()</literal> and the
       <literal>assertXMLIdentical()</literal> method tests the value
       of <literal>Diff.identical()</literal>.</para>
@@ -383,7 +383,7 @@ public void testRepeatedChildElements() throws Exception {
     <section id="Comparing XML Transformations">
       <title>Comparing XML Transformations</title>
 
-      <para>XMLUnit can test XSL transformations at a high level using
+      <para>XMLUnit can test XSLT transformations at a high level using
       the <literal>Transform</literal> class that wraps an
       <literal>javax.xml.transform.Transformer</literal>
       instance. Knowing the input XML, input stylesheet and expected
@@ -404,7 +404,7 @@ public void testXSLTransformation() throws Exception {
       <para>The <literal>getResultString()</literal> and
       <literal>getResultDocument()</literal> methods of the
       <literal>Transform</literal> class can be used to access the
-      result of the XSL transformation programmatically if required,
+      result of the XSLT transformation programmatically if required,
       for example as below:</para>
 
       <example><title>Using <literal>Transform</literal>
@@ -466,7 +466,7 @@ public void testValidation() throws Exception {
 
     </section>
 
-    <section id="Xpath Tests"><title>Xpath Tests</title>
+    <section id="Xpath Tests"><title>XPath Tests</title>
 
       <para>One of the strengths of XML is the ability to
       programmatically extract specific parts of a document using
@@ -474,7 +474,7 @@ public void testValidation() throws Exception {
       offers a number of XPath related assertion methods, as
       demonstrated in this test:</para>
 
-      <example><title>Using Xpath Tests</title>
+      <example><title>Using XPath Tests</title>
         <programlisting language="Java"><![CDATA[
 public void testXPaths() throws Exception {
     String mySolarSystemXML = "<solar-system>"
@@ -493,10 +493,10 @@ public void testXPaths() throws Exception {
       <para>When an XPath expression is evaluated against a piece of
       XML a <literal>NodeList</literal> is created that contains the
       matching <literal>Node</literal>s. The methods in the previous
-      test <literal>assertXPathExists</literal>,
-      <literal>assertNotXPathExists</literal>,
-      <literal>assertXPathsEqual</literal>, and
-      <literal>assertXPathsNotEqual</literal> use these
+      test <literal>assertXpathExists</literal>,
+      <literal>assertXpathNotExists</literal>,
+      <literal>assertXpathsEqual</literal>, and
+      <literal>assertXpathsNotEqual</literal> use these
       <literal>NodeList</literal>s. However, the contents of a
       <literal>NodeList</literal> can be flattened (or
       <literal>String</literal>-ified) to a single value, and XMLUnit
@@ -504,9 +504,9 @@ public void testXPaths() throws Exception {
       this test<footnote id="XpathEngine note"><para>Each of the
       <literal>assertXpath...()</literal> methods uses an
       implementation of the <literal>XpathEngine</literal> interface
-      to evaluate an Xpath expression.</para></footnote>:</para>
+      to evaluate an XPath expression.</para></footnote>:</para>
 
-      <example><title>Testing Xpath Values</title>
+      <example><title>Testing XPath Values</title>
         <programlisting language="Java"><![CDATA[
 public void testXPathValues() throws Exception {
     String myJavaFlavours = "<java-flavours>"
@@ -522,7 +522,7 @@ public void testXPathValues() throws Exception {
                               "//jvm[3]/@current", myJavaFlavours);
 }]]></programlisting></example>
 
-      <para>Xpaths are especially useful where a document is made up
+      <para>XPaths are especially useful where a document is made up
       largely of known, unchanging content with only a small amount of
       changing content created by the system. One of the main areas
       where constant "boilerplate" markup is combined with system
@@ -558,7 +558,7 @@ public void testXpathsInHTML() throws Exception {
                            wellFormedDocument);
 }]]></programlisting></example>
 
-      <para>One of the key points about using Xpaths with HTML content
+      <para>One of the key points about using XPaths with HTML content
       is that extracting values in tests requires the values to be
       identifiable. (This is just another way of saying that testing
       HTML is easier when it is written to be testable.) In the
@@ -2104,7 +2104,7 @@ assertEquals(2, l.size()); // expected <b/> but was <c/> and vice versa
 
       <para>The interface <literal>MatchTracker</literal> can be
       implemented to get notified on each and every successful match,
-      note that there may be a lot more comparisions going on than you
+      note that there may be a lot more comparisons going on than you
       might expect and that your callback gets notified a lot.</para>
 
       <example>
@@ -2149,7 +2149,7 @@ public interface MatchTracker {
         receive any callbacks once the
         configured <literal>ComparisonController</literal> has decided
         that <literal>DifferenceEngine</literal> should halt the
-        comparision.</para>
+        comparison.</para>
 
     </section>
 
@@ -2621,7 +2621,7 @@ boolean isValid = v.isValid();
       package <ulink url="https://jaxp-sources.dev.java.net/nonav/docs/api/"><literal>javax.xml.validation</literal></ulink>
       designed for validations of snippets of XML against different
       schema languages.  Any compliant implementation must support the
-      W3C XMl Schema language, but other languages
+      W3C XML Schema language, but other languages
       like <ulink url="http://www.relaxng.org/">RELAX NG</ulink> or
       <ulink url="http://www.schematron.com/">Schematron</ulink> may
       be supported as well.</para>
@@ -2637,7 +2637,7 @@ boolean isValid = v.isValid();
       Alternatively you can specify the schema factory itself.</para>
 
       <para>The schema definition itself can be given via
-      <literal>Source</literal> elements, just like the pices of XML
+      <literal>Source</literal> elements, just like the pieces of XML
       to validate are specified as <literal>Source</literal> as
       well.</para>
 
@@ -2659,7 +2659,7 @@ boolean isValid = v.isInstanceValid(is);
       example.</para>
 
       <example>
-        <title>Validating a XML Schema Defintion</title>
+        <title>Validating an XML Schema Definition</title>
         <programlisting language="Java"><![CDATA[
 Validator v = new Validator();
 v.addSchemaSource(new StreamSource(new File(myXmlSchemaFile)));
@@ -2696,7 +2696,7 @@ boolean isValid = v.isSchemaValid();
         throws XpathException;
     
     /**
-     * Evaluate the result of executing the specified xpath syntax
+     * Evaluate the result of executing the specified XPath syntax
      * <code>select</code> expression on the specified document
      * @param select
      * @param document
@@ -3265,7 +3265,7 @@ class MyNodeTester implements NodeTester {
 
           <listitem>
             <para>When comparing two elements that differ on
-            attributes the comparision is now symmetric.</para>
+            attributes the comparison is now symmetric.</para>
 
             <para>In XMLUnit 1.0 if an attribute was present on the
             test but not the control element this wasn't flagged as a
@@ -3277,7 +3277,7 @@ class MyNodeTester implements NodeTester {
             number of attributes or there are attributes in the
             control element that are missing in the test element - so
             the pieces of XML have been flagged as different before as
-            well.  If you are using <literal>DetailiedDiff</literal>
+            well.  If you are using <literal>DetailedDiff</literal>
             this change may lead to more detected
             <literal>Difference</literal>s, though.</para>
           </listitem>
@@ -3494,7 +3494,7 @@ class MyNodeTester implements NodeTester {
 
               <listitem><literal>FloatingPointTolerantDifferenceListener</literal>
                 a - <literal>DifferenceListener</literal> that tries
-                to parse texts as floting point numbers and compares
+                to parse texts as floating point numbers and compares
                 them using a configurable tolerance.</listitem>
             </itemizedlist>
           </listitem>
