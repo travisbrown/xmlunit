@@ -558,7 +558,7 @@ public final class XMLUnit {
      * @return current version
      */
     public static String getVersion() {
-        return "1.2alpha"; 
+        return "1.2"; 
     }
 
    /**

@@ -37,7 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
   <property file="build.properties"/>
 
   <!-- Version -->
-  <property name="xmlunit.version" value="1.2alpha"/>
+  <property name="xmlunit.version" value="1.2"/>
 
   <!-- some locations -->
   <property name="src.dir" value="src"/>
