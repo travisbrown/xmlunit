@@ -5,12 +5,22 @@ To run this software you will need:
 - Nunit v2.2 or above (http://nunit.org/)
 - .NET runtime v1.1 or Mono runtime v1.0 (or above)
 
-If you want to build the source code yourself you will also need NAnt (http://nant.sourceforge.net/)
+If you want to build the source code yourself you will also need NAnt
+(http://nant.sourceforge.net/)
 
-This build of the source code was prepared using .NET csc 1.1.4322, NUnit2.4.6, and NAnt0.8.5
+This build of the source code was prepared using .NET csc 1.1.4322,
+NUnit2.4.8, and NAnt0.8.5
 
 Enjoy!
 http://xmlunit.sourceforge.net/
+
+Changes in version 0.4:
+- order of attributes is ignored, this means there will never be a
+  difference of type 4 anymore.
+
+  A new flag in DifferenceConfiguration can be used to turn on the old
+  behavior where attribute order was significant.
+
 
 Changes in version 0.3.1:
 - made it compile and all tests pass on .NET 1.1 as well as 2.0 and

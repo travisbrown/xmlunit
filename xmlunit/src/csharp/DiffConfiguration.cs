@@ -2,20 +2,31 @@ namespace XmlUnit {
     using System.Xml;
     
     public class DiffConfiguration {
-        public static readonly WhitespaceHandling DEFAULT_WHITESPACE_HANDLING = WhitespaceHandling.All;
-        public static readonly string DEFAULT_DESCRIPTION = "XmlDiff";
-        public static readonly bool DEFAULT_USE_VALIDATING_PARSER = true;
+        public const WhitespaceHandling DEFAULT_WHITESPACE_HANDLING = WhitespaceHandling.All;
+        public const string DEFAULT_DESCRIPTION = "XmlDiff";
+        public const bool DEFAULT_USE_VALIDATING_PARSER = true;
+        public const bool DEFAULT_IGNORE_ATTRIBUTE_ORDER = true;
         
         private readonly string _description;
         private readonly bool _useValidatingParser;
         private readonly WhitespaceHandling _whitespaceHandling;
+        private readonly bool ignoreAttributeOrder;
         
         public DiffConfiguration(string description, 
                                  bool useValidatingParser,  
-                                 WhitespaceHandling whitespaceHandling) {
+                                 WhitespaceHandling whitespaceHandling,
+                                 bool ignoreAttributeOrder) {
             _description = description;
             _useValidatingParser = useValidatingParser;
             _whitespaceHandling = whitespaceHandling;
+            this.ignoreAttributeOrder = ignoreAttributeOrder;
+        }
+
+        public DiffConfiguration(string description, 
+                                 bool useValidatingParser,  
+                                 WhitespaceHandling whitespaceHandling)
+        : this (description, useValidatingParser, whitespaceHandling,
+                DEFAULT_IGNORE_ATTRIBUTE_ORDER) {
         }
         
         public DiffConfiguration(string description, 
@@ -60,6 +71,12 @@ namespace XmlUnit {
         public WhitespaceHandling WhitespaceHandling {
             get {
                 return _whitespaceHandling;
+            }
+        }
+
+        public bool IgnoreAttributeOrder {
+            get {
+                return ignoreAttributeOrder;
             }
         }
     }
