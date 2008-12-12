@@ -145,7 +145,7 @@ namespace XmlUnit {
                 
                 if (!String.Equals(controlAttrName, testAttrName)) {
                     if (!_diffConfiguration.IgnoreAttributeOrder) {
-                    DifferenceFound(DifferenceType.ATTR_SEQUENCE_ID, result);
+                        DifferenceFound(DifferenceType.ATTR_SEQUENCE_ID, result);
                     }
                 
                     if (!_testReader.MoveToAttribute(controlAttrName)) {
