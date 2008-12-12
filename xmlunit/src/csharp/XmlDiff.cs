@@ -1,10 +1,13 @@
 namespace XmlUnit {
     using System;
+    using System.Collections;
     using System.IO;
     using System.Xml;
     using System.Xml.Schema;
     
     public class XmlDiff {
+        private const string XMLNS_PREFIX = "xmlns";
+
         private readonly XmlReader _controlReader; 
         private readonly XmlReader _testReader;
         private readonly DiffConfiguration _diffConfiguration;
@@ -119,47 +122,61 @@ namespace XmlUnit {
             if (!String.Equals(controlTagName, testTagName)) {
                 DifferenceFound(DifferenceType.ELEMENT_TAG_NAME_ID, result);
             } else {
-                int controlAttributeCount = _controlReader.AttributeCount;
-                int testAttributeCount = _testReader.AttributeCount;
-                if (controlAttributeCount != testAttributeCount) {
+                XmlAttribute[] controlAttributes =
+                    GetNonSpecialAttributes(_controlReader);
+                XmlAttribute[] testAttributes =
+                    GetNonSpecialAttributes(_testReader);
+                if (controlAttributes.Length != testAttributes.Length) {
                     DifferenceFound(DifferenceType.ELEMENT_NUM_ATTRIBUTES_ID, result);
                 } else {
-                    CompareAttributes(result, controlAttributeCount);
+                    CompareAttributes(result, controlAttributes, testAttributes);
                 }
             }
         }
         
-        private void CompareAttributes(DiffResult result, int controlAttributeCount) {
-            string controlAttrValue, controlAttrName;
-            string testAttrValue, testAttrName;
-            
-            _controlReader.MoveToFirstAttribute();
-            _testReader.MoveToFirstAttribute();
-            for (int i=0; i < controlAttributeCount; ++i) {
+        private void CompareAttributes(DiffResult result,
+                                       XmlAttribute[] controlAttributes,
+                                       XmlAttribute[] testAttributes) {
+            ArrayList unmatchedTestAttributes = new ArrayList();
+            unmatchedTestAttributes.AddRange(testAttributes);
+            for (int i=0; i < controlAttributes.Length; ++i) {
                 
-                controlAttrName = _controlReader.Name;
-                testAttrName = _testReader.Name;
-                
-                controlAttrValue = _controlReader.Value;
-                testAttrValue = _testReader.Value;
-                
-                if (!String.Equals(controlAttrName, testAttrName)) {
-                    if (!_diffConfiguration.IgnoreAttributeOrder) {
-                        DifferenceFound(DifferenceType.ATTR_SEQUENCE_ID, result);
-                    }
-                
-                    if (!_testReader.MoveToAttribute(controlAttrName)) {
-                        DifferenceFound(DifferenceType.ATTR_NAME_NOT_FOUND_ID, result);
-                    }
-                    testAttrValue = _testReader.Value;
+                bool controlIsInNs = IsNamespaced(controlAttributes[i]);
+                string controlAttrName =
+                    GetUnNamespacedNodeName(controlAttributes[i]);
+                XmlAttribute testAttr = null;
+                if (!controlIsInNs) {
+                    testAttr = FindAttributeByName(testAttributes,
+                                                   controlAttrName);
+                } else {
+                    testAttr = FindAttributeByNameAndNs(testAttributes,
+                                                        controlAttrName,
+                                                        controlAttributes[i]
+                                                        .NamespaceURI);
                 }
-                
-                if (!String.Equals(controlAttrValue, testAttrValue)) {
-                    DifferenceFound(DifferenceType.ATTR_VALUE_ID, result);
+
+                if (testAttr != null) {
+                    unmatchedTestAttributes.Remove(testAttr);
+                    if (!_diffConfiguration.IgnoreAttributeOrder
+                        && testAttr != testAttributes[i]) {
+                        DifferenceFound(DifferenceType.ATTR_SEQUENCE_ID,
+                                        result);
+                    }
+
+                    if (controlAttributes[i].Value != testAttr.Value) {
+                    Console.Error.WriteLine("control: {0}, expected {1}, was {2}",
+                                            controlAttrName,
+                    controlAttributes[i].Value, testAttr.Value);
+                        DifferenceFound(DifferenceType.ATTR_VALUE_ID, result);
+                    }
+
+                } else {
+                    DifferenceFound(DifferenceType.ATTR_NAME_NOT_FOUND_ID,
+                                    result);
                 }
-                
-                _controlReader.MoveToNextAttribute();
-                _testReader.MoveToNextAttribute();
+            }
+            foreach (XmlAttribute a in unmatchedTestAttributes) {
+                DifferenceFound(DifferenceType.ATTR_NAME_NOT_FOUND_ID, result);
             }
         }
         
@@ -207,6 +224,68 @@ namespace XmlUnit {
             }
         }
         
+        private XmlAttribute[] GetNonSpecialAttributes(XmlReader r) {
+            ArrayList l = new ArrayList();
+            int length = r.AttributeCount;
+            if (length > 0) {
+                XmlDocument doc = new XmlDocument();
+                r.MoveToFirstAttribute();
+                for (int i = 0; i < length; i++) {
+                    XmlAttribute a = doc.CreateAttribute(r.Name, r.NamespaceURI);
+                    if (!IsXMLNSAttribute(a)) {
+                        l.Add(a);
+                    }
+                    a.Value = r.Value;
+                    r.MoveToNextAttribute();
+                }
+            }
+            return (XmlAttribute[]) l.ToArray(typeof(XmlAttribute));
+        }
+
+        private bool IsXMLNSAttribute(XmlAttribute attribute) {
+            return XMLNS_PREFIX == attribute.Prefix ||
+                XMLNS_PREFIX == attribute.Name;
+        }
+
+        private XmlAttribute FindAttributeByName(XmlAttribute[] attrs,
+                                                 string name) {
+            foreach (XmlAttribute a in attrs) {
+                if (GetUnNamespacedNodeName(a) == name) {
+                    return a;
+                }
+            }
+            return null;
+        }
+
+        private XmlAttribute FindAttributeByNameAndNs(XmlAttribute[] attrs,
+                                                      string name,
+                                                      string nsUri) {
+            foreach (XmlAttribute a in attrs) {
+                if (GetUnNamespacedNodeName(a) == name
+                    && a.NamespaceURI == nsUri) {
+                    return a;
+                }
+            }
+            return null;
+        }
+
+        private string GetUnNamespacedNodeName(XmlNode aNode) {
+            return GetUnNamespacedNodeName(aNode, IsNamespaced(aNode));
+        }
+    
+        private string GetUnNamespacedNodeName(XmlNode aNode,
+                                               bool isNamespacedNode) {
+            if (isNamespacedNode) {
+                return aNode.LocalName;
+            }
+            return aNode.Name;
+        }
+
+        private bool IsNamespaced(XmlNode aNode) {
+            string ns = aNode.NamespaceURI;
+            return ns != null && ns.Length > 0;
+        }
+
         private void CheckEndElement(XmlReader reader, ref bool readResult, DiffResult result) {            
             readResult = reader.Read();
             if (!readResult || reader.NodeType != XmlNodeType.EndElement) {
