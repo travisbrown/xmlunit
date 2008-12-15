@@ -171,9 +171,6 @@ namespace XmlUnit {
                     }
 
                     if (controlAttributes[i].Value != testAttr.Value) {
-                    Console.Error.WriteLine("control: {0}, expected {1}, was {2}",
-                                            controlAttrName,
-                    controlAttributes[i].Value, testAttr.Value);
                         DifferenceFound(DifferenceType.ATTR_VALUE_ID, result);
                     }
 
@@ -222,12 +219,12 @@ namespace XmlUnit {
         private void CheckEmptyOrAtEndElement(DiffResult result, 
                                               ReaderWithState control,
                                               ReaderWithState test) {
-            if (control.Reader.IsEmptyElement) {
-                if (!test.Reader.IsEmptyElement) {
+            if (control.LastElementWasEmpty) {
+                if (!test.LastElementWasEmpty) {
                     CheckEndElement(test, result);
                 }
             } else {
-                if (test.Reader.IsEmptyElement) {
+                if (test.LastElementWasEmpty) {
                     CheckEndElement(control, result);
                 }
             }
@@ -319,11 +316,40 @@ namespace XmlUnit {
             internal ReaderWithState(XmlReader reader) {
                 Reader = reader;
                 HasRead = false;
+                LastElementWasEmpty = false;
             }
+
             internal readonly XmlReader Reader;
             internal bool HasRead;
+            internal bool LastElementWasEmpty;
+
             internal bool Read() {
-                return HasRead = Reader.Read();
+                HasRead = Reader.Read();
+                if (HasRead) {
+                    switch (Reader.NodeType) {
+                    case XmlNodeType.Element:
+                        LastElementWasEmpty = Reader.IsEmptyElement;
+                        break;
+                    case XmlNodeType.EndElement:
+                        LastElementWasEmpty = false;
+                        break;
+                    default:
+                        // don't care
+                        break;
+                    }
+                }
+                return HasRead;
+            }
+
+            internal string State {
+                get {
+                    return string.Format("Name {0}, NodeType {1}, IsEmpty {2},"
+                                         + " HasRead {3}, LastWasEmpty {4}",
+                                         Reader.Name,
+                                         Reader.NodeType,
+                                         Reader.IsEmptyElement,
+                                         HasRead, LastElementWasEmpty);
+                }
             }
         }
     }

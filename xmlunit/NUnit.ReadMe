@@ -24,6 +24,10 @@ Changes in version 0.4:
 - xmlns attributes are now no longer treated as normal attributes and
   the namespace of attributes is now sigificant
 
+- comparisions of empty elements with attributes failed.
+  I.e. <foo><bar x="1"/></foo> was considered different from
+  <foo><bar x="1"></bar></foo>
+
 Changes in version 0.3.1:
 - made it compile and all tests pass on .NET 1.1 as well as 2.0 and
   NUnit 2.4
