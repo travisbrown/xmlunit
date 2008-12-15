@@ -24,9 +24,12 @@ namespace XmlUnit.Tests {
         private void AssertExpectedResult(string input1, string input2, bool expected) {
             TextReader reader1 = new StringReader(input1);
             TextReader reader2 = new StringReader(input2);
+            System.Console.Error.WriteLine("comparing {0} to {1}", input1,
+                                           input2);
             DiffResult result = PerformDiff(reader1, reader2);
-            string msg = "comparing " + input1 + " to " + input2 + ": " + result.Difference;
-            Assert.AreEqual(expected, result.Equal);
+            string msg = string.Format("comparing {0} to {1}: {2}", input1,
+                                       input2, result.Difference);
+            Assert.AreEqual(expected, result.Equal, msg);
         }
         
         private void AssertExpectedResult(string[] inputs1, string[] inputs2, bool expected) {
@@ -46,9 +49,25 @@ namespace XmlUnit.Tests {
         }
         
         [Test] public void EqualResultForSameEmptyElements() { 
-            string[] input1 = {"<empty/>" , "<empty></empty>", "<elem><empty/></elem>", "<empty/>" };
-            string[] input2 = {"<empty/>" , "<empty></empty>", "<elem><empty></empty></elem>", "<empty></empty>"};
+            string[] input1 = {"<empty/>", "<elem><empty/></elem>"};
+            string[] input2 = {"<empty></empty>", "<elem><empty></empty></elem>"};
+            System.Console.Error.WriteLine("ooooooooooooooooooooooooooooooooooooooooo");
+            try {
             AssertExpectedResult(input1, input2, true);
+            } finally {
+            System.Console.Error.WriteLine("ooooooooooooooooooooooooooooooooooooooooo");
+            }
+        }
+
+        [Test] public void EqualResultForEmptyElementsWithAttributes() { 
+            string[] input1 = {"<empty x='1'/>", "<elem><empty x='1'/></elem>"};
+            string[] input2 = {"<empty x='1'></empty>", "<elem><empty x='1'></empty></elem>"};
+            System.Console.Error.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            try {
+            AssertExpectedResult(input1, input2, true);
+            } finally {
+            System.Console.Error.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            }
         }
 
         [Test] public void NotEqualResultForEmptyVsNotEmptyElements() { 
