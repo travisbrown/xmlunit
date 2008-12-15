@@ -140,9 +140,8 @@ namespace XmlUnit {
                     GetNonSpecialAttributes(testReader);
                 if (controlAttributes.Length != testAttributes.Length) {
                     DifferenceFound(DifferenceType.ELEMENT_NUM_ATTRIBUTES_ID, result);
-                } else {
-                    CompareAttributes(result, controlAttributes, testAttributes);
                 }
+                CompareAttributes(result, controlAttributes, testAttributes);
             }
         }
         
