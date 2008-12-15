@@ -8,20 +8,16 @@ namespace XmlUnit {
     public class XmlDiff {
         private const string XMLNS_PREFIX = "xmlns";
 
-        private readonly XmlReader _controlReader; 
-        private readonly XmlReader _testReader;
+        private readonly XmlInput controlInput;
+        private readonly XmlInput testInput;
         private readonly DiffConfiguration _diffConfiguration;
         private DiffResult _diffResult;
                 
         public XmlDiff(XmlInput control, XmlInput test, 
                        DiffConfiguration diffConfiguration) {
             _diffConfiguration =  diffConfiguration;
-            _controlReader = CreateXmlReader(control);
-            if (control.Equals(test)) {
-                _testReader = _controlReader;
-            } else {
-                _testReader = CreateXmlReader(test);
-            }
+            controlInput = control;
+            testInput = test;
         }
         
         public XmlDiff(XmlInput control, XmlInput test)
@@ -54,78 +50,94 @@ namespace XmlUnit {
         public DiffResult Compare() {
             if (_diffResult == null) {
                 _diffResult = new DiffResult();
-                if (!_controlReader.Equals(_testReader)) {
-                    Compare(_diffResult);
+                using (XmlReader controlReader = CreateXmlReader(controlInput))
+                using (XmlReader testReader = CreateXmlReader(testInput)) {
+                    if (!controlInput.Equals(testInput)) {
+                        Compare(_diffResult, controlReader, testReader);
+                    }
                 }
             }
             return _diffResult;
         }
         
-        private void Compare(DiffResult result) {
+        private void Compare(DiffResult result, XmlReader controlReader,
+                             XmlReader testReader) {
             bool controlRead, testRead;
             try {
                 do {
-                    controlRead = _controlReader.Read();
-                    testRead = _testReader.Read();
-                	Compare(result, ref controlRead, ref testRead);
+                    controlRead = controlReader.Read();
+                    testRead = testReader.Read();
+                    Compare(result, controlReader, ref controlRead,
+                            testReader, ref testRead);
                 } while (controlRead && testRead) ;
             } catch (FlowControlException e) {       
                 Console.Out.WriteLine(e.Message);
             }
         }        
         
-        private void Compare(DiffResult result, ref bool controlRead, ref bool testRead) {        	
+        private void Compare(DiffResult result,
+                             XmlReader controlReader, ref bool controlRead,
+                             XmlReader testReader, ref bool testRead) {        	
             if (controlRead) {
-                if(testRead) {
-                    CompareNodes(result);
-                    CheckEmptyOrAtEndElement(result, ref controlRead, ref testRead);
+                if (testRead) {
+                    CompareNodes(result, controlReader, testReader);
+                    CheckEmptyOrAtEndElement(result,
+                                             controlReader, ref controlRead,
+                                             testReader, ref testRead);
                 } else {
                     DifferenceFound(DifferenceType.CHILD_NODELIST_LENGTH_ID, result);
                 } 
             }
         }
                 
-        private void CompareNodes(DiffResult result) {
-            XmlNodeType controlNodeType = _controlReader.NodeType;
-            XmlNodeType testNodeType = _testReader.NodeType;
+        private void CompareNodes(DiffResult result, XmlReader controlReader,
+                                  XmlReader testReader) {
+            XmlNodeType controlNodeType = controlReader.NodeType;
+            XmlNodeType testNodeType = testReader.NodeType;
             if (!controlNodeType.Equals(testNodeType)) {
-            	CheckNodeTypes(controlNodeType, testNodeType, result);
+                CheckNodeTypes(controlNodeType, testNodeType, result,
+                               controlReader, testReader);
             } else if (controlNodeType == XmlNodeType.Element) {
-                CompareElements(result);
+                CompareElements(result, controlReader, testReader);
             } else if (controlNodeType == XmlNodeType.Text) {
-                CompareText(result);
+                CompareText(result, controlReader, testReader);
             }
         }
         
-        private void CheckNodeTypes(XmlNodeType controlNodeType, XmlNodeType testNodeType, DiffResult result) {        
-        	XmlReader readerToAdvance = null;
-        	if (controlNodeType.Equals(XmlNodeType.XmlDeclaration)) {
-        		readerToAdvance = _controlReader;
-        	} else if (testNodeType.Equals(XmlNodeType.XmlDeclaration)) {        			
-        		readerToAdvance = _testReader;
-        	}
+        private void CheckNodeTypes(XmlNodeType controlNodeType,
+                                    XmlNodeType testNodeType,
+                                    DiffResult result,
+                                    XmlReader controlReader,
+                                    XmlReader testReader) {
+            XmlReader readerToAdvance = null;
+            if (controlNodeType.Equals(XmlNodeType.XmlDeclaration)) {
+                readerToAdvance = controlReader;
+            } else if (testNodeType.Equals(XmlNodeType.XmlDeclaration)) {        			
+                readerToAdvance = testReader;
+            }
         	
-        	if (readerToAdvance != null) {
+            if (readerToAdvance != null) {
             	DifferenceFound(DifferenceType.HAS_XML_DECLARATION_PREFIX_ID, 
             	                controlNodeType, testNodeType, result);
-        		readerToAdvance.Read();
-        		CompareNodes(result);
-    		} else {
+                readerToAdvance.Read();
+                CompareNodes(result, controlReader, testReader);
+            } else {
             	DifferenceFound(DifferenceType.NODE_TYPE_ID, controlNodeType, 
              	                testNodeType, result);
-    		}       
+            }       
         }
         
-        private void CompareElements(DiffResult result) {
-            string controlTagName = _controlReader.Name;
-            string testTagName = _testReader.Name;
+        private void CompareElements(DiffResult result, XmlReader controlReader,
+                                     XmlReader testReader) {
+            string controlTagName = controlReader.Name;
+            string testTagName = testReader.Name;
             if (!String.Equals(controlTagName, testTagName)) {
                 DifferenceFound(DifferenceType.ELEMENT_TAG_NAME_ID, result);
             } else {
                 XmlAttribute[] controlAttributes =
-                    GetNonSpecialAttributes(_controlReader);
+                    GetNonSpecialAttributes(controlReader);
                 XmlAttribute[] testAttributes =
-                    GetNonSpecialAttributes(_testReader);
+                    GetNonSpecialAttributes(testReader);
                 if (controlAttributes.Length != testAttributes.Length) {
                     DifferenceFound(DifferenceType.ELEMENT_NUM_ATTRIBUTES_ID, result);
                 } else {
@@ -180,9 +192,10 @@ namespace XmlUnit {
             }
         }
         
-        private void CompareText(DiffResult result) {
-            string controlText = _controlReader.Value;
-            string testText = _testReader.Value;
+      private void CompareText(DiffResult result, XmlReader controlReader,
+                               XmlReader testReader) {
+            string controlText = controlReader.Value;
+            string testText = testReader.Value;
             if (!String.Equals(controlText, testText)) {
                 DifferenceFound(DifferenceType.TEXT_VALUE_ID, result);
             }
@@ -212,14 +225,17 @@ namespace XmlUnit {
         }
         
         private void CheckEmptyOrAtEndElement(DiffResult result, 
-                                              ref bool controlRead, ref bool testRead) {
-            if (_controlReader.IsEmptyElement) {
-                if (!_testReader.IsEmptyElement) {
-                    CheckEndElement(_testReader, ref testRead, result);
+                                              XmlReader controlReader,
+                                              ref bool controlRead,
+                                              XmlReader testReader,
+                                              ref bool testRead) {
+            if (controlReader.IsEmptyElement) {
+                if (!testReader.IsEmptyElement) {
+                    CheckEndElement(testReader, ref testRead, result);
                 }
             } else {
-                if (_testReader.IsEmptyElement) {
-                    CheckEndElement(_controlReader, ref controlRead, result);
+                if (testReader.IsEmptyElement) {
+                    CheckEndElement(controlReader, ref controlRead, result);
                 }
             }
         }
