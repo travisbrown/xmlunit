@@ -3516,6 +3516,38 @@ class MyNodeTester implements NodeTester {
       </section>
     </section>
 
+    <section id="Changes 1.3">
+      <title>Changes from XMLUnit 1.2 to 1.3</title>
+
+      <section id="Breaking Changes 1.2">
+        <title>Breaking Changes</title>
+
+        <itemizedlist>
+        </itemizedlist>
+      </section>
+
+      <section id="New Features 1.2">
+        <title>New Features</title>
+
+        <itemizedlist>
+        </itemizedlist>
+      </section>
+
+      <section id="Bugfixes 1.2">
+        <title>Important Bug Fixes</title>
+
+        <itemizedlist>
+          <listitem>
+            If XMLUnit couldn't match attributes (i.e. it encountered
+            a <literal>ATTR_NAME_NOT_FOUND_ID</literal> kind of
+            difference), the XPath expressions of the node details
+            have been random.  <ulink
+            url="https://sourceforge.net/tracker/index.php?func=detail&aid=2386807&group_id=23187&atid=377768">Issue 2386807</ulink>.
+          </listitem>
+        </itemizedlist>
+      </section>
+    </section>
+
   </appendix>
 
 </article>

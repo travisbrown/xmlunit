@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2001-2008, Jeff Martin, Tim Bacon
+Copyright (c) 2001-2009, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -568,6 +568,8 @@ public class DifferenceEngine implements DifferenceConstants {
                                 nextAttr, compareTo, listener, ATTR_SEQUENCE);
                     }
                 } else {
+                    controlTracker.clearTrackedAttribute();
+                    testTracker.clearTrackedAttribute();
                     compare(attrName, null, control, test, listener,
                             ATTR_NAME_NOT_FOUND);
                 }
@@ -580,6 +582,8 @@ public class DifferenceEngine implements DifferenceConstants {
                 compareRecognizedXMLSchemaInstanceAttribute(null, nextAttr,
                                                             listener);
             } else {
+                controlTracker.clearTrackedAttribute();
+                testTracker.clearTrackedAttribute();
                 compare(null,
                         getUnNamespacedNodeName(nextAttr,
                                                 isNamespaced(nextAttr)),
