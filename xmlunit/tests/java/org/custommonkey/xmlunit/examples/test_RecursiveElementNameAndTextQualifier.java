@@ -1,6 +1,6 @@
 /*
 ******************************************************************
-Copyright (c) 2008, Jeff Martin, Tim Bacon
+Copyright (c) 2008-2009, Jeff Martin, Tim Bacon
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite; 
 
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
 import org.custommonkey.xmlunit.ElementQualifier;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -170,4 +171,91 @@ public class test_RecursiveElementNameAndTextQualifier extends TestCase {
         document = XMLUnit.newControlParser().newDocument();
     }
 
+    /**
+     * @see https://sourceforge.net/forum/forum.php?thread_id=2948005&amp;forum_id=73273
+     */
+    public void testOpenDiscussionThread2948995_1() throws Exception {
+        Diff myDiff = new Diff("<root>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>1</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>2</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>3</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>4</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "</root>",
+                               "<root>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>2</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>1</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>3</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>4</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "</root>");
+        myDiff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier()); 
+        XMLAssert.assertXMLEqual("Not similar", myDiff, true); 
+    }
+
+    /**
+     * @see https://sourceforge.net/forum/forum.php?thread_id=2948005&amp;forum_id=73273
+     */
+    public void testOpenDiscussionThread2948995_2() throws Exception {
+        Diff myDiff = new Diff("<root>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>1</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>2</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>3</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>4</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "</root>",
+                               "<root>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>1</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>2</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "  <ent>"
+                               + "    <value>"
+                               + "      <int>4</int>"
+                               + "    </value>"
+                               + "    <value>"
+                               + "      <int>3</int>"
+                               + "    </value>"
+                               + "  </ent>"
+                               + "</root>");
+        myDiff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier()); 
+        XMLAssert.assertXMLEqual("Not similar", myDiff, true); 
+    }
 }
