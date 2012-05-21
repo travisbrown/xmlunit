@@ -27,9 +27,9 @@ public class TransformTest {
     @Test public void transformAnimalToString() {
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><dog/>",
                      Transform
-                     .source(Input.fromFile(TestResources.DOG_FILE)
+                     .source(Input.fromStream(this.getClass().getResourceAsStream(TestResources.DOG_FILE))
                              .build())
-                     .withStylesheet(Input.fromFile(TestResources.ANIMAL_XSL)
+                     .withStylesheet(Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_XSL))
                                      .build())
                      .build()
                      .toString());
@@ -37,8 +37,8 @@ public class TransformTest {
 
     @Test public void transformAnimalToDocument() {
         Document doc = Transform
-            .source(Input.fromFile(TestResources.DOG_FILE).build())
-            .withStylesheet(Input.fromFile(TestResources.ANIMAL_XSL)
+            .source(Input.fromStream(this.getClass().getResourceAsStream(TestResources.DOG_FILE)).build())
+            .withStylesheet(Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_XSL))
                             .build())
             .build()
             .toDocument();
@@ -47,8 +47,8 @@ public class TransformTest {
 
     @Test public void transformAnimalToHtml() {
         assertThat(Transform
-                   .source(Input.fromFile(TestResources.DOG_FILE).build())
-                   .withStylesheet(Input.fromFile(TestResources.ANIMAL_XSL)
+                   .source(Input.fromStream(this.getClass().getResourceAsStream(TestResources.DOG_FILE)).build())
+                   .withStylesheet(Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_XSL))
                                    .build())
                    .withOutputProperty(OutputKeys.METHOD, "html")
                    .build()

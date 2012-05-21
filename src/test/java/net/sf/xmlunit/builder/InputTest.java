@@ -15,8 +15,9 @@ package net.sf.xmlunit.builder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
@@ -42,27 +43,27 @@ public class InputTest {
     }
 
     @Test public void shouldParseADocument() throws Exception {
-        Document d = parse(Input.fromFile(TestResources.ANIMAL_FILE).build());
+        Document d = parse(Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_FILE)).build());
         Source s = Input.fromDocument(d).build();
         allIsWellFor(s);
     }
 
-    @Test public void shouldParseAnExistingFileByName() throws Exception {
-        Source s = Input.fromFile(TestResources.ANIMAL_FILE).build();
+    /*@Test public void shouldParseAnExistingFileByName() throws Exception {
+        Source s = Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_FILE)).build();
         allIsWellFor(s);
         assertEquals(toFileUri(TestResources.ANIMAL_FILE), s.getSystemId());
     }
 
     @Test public void shouldParseAnExistingFileByFile() throws Exception {
-        Source s = Input.fromFile(new File(TestResources.ANIMAL_FILE)).build();
+        Source s = Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_FILE)).build();
         allIsWellFor(s);
         assertEquals(toFileUri(TestResources.ANIMAL_FILE), s.getSystemId());
-    }
+    }*/
 
     @Test public void shouldParseAnExistingFileFromStream() throws Exception {
-        FileInputStream is = null;
+        InputStream is = null;
         try {
-            is = new FileInputStream(TestResources.ANIMAL_FILE);
+            is = this.getClass().getResourceAsStream(TestResources.ANIMAL_FILE);
             allIsWellFor(Input.fromStream(is).build());
         } finally {
             if (is != null) {
@@ -72,9 +73,9 @@ public class InputTest {
     }
 
     @Test public void shouldParseAnExistingFileFromReader() throws Exception {
-        FileReader r = null;
+        Reader r = null;
         try {
-            r = new FileReader(TestResources.ANIMAL_FILE);
+            r = new InputStreamReader(this.getClass().getResourceAsStream(TestResources.ANIMAL_FILE));
             allIsWellFor(Input.fromReader(r).build());
         } finally {
             if (r != null) {
@@ -93,23 +94,22 @@ public class InputTest {
     }
 
     @Test public void shouldParseFileFromURIString() throws Exception {
-        allIsWellFor(Input.fromURI("file:" + TestResources.ANIMAL_FILE).build());
+        allIsWellFor(Input.fromURI(new URI(this.getClass().getResource(TestResources.ANIMAL_FILE).toExternalForm())).build());
     }
 
     @Test public void shouldParseFileFromURI() throws Exception {
-        allIsWellFor(Input.fromURI(new URI("file:" + TestResources.ANIMAL_FILE))
-                     .build());
+        allIsWellFor(Input.fromURI(this.getClass().getResource(TestResources.ANIMAL_FILE).toExternalForm()).build());
     }
 
     @Test public void shouldParseFileFromURL() throws Exception {
-        allIsWellFor(Input.fromURL(new URL("file:" + TestResources.ANIMAL_FILE))
+        allIsWellFor(Input.fromURL(this.getClass().getResource(TestResources.ANIMAL_FILE))
                      .build());
     }
 
     @Test public void shouldParseATransformationFromSource() throws Exception {
         Source input = Input.fromMemory("<animal>furry</animal>").build();
         Source s = Input.byTransforming(input)
-            .withStylesheet(Input.fromFile("src/tests/resources/animal.xsl")
+            .withStylesheet(Input.fromStream(this.getClass().getResourceAsStream("/animal.xsl"))
                             .build())
             .build();
         allIsWellFor(s, "furry");
@@ -118,7 +118,7 @@ public class InputTest {
     @Test public void shouldParseATransformationFromBuilder() throws Exception {
         Input.Builder input = Input.fromMemory("<animal>furry</animal>");
         Source s = Input.byTransforming(input)
-            .withStylesheet(Input.fromFile("src/tests/resources/animal.xsl"))
+            .withStylesheet(Input.fromStream(this.getClass().getResourceAsStream("/animal.xsl")))
             .build();
         allIsWellFor(s, "furry");
     }
@@ -136,7 +136,7 @@ public class InputTest {
     }
 
     private static byte[] readTestFile() throws Exception {
-        FileInputStream is = new FileInputStream(TestResources.ANIMAL_FILE);
+        InputStream is = InputTest.class.getResourceAsStream(TestResources.ANIMAL_FILE);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int read = -1;

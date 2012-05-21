@@ -27,9 +27,9 @@ public class TransformationTest {
     private Transformation t;
 
     @Before public void createTransformation() {
-        t = new Transformation(Input.fromFile(TestResources.DOG_FILE)
+        t = new Transformation(Input.fromStream(this.getClass().getResourceAsStream(TestResources.DOG_FILE))
                                .build());
-        t.setStylesheet(Input.fromFile(TestResources.ANIMAL_XSL).build());
+        t.setStylesheet(Input.fromStream(this.getClass().getResourceAsStream(TestResources.ANIMAL_XSL)).build());
     }
 
     @Test public void transformAnimalToString() {

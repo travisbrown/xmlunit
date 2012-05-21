@@ -316,7 +316,7 @@ public class DOMDifferenceEngineTest extends AbstractDifferenceEngineTest {
         Document d2 =
             Convert.toDocument(Input.fromMemory("<!DOCTYPE Book PUBLIC "
                                                 + "\"XMLUNIT/TEST/PUB\" "
-                                                + "\"" + TestResources.BOOK_DTD
+                                                + "\"src/test/resources" + TestResources.BOOK_DTD
                                                 + "\">"
                                                 + "<Book/>")
                                .build());

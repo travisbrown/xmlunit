@@ -32,7 +32,7 @@ public abstract class AbstractXPathEngineTest {
     private Source source;
 
     @Before public void readSource() throws Exception {
-        source = Input.fromFile(TestResources.BLAME_FILE).build();
+        source = Input.fromStream(this.getClass().getResourceAsStream(TestResources.BLAME_FILE)).build();
     }
 
     @Test public void selectNodesWithNoMatches() {

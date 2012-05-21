@@ -23,8 +23,8 @@ public class ParsingValidatorTest {
     @Test public void shouldSuccessfullyValidateSchemaInstance() {
         ParsingValidator v =
             new ParsingValidator(Languages.W3C_XML_SCHEMA_NS_URI);
-        v.setSchemaSource(new StreamSource(new File("src/tests/resources/Book.xsd")));
-        ValidationResult r = v.validateInstance(new StreamSource(new File("src/tests/resources/BookXsdGenerated.xml")));
+        v.setSchemaSource(new StreamSource(this.getClass().getResourceAsStream("/Book.xsd")));
+        ValidationResult r = v.validateInstance(new StreamSource(this.getClass().getResourceAsStream("/BookXsdGenerated.xml")));
         assertTrue(r.isValid());
         assertFalse(r.getProblems().iterator().hasNext());
     }
@@ -32,8 +32,8 @@ public class ParsingValidatorTest {
     @Test public void shouldFailOnBrokenSchemaInstance() {
         ParsingValidator v =
             new ParsingValidator(Languages.W3C_XML_SCHEMA_NS_URI);
-        v.setSchemaSource(new StreamSource(new File("src/tests/resources/Book.xsd")));
-        ValidationResult r = v.validateInstance(new StreamSource(new File("src/tests/resources/invalidBook.xml")));
+        v.setSchemaSource(new StreamSource(this.getClass().getResourceAsStream("/Book.xsd")));
+        ValidationResult r = v.validateInstance(new StreamSource(this.getClass().getResourceAsStream("/invalidBook.xml")));
         assertFalse(r.isValid());
         assertTrue(r.getProblems().iterator().hasNext());
     }
@@ -41,8 +41,8 @@ public class ParsingValidatorTest {
     @Test public void shouldSuccessfullyValidateDTDInstance() {
         ParsingValidator v =
             new ParsingValidator(Languages.XML_DTD_NS_URI);
-        v.setSchemaSource(new StreamSource(new File("src/tests/resources/Book.dtd")));
-        ValidationResult r = v.validateInstance(new StreamSource(new File("src/tests/resources/BookWithDoctype.xml")));
+        v.setSchemaSource(new StreamSource(this.getClass().getResource("/Book.dtd").toExternalForm()));
+        ValidationResult r = v.validateInstance(new StreamSource(this.getClass().getResource("/BookWithDoctype.xml").toExternalForm()));
         assertTrue(r.isValid());
         assertFalse(r.getProblems().iterator().hasNext());
     }
@@ -50,8 +50,8 @@ public class ParsingValidatorTest {
     @Test public void shouldFailOnBrokenDTDInstance() {
         ParsingValidator v =
             new ParsingValidator(Languages.XML_DTD_NS_URI);
-        v.setSchemaSource(new StreamSource(new File("src/tests/resources/Book.dtd")));
-        ValidationResult r = v.validateInstance(new StreamSource(new File("src/tests/resources/invalidBookWithDoctype.xml")));
+        v.setSchemaSource(new StreamSource(this.getClass().getResourceAsStream("/Book.dtd")));
+        ValidationResult r = v.validateInstance(new StreamSource(this.getClass().getResourceAsStream("/invalidBookWithDoctype.xml")));
         assertFalse(r.isValid());
         assertTrue(r.getProblems().iterator().hasNext());
     }
