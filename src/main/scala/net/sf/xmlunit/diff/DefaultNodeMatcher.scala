@@ -11,38 +11,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-package net.sf.xmlunit.diff;
+package net.sf.xmlunit.diff
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import net.sf.xmlunit.util.Linqy;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import java.util.LinkedHashMap
+import java.util.List
+import java.util.Map
+import java.util.Set
+import java.util.TreeSet
+import net.sf.xmlunit.util.Linqy
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 
 /**
  * Strategy that matches control and tests nodes for comparison.
  */
-public class DefaultNodeMatcher implements NodeMatcher {
-    private final ElementSelector elementSelector;
-    private final NodeTypeMatcher nodeTypeMatcher;
+class DefaultNodeMatcher(
+  private val elementSelector: ElementSelector,
+  private val nodeTypeMatcher: NodeTypeMatcher
+) extends NodeMatcher {
+  def this(elementSelector: ElementSelector) = this(elementSelector, new DefaultNodeTypeMatcher())
+  def this() = this(ElementSelectors.Default)
 
-    public DefaultNodeMatcher() {
-        this(ElementSelectors.Default);
-    }
-
-    public DefaultNodeMatcher(ElementSelector es) {
-        this(es, new DefaultNodeTypeMatcher());
-    }
-
-    public DefaultNodeMatcher(ElementSelector es, NodeTypeMatcher ntm) {
-        elementSelector = es;
-        nodeTypeMatcher = ntm;
-    }
-
-    public Iterable<Map.Entry<Node, Node>> match(Iterable<Node> controlNodes,
+  def Iterable<Map.Entry<Node, Node>> match(Iterable<Node> controlNodes,
                                                  Iterable<Node> testNodes) {
         Map<Node, Node> matches = new LinkedHashMap<Node, Node>();
         List<Node> controlList = Linqy.asList(controlNodes);
@@ -91,35 +81,26 @@ public class DefaultNodeMatcher implements NodeMatcher {
         return null;
     }
 
-    private boolean nodesMatch(final Node n1, final Node n2) {
-        if (n1 instanceof Element && n2 instanceof Element) {
-            return elementSelector.canBeCompared((Element) n1, (Element) n2);
-        }
-        return nodeTypeMatcher.canBeCompared(n1.getNodeType(),
-                                             n2.getNodeType());
-    }
+  def nodesMatch(n1: Node, n2: Node) = (n1, n2) match {
+    case (e1: Element, e2: Element) =>
+      this.elementSelector.canBeCompared(e1, e2)
+    case (n1, n2) =>
+      this.nodeTypeMatcher.canBeCompared(n1.getNodeType, n2.getNodeType)
+  }
 
-    private class Match {
-        private final Node node;
-        private final int index;
-        private Match(Node match, int index) {
-            this.node = match;
-            this.index = index;
-        }
-    }
+  case class Match(node: Node, index: Int)
 
-    public interface NodeTypeMatcher {
-        boolean canBeCompared(short controlType, short testType);
-    }
+  trait NodeTypeMatcher {
+    def canBeCompared(controlType: Short, testType: Short)
+  }
 
-    private static final short CDATA = Node.TEXT_NODE;
-    private static final short TEXT = Node.CDATA_SECTION_NODE;
-
-    public static class DefaultNodeTypeMatcher implements NodeTypeMatcher {
-        public boolean canBeCompared(short controlType, short testType) {
-            return controlType == testType
-                || (controlType == CDATA && testType == TEXT)
-                || (controlType == TEXT && testType == CDATA);
-        }
-    }
+  object DefaultNodeTypeMatcher extends NodeTypeMatcher {
+    def canBeCompared(controlType: Short, testType: Short) =
+      controlType == testType || (
+        controlType == Node.TEXT_NODE && testType == Node.CDATA_SECTION_NODE
+      ) || (
+        controlType == Node.CDATA_SECTION_NODE && testType == Node.TEXT_NODE
+      )
+  }
 }
+
