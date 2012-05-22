@@ -16,13 +16,18 @@ package net.sf.xmlunit.diff;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.namespace.QName;
-import net.sf.xmlunit.util.Linqy;
 import org.junit.Test;
 import org.w3c.dom.Node;
 
 import static org.junit.Assert.*;
 
 public class XPathContextTest {
+    private <E> Iterable<E> singleton(E item) {
+      ArrayList<E> list = new ArrayList<E>();
+      list.add(item);
+      return list;
+    }
+
     @Test public void empty() {
         assertEquals("/", new XPathContext().getXPath());
     }
@@ -93,7 +98,7 @@ public class XPathContextTest {
 
     @Test public void attributes() {
         XPathContext ctx = new XPathContext();
-        ctx.setChildren(Linqy.singleton(new Element("foo")));
+        ctx.setChildren(this.singleton(new Element("foo")));
         ctx.navigateToChild(0);
         ArrayList<QName> l = new ArrayList<QName>();
         l.add(new QName("bar"));
@@ -162,7 +167,7 @@ public class XPathContextTest {
         HashMap<String, String> m = new HashMap<String, String>();
         m.put("urn:foo:bar", "bar");
         XPathContext ctx = new XPathContext(m);
-        ctx.setChildren(Linqy.singleton(new Element("foo", "urn:foo:bar")));
+        ctx.setChildren(this.singleton(new Element("foo", "urn:foo:bar")));
         ctx.navigateToChild(0);
         ArrayList<QName> l = new ArrayList<QName>();
         l.add(new QName("baz"));

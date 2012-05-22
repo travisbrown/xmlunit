@@ -11,29 +11,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-package net.sf.xmlunit.xpath;
+package net.sf.xmlunit.xpath
 
-import java.util.Map;
-import javax.xml.transform.Source;
-import org.w3c.dom.Node;
+import java.util.Map
+import javax.xml.transform.Source
+import org.w3c.dom.Node
 
 /**
  * Interface for XMLUnit's XPath abstraction.
  */
-public interface XPathEngine {
-    /**
-     * Returns a potentially empty collection of Nodes matching an
-     * XPath expression.
-     */
-    Iterable<Node> selectNodes(String xPath, Source s);
-    /**
-     * Evaluates an XPath expression and stringifies the result.
-     */
-    String evaluate(String xPath, Source s);
-    /**
-     * Establish a namespace context.
-     *
-     * @param prefix2Uri maps from prefix to namespace URI.
-     */
-    void setNamespaceContext(Map<String, String> prefix2Uri);
+trait XPathEngine {
+  /**
+   * Returns a potentially empty collection of Nodes matching an
+   * XPath expression.
+   */
+  def selectNodes(path: String, source: Source): java.lang.Iterable[Node]
+
+  /**
+   * Evaluates an XPath expression and stringifies the result.
+   */
+  def evaluate(path: String, source: Source): String
+
+  /**
+   * Establish a namespace context.
+   *
+   * @param prefix2Uri maps from prefix to namespace URI.
+   */
+  def setNamespaceContext(prefix2Uri: Map[String, String]): Unit
 }
+

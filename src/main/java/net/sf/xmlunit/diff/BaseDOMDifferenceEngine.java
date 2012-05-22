@@ -28,7 +28,6 @@ import net.sf.xmlunit.util.Convert;
 import net.sf.xmlunit.util.IterableNodeList;
 import net.sf.xmlunit.util.Linqy;
 import net.sf.xmlunit.util.Nodes;
-import net.sf.xmlunit.util.Predicate;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -38,11 +37,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+import scala.Tuple2;
 
 /**
  * Difference engine based on DOM.
  */
-public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
+public abstract class BaseDOMDifferenceEngine extends AbstractDifferenceEngine {
 
     public void compare(Source control, Source test) {
         if (control == null) {
@@ -72,84 +72,14 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
      *
      * <p>package private to support tests.</p>
      */
-    ComparisonResult compareNodes(Node control, XPathContext controlContext,
-                                  Node test, XPathContext testContext) {
-        ComparisonResult lastResult =
-            compare(new Comparison(ComparisonType.NODE_TYPE,
-                                   control, getXPath(controlContext),
-                                   control.getNodeType(),
-                                   test, getXPath(testContext),
-                                   test.getNodeType()));
-        if (lastResult == ComparisonResult.CRITICAL) {
-            return lastResult;
-        }
-
-        lastResult =
-            compare(new Comparison(ComparisonType.NAMESPACE_URI,
-                                   control, getXPath(controlContext),
-                                   control.getNamespaceURI(),
-                                   test, getXPath(testContext),
-                                   test.getNamespaceURI()));
-
-        if (lastResult == ComparisonResult.CRITICAL) {
-            return lastResult;
-        }
-
-        lastResult =
-            compare(new Comparison(ComparisonType.NAMESPACE_PREFIX,
-                                   control, getXPath(controlContext),
-                                   control.getPrefix(),
-                                   test, getXPath(testContext),
-                                   test.getPrefix()));
-        if (lastResult == ComparisonResult.CRITICAL) {
-            return lastResult;
-        }
-
-
-        Iterable<Node> controlChildren =
-            Linqy.filter(new IterableNodeList(control.getChildNodes()),
-                         INTERESTING_NODES);
-        Iterable<Node> testChildren =
-            Linqy.filter(new IterableNodeList(test.getChildNodes()),
-                         INTERESTING_NODES);
-        if (control.getNodeType() != Node.ATTRIBUTE_NODE) {
-            lastResult =
-                compare(new Comparison(ComparisonType.CHILD_NODELIST_LENGTH,
-                                       control, getXPath(controlContext),
-                                       Linqy.count(controlChildren),
-                                       test, getXPath(testContext),
-                                       Linqy.count(testChildren)));
-            if (lastResult == ComparisonResult.CRITICAL) {
-                return lastResult;
-            }
-        }
-
-        lastResult = nodeTypeSpecificComparison(control, controlContext,
-                                                test, testContext);
-        if (lastResult == ComparisonResult.CRITICAL) {
-            return lastResult;
-        }
-
-        if (control.getNodeType() != Node.ATTRIBUTE_NODE) {
-            controlContext
-                .setChildren(Linqy.map(controlChildren, TO_NODE_INFO));
-            testContext
-                .setChildren(Linqy.map(testChildren, TO_NODE_INFO));
-
-            lastResult = compareNodeLists(controlChildren, controlContext,
-                                          testChildren, testContext);
-            if (lastResult == ComparisonResult.CRITICAL) {
-                return lastResult;
-            }
-        }
-        return lastResult;
-    }
+    abstract ComparisonResult compareNodes(Node control, XPathContext controlContext,
+                                  Node test, XPathContext testContext); /* {
 
     /**
      * Dispatches to the node type specific comparison if one is
      * defined for the given combination of nodes.
      */
-    private ComparisonResult
+    protected ComparisonResult
         nodeTypeSpecificComparison(Node control,
                                    XPathContext controlContext,
                                    Node test, XPathContext testContext) {
@@ -203,7 +133,7 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
     /**
      * Compares textual content.
      */
-    private ComparisonResult compareCharacterData(CharacterData control,
+    protected ComparisonResult compareCharacterData(CharacterData control,
                                                   XPathContext controlContext,
                                                   CharacterData test,
                                                   XPathContext testContext) {
@@ -217,7 +147,7 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
     /**
      * Compares document node, doctype and XML declaration properties
      */
-    private ComparisonResult compareDocuments(Document control,
+    protected ComparisonResult compareDocuments(Document control,
                                               XPathContext controlContext,
                                               Document test,
                                               XPathContext testContext) {
@@ -273,7 +203,7 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
     /**
      * Compares properties of the doctype declaration.
      */
-    private ComparisonResult compareDocTypes(DocumentType control,
+    protected ComparisonResult compareDocTypes(DocumentType control,
                                              XPathContext controlContext,
                                              DocumentType test,
                                              XPathContext testContext) {
@@ -306,7 +236,7 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
      * Compares elements node properties, in particular the element's
      * name and its attributes.
      */
-    private ComparisonResult compareElements(Element control,
+    protected ComparisonResult compareElements(Element control,
                                              XPathContext controlContext,
                                              Element test,
                                              XPathContext testContext) {
@@ -450,22 +380,22 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
      * <p>Also performs CHILD_LOOKUP comparisons for each node that
      * couldn't be matched to one of the "other" list.</p>
      */
-    private ComparisonResult compareNodeLists(Iterable<Node> controlSeq,
+    protected ComparisonResult compareNodeLists(Iterable<Node> controlSeq,
                                               XPathContext controlContext,
                                               Iterable<Node> testSeq,
                                               XPathContext testContext) {
         // if there are no children on either Node, the result is equal
         ComparisonResult lastResult = ComparisonResult.EQUAL;
 
-        Iterable<Map.Entry<Node, Node>> matches =
-            getNodeMatcher().match(controlSeq, testSeq);
+        Iterable<Tuple2<Node, Node>> matches =
+            getNodeMatcher().getMatches(controlSeq, testSeq);
         List<Node> controlList = Linqy.asList(controlSeq);
         List<Node> testList = Linqy.asList(testSeq);
         Set<Node> seen = new HashSet<Node>();
-        for (Map.Entry<Node, Node> pair : matches) {
-            Node control = pair.getKey();
+        for (Tuple2<Node, Node> pair : matches) {
+            Node control = pair._1();
             seen.add(control);
-            Node test = pair.getValue();
+            Node test = pair._2();
             seen.add(test);
             int controlIndex = controlList.indexOf(control);
             int testIndex = testList.indexOf(test);
@@ -628,25 +558,5 @@ public final class DOMDifferenceEngine extends AbstractDifferenceEngine {
         new Linqy.Mapper<Node, QName>() {
         public QName map(Node n) { return Nodes.getQName(n); }
     };
-
-    /**
-     * Maps Nodes to their NodeInfo equivalent.
-     */
-    private static final Linqy.Mapper<Node, XPathContext.NodeInfo> TO_NODE_INFO =
-        new Linqy.Mapper<Node, XPathContext.NodeInfo>() {
-        public XPathContext.NodeInfo map(Node n) {
-            return new XPathContext.DOMNodeInfo(n);
-        }
-    };
-
-    /**
-     * Suppresses document-type nodes.
-     */
-    private static final Predicate<Node> INTERESTING_NODES =
-        new Predicate<Node>() {
-        public boolean matches(Node n) {
-            return n.getNodeType() != Node.DOCUMENT_TYPE_NODE;
-        }
-    };
-
 }
+

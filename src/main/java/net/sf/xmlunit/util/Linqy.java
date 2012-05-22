@@ -34,28 +34,6 @@ public final class Linqy {
     }
 
     /**
-     * Turns an iterable into its type-safe cousin.
-     */
-    public static <E> Iterable<E> cast(final Iterable i) {
-        return map(i, new Mapper<Object, E>() {
-                public E map(Object o) {
-                    return (E) o;
-                }
-            });
-    }
-
-    /**
-     * An iterable containing a single element.
-     */
-    public static <E> Iterable<E> singleton(final E single) {
-        return new Iterable<E>() {
-            public Iterator<E> iterator() {
-                return new OnceOnlyIterator<E>(single);
-            }
-        };
-    }
-
-    /**
      * Create a new iterable by applying a mapper function to each
      * element of a given sequence.
      */
@@ -75,53 +53,6 @@ public final class Linqy {
         T map(F from);
     }
 
-    /**
-     * Exclude all elements from an iterable that don't match a given
-     * predicate.
-     */
-    public static <T> Iterable<T> filter(final Iterable<T> sequence,
-                                         final Predicate<? super T> filter) {
-        return new Iterable<T>() {
-            public Iterator<T> iterator() {
-                return new FilteringIterator<T>(sequence.iterator(), filter);
-            }
-        };
-    }
-
-    /**
-     * Count the number of elements in a sequence.
-     */
-    public static int count(Iterable seq) {
-        int c = 0;
-        Iterator it = seq.iterator();
-        while (it.hasNext()) {
-            c++;
-            it.next();
-        }
-        return c;
-    }
-
-    private static class OnceOnlyIterator<E> implements Iterator<E> {
-        private final E element;
-        private boolean iterated = false;
-        private OnceOnlyIterator(E element) {
-            this.element = element;
-        }
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-        public E next() {
-            if (iterated) {
-                throw new NoSuchElementException();
-            }
-            iterated = true;
-            return element;
-        }
-        public boolean hasNext() {
-            return !iterated;
-        }
-    }
-
     private static class MappingIterator<F, T> implements Iterator<T> {
         private final Iterator<F> i;
         private final Mapper<? super F, T> mapper;
@@ -139,35 +70,4 @@ public final class Linqy {
             return i.hasNext();
         }
     }
-
-    private static class FilteringIterator<T> implements Iterator<T> {
-        private final Iterator<T> i;
-        private final Predicate<? super T> filter;
-        private T lookAhead = null;
-        private FilteringIterator(Iterator<T> i, Predicate<? super T> filter) {
-            this.i = i;
-            this.filter = filter;
-        }
-        public void remove() {
-            i.remove();
-        }
-        public T next() {
-            if (lookAhead == null) {
-                throw new NoSuchElementException();
-            }
-            T next = lookAhead;
-            lookAhead = null;
-            return next;
-        }
-        public boolean hasNext() {
-            while (lookAhead == null && i.hasNext()) {
-                T next = i.next();
-                if (filter.matches(next)) {
-                    lookAhead = next;
-                }
-            }
-            return lookAhead != null;
-        }
-    }
-
 }

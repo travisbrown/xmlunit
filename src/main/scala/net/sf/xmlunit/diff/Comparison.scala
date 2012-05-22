@@ -18,17 +18,17 @@ import scala.reflect.BeanProperty
 /**
  * Details of a single comparison XMLUnit has performed.
  */
-class Comparison(
+class Comparison[A, B](
   /**
    * The kind of comparison performed.
    */
   @BeanProperty val `type`: ComparisonType,
-  controlTarget: Object,
+  controlTarget: A,
   controlXPath: String,
-  controlValue: Object,
-  testTarget: Object,
+  controlValue: B,
+  testTarget: A,
   testXPath: String,
-  testValue: Object
+  testValue: B
 ) {
     /**
      * The details of a target (usually some representation of an XML
@@ -38,7 +38,7 @@ class Comparison(
         /**
          * The actual target.
          */
-        @BeanProperty target: Object,
+        @BeanProperty target: A,
         /**
          * XPath leading to the target.
          */
@@ -46,7 +46,7 @@ class Comparison(
         /**
          * The value for comparison found at the current target.
          */
-        @BeanProperty value: Object
+        @BeanProperty value: B
     )
 
     /**

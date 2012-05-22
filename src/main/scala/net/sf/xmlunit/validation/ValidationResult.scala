@@ -11,11 +11,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-package net.sf.xmlunit.util;
+package net.sf.xmlunit.validation
+
+import scala.collection.JavaConversions._
 
 /**
- * A function that tests an object for a property.
+ * The result of a validation.
  */
-public interface Predicate<T> {
-    boolean matches(T toTest);
+case class ValidationResult(
+  valid: Boolean,
+  problems: Seq[ValidationProblem]
+) {
+  /**
+   * Has the validation been successful?
+   */
+  def isValid = valid
+
+  /**
+   * Retrieves the problems that have been found.
+   */
+  def getProblems = asJavaIterable(this.problems)
 }
+

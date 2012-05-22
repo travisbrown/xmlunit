@@ -56,7 +56,7 @@ public class ComparisonListenerSupport {
      * Propagates the result of a comparision to all registered
      * listeners.
      */
-    public void fireComparisonPerformed(Comparison comparison,
+    public <A, B> void fireComparisonPerformed(Comparison<A, B> comparison,
                                         ComparisonResult outcome) {
         fire(comparison, outcome, compListeners);
         if (outcome == ComparisonResult.EQUAL) {
@@ -66,7 +66,7 @@ public class ComparisonListenerSupport {
         }
     }
 
-    private static void fire(Comparison comparison, ComparisonResult outcome,
+    private static <A, B> void fire(Comparison<A, B> comparison, ComparisonResult outcome,
                              List<ComparisonListener> listeners) {
         if (!listeners.isEmpty()) {
             for (Iterator<ComparisonListener> it = listeners.iterator();
